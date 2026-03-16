@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circuitos Combinacionales — INF110-SF</title>
+<link rel="stylesheet" href="../../assets/shared.css">
+<style>
+  body { padding-bottom: 4rem; }
+
+  .hero { padding: 2.5rem 0 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--teal-l); text-transform: uppercase; margin-bottom: 10px; }
+  h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 10px; }
+  h1 span { color: var(--teal-l); }
+  .subtitle { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+  /* ── SECCIÓN ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-bottom: 1rem; }
+  .grid-wide { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; margin-bottom: 1rem; }
+
+  /* ── CARD ── */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; transition: border-color .2s, background .2s; }
+  .card:hover { border-color: var(--border-h); background: var(--bg3); }
+  .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .circuit-name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .circuit-expr { font-family: var(--mono); font-size: 11px; color: var(--teal-l); background: var(--teal-bg); border: 1px solid rgba(93,202,165,0.25); border-radius: 6px; padding: 3px 9px; }
+  .circuit-expr.amber { color: var(--amber); background: var(--amber-bg); border-color: rgba(239,159,39,0.25); }
+
+  .card-body { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 12px; }
+  .svg-wrap { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+
+  /* ── TABLA DE VERDAD ── */
+  .tt { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+  .tt th { color: var(--dim); font-weight: 500; padding: 3px 8px; text-align: center; border-bottom: 1px solid var(--border); letter-spacing: 0.08em; }
+  .tt td { padding: 4px 8px; text-align: center; color: var(--muted); cursor: pointer; border-radius: 4px; transition: background .12s; user-select: none; }
+  .tt tr:hover td { background: rgba(255,255,255,0.04); }
+  .tt tr.active td { background: rgba(255,255,255,0.06); color: var(--text); }
+  .tt tr.active td.out-1 { background: var(--teal-bg2); color: var(--teal-l); font-weight: 700; }
+  .tt tr.active td.out-0 { background: var(--red-bg); color: var(--red); font-weight: 700; }
+  .val-1 { color: var(--teal-l); font-weight: 500; }
+  .val-0 { color: var(--dim); }
+
+  .desc { font-size: 12px; color: var(--muted); line-height: 1.5; border-top: 1px solid var(--border); padding-top: 10px; font-family: var(--mono); }
+
+  /* ── LEGEND ── */
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; font-family: var(--mono); font-size: 11px; color: var(--muted); padding: 14px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 2rem; }
+  .legend-item { display: flex; align-items: center; gap: 7px; }
+  .ldot { width: 10px; height: 10px; border-radius: 3px; }
+  .ldot-1 { background: var(--teal-bg2); border: 1px solid rgba(29,158,117,0.4); }
+  .ldot-0 { background: var(--red-bg); border: 1px solid rgba(226,75,74,0.3); }
+  .ldot-row { background: rgba(255,255,255,0.06); border: 1px solid var(--border-h); }
+
+  /* ── INFO BOX ── */
+  .info-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 1rem; }
+  .info-box.amber { border-left-color: var(--amber); }
+  .info-box.purple { border-left-color: var(--purple); }
+  .info-title { font-size: 13px; font-weight: 700; color: var(--teal-l); margin-bottom: 8px; font-family: var(--mono); }
+  .info-title.amber { color: var(--amber); }
+  .info-title.purple { color: var(--purple); }
+  .info-body { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.9; }
+  .info-body code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
+  .info-body code.teal { color: var(--teal-l); background: var(--teal-bg); }
+
+  /* ── DECODER OUTPUT ── */
+  .decoder-out { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .dec-bit {
+    font-family: var(--mono); font-size: 13px; font-weight: 700;
+    padding: 6px 12px; border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg3); color: var(--dim);
+    transition: all .2s;
+  }
+  .dec-bit.active { background: var(--teal-bg2); color: var(--teal-l); border-color: rgba(29,158,117,0.4); }
+
+  /* ── MUX VISUAL ── */
+  .mux-inputs { display: flex; flex-direction: column; gap: 6px; }
+  .mux-input-row { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12px; }
+  .mux-input-row .label { color: var(--dim); width: 20px; }
+  .mux-btn {
+    width: 36px; height: 26px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--bg3); color: var(--muted); font-family: var(--mono); font-size: 13px;
+    cursor: pointer; transition: all .15s; font-weight: 700;
+  }
+  .mux-btn.on { background: var(--teal-bg2); color: var(--teal-l); border-color: rgba(29,158,117,0.4); }
+  .mux-output { font-family: var(--mono); font-size: 13px; color: var(--muted); margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .mux-output .val { font-weight: 700; font-size: 16px; }
+  .mux-output .val.one { color: var(--teal-l); }
+  .mux-output .val.zero { color: var(--red); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">apuntes<span>/</span>visuales</div>
+  <a href="../../index.html" class="nav-back">← volver al dashboard</a>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <p class="eyebrow">INF110-SF — Sistemas Digitales</p>
+    <h1>Circuitos <span>combinacionales</span></h1>
+    <p class="subtitle">Haz clic en cualquier fila para seleccionar los valores de entrada</p>
+  </div>
+
+  <!-- LEYENDA -->
+  <div class="legend">
+    <div class="legend-item"><div class="ldot ldot-row"></div> Fila activa (entrada seleccionada)</div>
+    <div class="legend-item"><div class="ldot ldot-1"></div> Salida = 1 (verdadero)</div>
+    <div class="legend-item"><div class="ldot ldot-0"></div> Salida = 0 (falso)</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ SUMADORES ══ -->
+  <p class="section-label">Sumadores</p>
+  <div class="grid" id="adderGrid"></div>
+
+  <!-- ═══════════════════════════════════════ MUX / DEMUX ══ -->
+  <p class="section-label">Multiplexores</p>
+  <div class="grid-wide" id="muxGrid"></div>
+
+  <!-- ═══════════════════════════════════════ CODIFICADORES ══ -->
+  <p class="section-label">Decodificadores</p>
+  <div class="grid-wide" id="decoderGrid"></div>
+
+  <!-- INFO BOXES -->
+  <div class="info-box">
+    <div class="info-title">¿Qué es un circuito combinacional?</div>
+    <div class="info-body">
+      La salida depende <em style="color:var(--text)">únicamente</em> de las entradas actuales — no tiene memoria.<br>
+      A diferencia de los circuitos secuenciales, no hay retroalimentación ni estado interno.<br>
+      Se construyen combinando compuertas lógicas básicas (AND, OR, NOT, XOR, etc.).
+    </div>
+  </div>
+
+  <div class="info-box amber">
+    <div class="info-title amber">Semisumador vs Sumador Completo</div>
+    <div class="info-body">
+      <code>Half Adder</code> suma dos bits: <code>S = A ⊕ B</code> y <code>C = A · B</code><br>
+      <code>Full Adder</code> suma tres bits (incluye acarreo de entrada C<sub>in</sub>):<br>
+      <code>S = A ⊕ B ⊕ Cᵢₙ</code> y <code>Cₒᵤₜ = (A·B) + (Cᵢₙ·(A⊕B))</code><br>
+      Los Full Adders se encadenan para sumar números de N bits.
+    </div>
+  </div>
+
+  <div class="info-box purple">
+    <div class="info-title purple">MUX y Decodificador</div>
+    <div class="info-body">
+      <code class="teal">MUX 2:1</code> selecciona una de 2 entradas según el selector S.<br>
+      <code class="teal">Decodificador 2:4</code> activa <em style="color:var(--text)">exactamente una</em> de 4 salidas según las 2 entradas.<br>
+      Regla: con N líneas de entrada → 2ᴺ salidas posibles.
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   SVGs de los circuitos
+══════════════════════════════════════════════════════ */
+const halfAdderSVG = `<svg width="100" height="70" viewBox="0 0 100 70">
+  <!-- entradas -->
+  <line x1="4" y1="22" x2="28" y2="22" stroke="#555562" stroke-width="1.5"/>
+  <line x1="4" y1="48" x2="28" y2="48" stroke="#555562" stroke-width="1.5"/>
+  <!-- cuerpo -->
+  <rect x="28" y="10" width="40" height="50" rx="5" fill="none" stroke="#5DCAA5" stroke-width="1.5"/>
+  <text x="48" y="39" font-size="9" fill="#5DCAA5" font-family="JetBrains Mono,monospace" text-anchor="middle">HA</text>
+  <!-- salidas -->
+  <line x1="68" y1="28" x2="96" y2="28" stroke="#555562" stroke-width="1.5"/>
+  <line x1="68" y1="42" x2="96" y2="42" stroke="#555562" stroke-width="1.5"/>
+  <!-- labels -->
+  <text x="2" y="25" font-size="10" fill="#888896" font-family="JetBrains Mono,monospace">A</text>
+  <text x="2" y="51" font-size="10" fill="#888896" font-family="JetBrains Mono,monospace">B</text>
+  <text x="80" y="25" font-size="9" fill="#888896" font-family="JetBrains Mono,monospace">S</text>
+  <text x="78" y="39" font-size="9" fill="#888896" font-family="JetBrains Mono,monospace">C</text>
+</svg>`;
+
+const fullAdderSVG = `<svg width="100" height="82" viewBox="0 0 100 82">
+  <line x1="4" y1="20" x2="28" y2="20" stroke="#555562" stroke-width="1.5"/>
+  <line x1="4" y1="38" x2="28" y2="38" stroke="#555562" stroke-width="1.5"/>
+  <line x1="4" y1="56" x2="28" y2="56" stroke="#555562" stroke-width="1.5"/>
+  <rect x="28" y="8" width="40" height="66" rx="5" fill="none" stroke="#5DCAA5" stroke-width="1.5"/>
+  <text x="48" y="45" font-size="9" fill="#5DCAA5" font-family="JetBrains Mono,monospace" text-anchor="middle">FA</text>
+  <line x1="68" y1="28" x2="96" y2="28" stroke="#555562" stroke-width="1.5"/>
+  <line x1="68" y1="48" x2="96" y2="48" stroke="#555562" stroke-width="1.5"/>
+  <text x="2" y="23" font-size="10" fill="#888896" font-family="JetBrains Mono,monospace">A</text>
+  <text x="2" y="41" font-size="10" fill="#888896" font-family="JetBrains Mono,monospace">B</text>
+  <text x="0" y="59" font-size="9" fill="#888896" font-family="JetBrains Mono,monospace">Cᵢ</text>
+  <text x="80" y="25" font-size="9" fill="#888896" font-family="JetBrains Mono,monospace">S</text>
+  <text x="77" y="45" font-size="9" fill="#888896" font-family="JetBrains Mono,monospace">Cₒ</text>
+</svg>`;
+
+/* ══════════════════════════════════════════════════════
+   SUMADORES — tabla de verdad interactiva
+══════════════════════════════════════════════════════ */
+const adders = [
+  {
+    id: 'ha',
+    name: 'Semisumador',
+    tag: 'Half Adder',
+    svg: halfAdderSVG,
+    inputs: ['A','B'],
+    outputs: ['S','C'],
+    rows: [
+      [0,0, 0,0],
+      [0,1, 1,0],
+      [1,0, 1,0],
+      [1,1, 0,1],
+    ],
+    desc: 'Suma dos bits. S = suma (XOR), C = acarreo (AND).'
+  },
+  {
+    id: 'fa',
+    name: 'Sumador Completo',
+    tag: 'Full Adder',
+    svg: fullAdderSVG,
+    inputs: ['A','B','Cᵢₙ'],
+    outputs: ['S','Cₒᵤₜ'],
+    rows: [
+      [0,0,0, 0,0],
+      [0,0,1, 1,0],
+      [0,1,0, 1,0],
+      [0,1,1, 0,1],
+      [1,0,0, 1,0],
+      [1,0,1, 0,1],
+      [1,1,0, 0,1],
+      [1,1,1, 1,1],
+    ],
+    desc: 'Suma tres bits incluyendo acarreo de entrada. Encadenable para N bits.'
+  }
+];
+
+const adderState = { ha: 0, fa: 0 }; // índice de fila activa
+
+function fmtVal(v) { return v ? `<span class="val-1">1</span>` : `<span class="val-0">0</span>`; }
+
+function renderAdders() {
+  const grid = document.getElementById('adderGrid');
+  grid.innerHTML = '';
+  adders.forEach(circuit => {
+    const activeIdx = adderState[circuit.id];
+    const nIn = circuit.inputs.length;
+    const nOut = circuit.outputs.length;
+    const thCells = [...circuit.inputs, ...circuit.outputs].map(h => `<th>${h}</th>`).join('');
+    const tbodyRows = circuit.rows.map((row, idx) => {
+      const ins = row.slice(0, nIn);
+      const outs = row.slice(nIn);
+      const active = idx === activeIdx;
+      const inCells = ins.map(v => `<td>${fmtVal(v)}</td>`).join('');
+      const outCells = outs.map(v => `<td class="${active ? (v ? 'out-1' : 'out-0') : ''}">${fmtVal(v)}</td>`).join('');
+      return `<tr class="${active ? 'active' : ''}" data-id="${circuit.id}" data-idx="${idx}">${inCells}${outCells}</tr>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-head">
+        <span class="circuit-name">${circuit.name}</span>
+        <span class="circuit-expr">${circuit.tag}</span>
+      </div>
+      <div class="card-body">
+        <div class="svg-wrap">${circuit.svg}</div>
+        <div style="flex:1">
+          <table class="tt">
+            <thead><tr>${thCells}</tr></thead>
+            <tbody>${tbodyRows}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="desc">${circuit.desc}</div>`;
+    grid.appendChild(card);
+  });
+
+  document.querySelectorAll('#adderGrid .tt tbody tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      adderState[tr.dataset.id] = parseInt(tr.dataset.idx);
+      renderAdders();
+    });
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   MUX 2:1
+══════════════════════════════════════════════════════ */
+const muxState = { A: 0, B: 0, S: 0 };
+
+function renderMux() {
+  const grid = document.getElementById('muxGrid');
+  grid.innerHTML = '';
+
+  // MUX 2:1 card
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const output = muxState.S === 0 ? muxState.A : muxState.B;
+  const outClass = output ? 'one' : 'zero';
+
+  const muxSVG = `<svg width="90" height="80" viewBox="0 0 90 80">
+    <line x1="4" y1="22" x2="28" y2="22" stroke="#555562" stroke-width="1.5"/>
+    <line x1="4" y1="44" x2="28" y2="44" stroke="#555562" stroke-width="1.5"/>
+    <line x1="48" y1="66" x2="48" y2="80" stroke="#555562" stroke-width="1.5"/>
+    <polygon points="28,10 68,20 68,50 28,60" fill="none" stroke="#7F77DD" stroke-width="1.5"/>
+    <line x1="68" y1="35" x2="90" y2="35" stroke="#555562" stroke-width="1.5"/>
+    <text x="2" y="25" font-size="10" fill="#888896" font-family="JetBrains Mono,monospace">A</text>
+    <text x="2" y="47" font-size="10" fill="#888896" font-family="JetBrains Mono,monospace">B</text>
+    <text x="44" y="78" font-size="9" fill="#888896" font-family="JetBrains Mono,monospace">S</text>
+    <text x="75" y="38" font-size="10" fill="#888896" font-family="JetBrains Mono,monospace">Y</text>
+    <text x="42" y="38" font-size="9" fill="#7F77DD" font-family="JetBrains Mono,monospace">MUX</text>
+  </svg>`;
+
+  const rows = [[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]];
+  const activeRow = rows.find(r => r[0]===muxState.A && r[1]===muxState.B && r[2]===muxState.S);
+  const activeIdx = rows.indexOf(activeRow);
+
+  const tbody = rows.map((r,i) => {
+    const [a,b,s] = r;
+    const y = s===0 ? a : b;
+    const active = i === activeIdx;
+    return `<tr class="${active?'active':''}" data-row="${i}">
+      <td>${fmtVal(a)}</td><td>${fmtVal(b)}</td><td>${fmtVal(s)}</td>
+      <td class="${active?(y?'out-1':'out-0'):''}">${fmtVal(y)}</td>
+    </tr>`;
+  }).join('');
+
+  card.innerHTML = `
+    <div class="card-head">
+      <span class="circuit-name">Multiplexor 2:1</span>
+      <span class="circuit-expr amber">MUX</span>
+    </div>
+    <div class="card-body">
+      <div class="svg-wrap">${muxSVG}</div>
+      <div style="flex:1">
+        <table class="tt">
+          <thead><tr><th>A</th><th>B</th><th>S</th><th>Y</th></tr></thead>
+          <tbody>${tbody}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="desc">Selector S=0 → Y=A. Selector S=1 → Y=B. Elige entre 2 entradas.</div>`;
+
+  grid.appendChild(card);
+
+  document.querySelectorAll('#muxGrid .tt tbody tr').forEach((tr, i) => {
+    tr.addEventListener('click', () => {
+      const r = rows[i];
+      muxState.A = r[0]; muxState.B = r[1]; muxState.S = r[2];
+      renderMux();
+    });
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   DECODIFICADOR 2:4
+══════════════════════════════════════════════════════ */
+const decState = { A: 0, B: 0 };
+
+function renderDecoder() {
+  const grid = document.getElementById('decoderGrid');
+  grid.innerHTML = '';
+
+  const decSVG = `<svg width="90" height="80" viewBox="0 0 90 80">
+    <line x1="4" y1="25" x2="28" y2="25" stroke="#555562" stroke-width="1.5"/>
+    <line x1="4" y1="55" x2="28" y2="55" stroke="#555562" stroke-width="1.5"/>
+    <rect x="28" y="10" width="34" height="60" rx="5" fill="none" stroke="#EF9F27" stroke-width="1.5"/>
+    <text x="45" y="43" font-size="8" fill="#EF9F27" font-family="JetBrains Mono,monospace" text-anchor="middle">DEC</text>
+    <!-- 4 salidas -->
+    <line x1="62" y1="20" x2="86" y2="20" stroke="#555562" stroke-width="1.5"/>
+    <line x1="62" y1="33" x2="86" y2="33" stroke="#555562" stroke-width="1.5"/>
+    <line x1="62" y1="47" x2="86" y2="47" stroke="#555562" stroke-width="1.5"/>
+    <line x1="62" y1="60" x2="86" y2="60" stroke="#555562" stroke-width="1.5"/>
+    <text x="2" y="28" font-size="10" fill="#888896" font-family="JetBrains Mono,monospace">A</text>
+    <text x="2" y="58" font-size="10" fill="#888896" font-family="JetBrains Mono,monospace">B</text>
+    <text x="74" y="17" font-size="8" fill="#888896" font-family="JetBrains Mono,monospace">Y₀</text>
+    <text x="74" y="30" font-size="8" fill="#888896" font-family="JetBrains Mono,monospace">Y₁</text>
+    <text x="74" y="44" font-size="8" fill="#888896" font-family="JetBrains Mono,monospace">Y₂</text>
+    <text x="74" y="57" font-size="8" fill="#888896" font-family="JetBrains Mono,monospace">Y₃</text>
+  </svg>`;
+
+  const rows = [
+    [0,0, 1,0,0,0],
+    [0,1, 0,1,0,0],
+    [1,0, 0,0,1,0],
+    [1,1, 0,0,0,1],
+  ];
+  const activeIdx = rows.findIndex(r => r[0]===decState.A && r[1]===decState.B);
+
+  const tbody = rows.map((r,i) => {
+    const [a,b,y0,y1,y2,y3] = r;
+    const active = i === activeIdx;
+    const oc = (v) => active ? (v?'out-1':'out-0') : '';
+    return `<tr class="${active?'active':''}" data-idx="${i}">
+      <td>${fmtVal(a)}</td><td>${fmtVal(b)}</td>
+      <td class="${oc(y0)}">${fmtVal(y0)}</td>
+      <td class="${oc(y1)}">${fmtVal(y1)}</td>
+      <td class="${oc(y2)}">${fmtVal(y2)}</td>
+      <td class="${oc(y3)}">${fmtVal(y3)}</td>
+    </tr>`;
+  }).join('');
+
+  // bits de salida animados
+  const activeRow = rows[activeIdx];
+  const decBits = [0,1,2,3].map(i => {
+    const v = activeRow[i+2];
+    return `<div class="dec-bit ${v?'active':''}">Y${i} = ${v}</div>`;
+  }).join('');
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="card-head">
+      <span class="circuit-name">Decodificador 2:4</span>
+      <span class="circuit-expr amber">DEC 2→4</span>
+    </div>
+    <div class="card-body">
+      <div class="svg-wrap">${decSVG}</div>
+      <div style="flex:1">
+        <table class="tt">
+          <thead><tr><th>A</th><th>B</th><th>Y₀</th><th>Y₁</th><th>Y₂</th><th>Y₃</th></tr></thead>
+          <tbody>${tbody}</tbody>
+        </table>
+        <div class="decoder-out">${decBits}</div>
+      </div>
+    </div>
+    <div class="desc">Activa exactamente una salida según la combinación de entradas A y B.</div>`;
+
+  grid.appendChild(card);
+
+  document.querySelectorAll('#decoderGrid .tt tbody tr').forEach((tr, i) => {
+    tr.addEventListener('click', () => {
+      decState.A = rows[i][0]; decState.B = rows[i][1];
+      renderDecoder();
+    });
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+renderAdders();
+renderMux();
+renderDecoder();
+</script>
+</body>
+</html>
