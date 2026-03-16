@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compuertas Lógicas — INF110-SF</title>
+<link rel="stylesheet" href="../../assets/shared.css">
+<style>
+  body { padding-bottom: 4rem; }
+
+  .hero { padding: 2.5rem 0 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--teal-l); text-transform: uppercase; margin-bottom: 10px; }
+  h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 10px; }
+  h1 span { color: var(--teal-l); }
+  .subtitle { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; transition: border-color .2s, background .2s; }
+  .card:hover { border-color: var(--border-h); background: var(--bg3); }
+  .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .gate-name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .gate-expr { font-family: var(--mono); font-size: 11px; color: var(--teal-l); background: var(--teal-bg); border: 1px solid rgba(93,202,165,0.25); border-radius: 6px; padding: 3px 9px; }
+  .card-body { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
+
+  .tt { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+  .tt th { color: var(--dim); font-weight: 500; padding: 3px 8px; text-align: center; border-bottom: 1px solid var(--border); letter-spacing: 0.08em; }
+  .tt td { padding: 4px 8px; text-align: center; color: var(--muted); cursor: pointer; border-radius: 4px; transition: background .12s; user-select: none; }
+  .tt tr:hover td { background: rgba(255,255,255,0.04); }
+  .tt tr.active td { background: rgba(255,255,255,0.06); color: var(--text); }
+  .tt tr.active td.out-1 { background: var(--teal-bg2); color: var(--teal-l); font-weight: 700; }
+  .tt tr.active td.out-0 { background: var(--red-bg); color: var(--red); font-weight: 700; }
+  .val-1 { color: var(--teal-l); font-weight: 500; }
+  .val-0 { color: var(--dim); }
+  .desc { font-size: 12px; color: var(--muted); line-height: 1.5; border-top: 1px solid var(--border); padding-top: 10px; font-family: var(--mono); }
+
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; font-family: var(--mono); font-size: 11px; color: var(--muted); padding: 14px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 2rem; }
+  .legend-item { display: flex; align-items: center; gap: 7px; }
+  .ldot { width: 10px; height: 10px; border-radius: 3px; }
+  .ldot-1 { background: var(--teal-bg2); border: 1px solid rgba(29,158,117,0.4); }
+  .ldot-0 { background: var(--red-bg); border: 1px solid rgba(226,75,74,0.3); }
+  .ldot-row { background: rgba(255,255,255,0.06); border: 1px solid var(--border-h); }
+
+  .info-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 1rem; }
+  .info-title { font-size: 13px; font-weight: 700; color: var(--teal-l); margin-bottom: 8px; font-family: var(--mono); }
+  .info-body { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.8; }
+  .info-body code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">apuntes<span>/</span>visuales</div>
+  <a href="../../index.html" class="nav-back">← volver al dashboard</a>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <p class="eyebrow">INF110-SF — Sistemas Digitales</p>
+    <h1>Compuertas <span>lógicas</span></h1>
+    <p class="subtitle">Haz clic en cualquier fila para seleccionar los valores de entrada</p>
+  </div>
+
+  <div class="grid" id="gateGrid"></div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="ldot ldot-row"></div> Fila activa (entrada seleccionada)</div>
+    <div class="legend-item"><div class="ldot ldot-1"></div> Salida = 1 (verdadero)</div>
+    <div class="legend-item"><div class="ldot ldot-0"></div> Salida = 0 (falso)</div>
+  </div>
+
+  <div class="info-box">
+    <div class="info-title">Compuertas universales</div>
+    <div class="info-body">
+      <strong style="color:var(--text)">NAND</strong> y <strong style="color:var(--text)">NOR</strong> son universales — con cualquiera de las dos se puede implementar <em style="color:var(--text)">cualquier</em> función lógica.<br>
+      Las compuertas con N al inicio llevan un círculo al final del símbolo (inversor en la salida).
+    </div>
+  </div>
+
+  <div class="info-box" style="border-left-color:var(--amber)">
+    <div class="info-title" style="color:var(--amber)">Leyes de De Morgan</div>
+    <div class="info-body">
+      <code>¬(A · B) = ¬A + ¬B</code> → NAND equivale a OR de negados<br>
+      <code>¬(A + B) = ¬A · ¬B</code> → NOR equivale a AND de negados
+    </div>
+  </div>
+</div>
+
+<script>
+const gates = [
+  { name:'AND',  expr:'S = A · B',     inputs:2, op:(a,b)=>a&&b,  desc:'Verdadero solo si ambas entradas son 1.',
+    svg:`<svg width="90" height="54" viewBox="0 0 90 54"><line x1="10" y1="18" x2="34" y2="18" stroke="#555562" stroke-width="1.5"/><line x1="10" y1="36" x2="34" y2="36" stroke="#555562" stroke-width="1.5"/><path d="M34 10 L34 44 Q70 44 70 27 Q70 10 34 10 Z" fill="none" stroke="#5DCAA5" stroke-width="1.5"/><line x1="70" y1="27" x2="86" y2="27" stroke="#555562" stroke-width="1.5"/><text x="5" y="21" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">A</text><text x="5" y="39" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">B</text><text x="78" y="31" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">S</text></svg>` },
+  { name:'OR',   expr:'S = A + B',     inputs:2, op:(a,b)=>a||b,  desc:'Verdadero si al menos una entrada es 1.',
+    svg:`<svg width="90" height="54" viewBox="0 0 90 54"><line x1="10" y1="18" x2="32" y2="18" stroke="#555562" stroke-width="1.5"/><line x1="10" y1="36" x2="32" y2="36" stroke="#555562" stroke-width="1.5"/><path d="M28 10 Q36 27 28 44 Q50 44 68 27 Q50 10 28 10 Z" fill="none" stroke="#5DCAA5" stroke-width="1.5"/><line x1="68" y1="27" x2="86" y2="27" stroke="#555562" stroke-width="1.5"/><text x="5" y="21" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">A</text><text x="5" y="39" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">B</text><text x="78" y="31" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">S</text></svg>` },
+  { name:'NOT',  expr:'S = ¬A',        inputs:1, op:(a)=>!a,       desc:'Invierte la entrada. 1 → 0, 0 → 1.',
+    svg:`<svg width="90" height="54" viewBox="0 0 90 54"><line x1="10" y1="27" x2="26" y2="27" stroke="#555562" stroke-width="1.5"/><polygon points="26,12 60,27 26,42" fill="none" stroke="#5DCAA5" stroke-width="1.5"/><circle cx="64" cy="27" r="4" fill="none" stroke="#5DCAA5" stroke-width="1.5"/><line x1="68" y1="27" x2="86" y2="27" stroke="#555562" stroke-width="1.5"/><text x="5" y="31" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">A</text><text x="78" y="31" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">S</text></svg>` },
+  { name:'NAND', expr:'S = ¬(A · B)',  inputs:2, op:(a,b)=>!(a&&b), desc:'AND negado. Falso solo si ambas entradas son 1.',
+    svg:`<svg width="90" height="54" viewBox="0 0 90 54"><line x1="10" y1="18" x2="34" y2="18" stroke="#555562" stroke-width="1.5"/><line x1="10" y1="36" x2="34" y2="36" stroke="#555562" stroke-width="1.5"/><path d="M34 10 L34 44 Q66 44 66 27 Q66 10 34 10 Z" fill="none" stroke="#EF9F27" stroke-width="1.5"/><circle cx="70" cy="27" r="4" fill="none" stroke="#EF9F27" stroke-width="1.5"/><line x1="74" y1="27" x2="86" y2="27" stroke="#555562" stroke-width="1.5"/><text x="5" y="21" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">A</text><text x="5" y="39" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">B</text><text x="78" y="31" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">S</text></svg>` },
+  { name:'NOR',  expr:'S = ¬(A + B)',  inputs:2, op:(a,b)=>!(a||b), desc:'OR negado. Verdadero solo si ambas entradas son 0.',
+    svg:`<svg width="90" height="54" viewBox="0 0 90 54"><line x1="10" y1="18" x2="32" y2="18" stroke="#555562" stroke-width="1.5"/><line x1="10" y1="36" x2="32" y2="36" stroke="#555562" stroke-width="1.5"/><path d="M28 10 Q36 27 28 44 Q50 44 64 27 Q50 10 28 10 Z" fill="none" stroke="#EF9F27" stroke-width="1.5"/><circle cx="68" cy="27" r="4" fill="none" stroke="#EF9F27" stroke-width="1.5"/><line x1="72" y1="27" x2="86" y2="27" stroke="#555562" stroke-width="1.5"/><text x="5" y="21" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">A</text><text x="5" y="39" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">B</text><text x="78" y="31" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">S</text></svg>` },
+  { name:'XOR',  expr:'S = A ⊕ B',    inputs:2, op:(a,b)=>a!==b,  desc:'Verdadero solo si las entradas son diferentes.',
+    svg:`<svg width="90" height="54" viewBox="0 0 90 54"><line x1="10" y1="18" x2="34" y2="18" stroke="#555562" stroke-width="1.5"/><line x1="10" y1="36" x2="34" y2="36" stroke="#555562" stroke-width="1.5"/><path d="M30 10 Q38 27 30 44 Q52 44 70 27 Q52 10 30 10 Z" fill="none" stroke="#5DCAA5" stroke-width="1.5"/><path d="M24 10 Q32 27 24 44" fill="none" stroke="#5DCAA5" stroke-width="1.5"/><line x1="70" y1="27" x2="86" y2="27" stroke="#555562" stroke-width="1.5"/><text x="5" y="21" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">A</text><text x="5" y="39" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">B</text><text x="78" y="31" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">S</text></svg>` },
+  { name:'XNOR', expr:'S = ¬(A ⊕ B)', inputs:2, op:(a,b)=>a===b,  desc:'XOR negado. Verdadero cuando ambas entradas son iguales.',
+    svg:`<svg width="90" height="54" viewBox="0 0 90 54"><line x1="10" y1="18" x2="34" y2="18" stroke="#555562" stroke-width="1.5"/><line x1="10" y1="36" x2="34" y2="36" stroke="#555562" stroke-width="1.5"/><path d="M30 10 Q38 27 30 44 Q52 44 66 27 Q52 10 30 10 Z" fill="none" stroke="#EF9F27" stroke-width="1.5"/><path d="M24 10 Q32 27 24 44" fill="none" stroke="#EF9F27" stroke-width="1.5"/><circle cx="70" cy="27" r="4" fill="none" stroke="#EF9F27" stroke-width="1.5"/><line x1="74" y1="27" x2="86" y2="27" stroke="#555562" stroke-width="1.5"/><text x="5" y="21" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">A</text><text x="5" y="39" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">B</text><text x="78" y="31" font-size="11" fill="#888896" font-family="JetBrains Mono,monospace">S</text></svg>` },
+];
+
+const stateA = {}, stateB = {};
+gates.forEach(g => { stateA[g.name]=0; stateB[g.name]=0; });
+
+function getRows(g) { return g.inputs===1 ? [[0],[1]] : [[0,0],[0,1],[1,0],[1,1]]; }
+function fmtVal(v) { return v ? `<span class="val-1">1</span>` : `<span class="val-0">0</span>`; }
+
+function renderAll() {
+  const grid = document.getElementById('gateGrid');
+  grid.innerHTML = '';
+  gates.forEach(gate => {
+    const curA = stateA[gate.name], curB = stateB[gate.name];
+    const rows = getRows(gate);
+    const isActive = r => gate.inputs===1 ? r[0]===curA : r[0]===curA && r[1]===curB;
+    const thead = gate.inputs===1 ? `<tr><th>A</th><th>S</th></tr>` : `<tr><th>A</th><th>B</th><th>S</th></tr>`;
+    const tbody = rows.map(r => {
+      const a=r[0], b=r[1]??0;
+      const res = gate.inputs===1 ? gate.op(!!a) : gate.op(!!a,!!b);
+      const active = isActive(r);
+      const outClass = active ? (res?'out-1':'out-0') : '';
+      const cells = gate.inputs===1
+        ? `<td>${fmtVal(a)}</td><td class="${outClass}">${fmtVal(res)}</td>`
+        : `<td>${fmtVal(a)}</td><td>${fmtVal(b)}</td><td class="${outClass}">${fmtVal(res)}</td>`;
+      return `<tr class="${active?'active':''}" data-gate="${gate.name}" data-a="${a}" data-b="${r[1]??''}">${cells}</tr>`;
+    }).join('');
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-head"><span class="gate-name">${gate.name}</span><span class="gate-expr">${gate.expr}</span></div>
+      <div class="card-body"><div style="flex-shrink:0">${gate.svg}</div><div style="flex:1"><table class="tt"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div></div>
+      <div class="desc">${gate.desc}</div>`;
+    grid.appendChild(card);
+  });
+  document.querySelectorAll('.tt tbody tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const g = tr.dataset.gate;
+      stateA[g] = parseInt(tr.dataset.a);
+      if (tr.dataset.b !== '') stateB[g] = parseInt(tr.dataset.b);
+      renderAll();
+    });
+  });
+}
+renderAll();
+</script>
+</body>
+</html>

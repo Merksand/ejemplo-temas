@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apuntes Visuales — Miguel</title>
+<link rel="stylesheet" href="assets/shared.css">
+<style>
+  body { padding-bottom: 4rem; }
+
+  .hero {
+    padding: 3.5rem 0 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--teal-l);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 12px;
+  }
+
+  h1 em { color: var(--teal-l); font-style: normal; }
+
+  .hero-sub {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .hero-sub span { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
+
+  /* semester section */
+  .semester-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 1rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .semester-block { margin-bottom: 3rem; }
+
+  /* subject grid */
+  .subjects {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .subject-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color .2s, background .2s;
+  }
+
+  .subject-card:hover { border-color: var(--border-h); background: var(--bg3); }
+
+  .subject-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .subject-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 3px;
+  }
+
+  .subject-code {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+  }
+
+  /* topic list */
+  .topics { display: flex; flex-direction: column; gap: 6px; }
+
+  .topic-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    transition: background .15s, border-color .15s;
+    cursor: default;
+  }
+
+  .topic-item.has-visual {
+    cursor: pointer;
+    border-color: var(--border);
+  }
+
+  .topic-item.has-visual:hover {
+    background: var(--bg3);
+    border-color: var(--teal-bg2);
+  }
+
+  .topic-item.has-visual:hover .topic-name { color: var(--teal-l); }
+
+  .topic-name {
+    font-size: 13px;
+    color: var(--muted);
+    transition: color .15s;
+  }
+
+  .topic-item.has-visual .topic-name { color: var(--text); }
+
+  .topic-status {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    white-space: nowrap;
+    margin-left: 8px;
+  }
+
+  .topic-item.has-visual .topic-status { color: var(--teal); }
+
+  /* stats bar */
+  .stats {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-num {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--teal-l);
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">apuntes<span>/</span>visuales</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="badge badge-teal">1er semestre</span>
+  </div>
+</nav>
+
+<div class="container">
+  <section class="hero">
+    <p class="eyebrow">Sistemas Informáticos — Universidad</p>
+    <h1>Apuntes<br><em>visuales</em></h1>
+    <div class="hero-sub">
+      <span><div class="dot"></div> Visualizaciones interactivas</span>
+      <span>·</span>
+      <span>1er Semestre</span>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-num" id="count-visuals">1</span>
+      <span class="stat-label">Visuales disponibles</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">3</span>
+      <span class="stat-label">Materias</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="count-topics">0</span>
+      <span class="stat-label">Temas en total</span>
+    </div>
+  </div>
+
+  <div class="semester-block">
+    <p class="semester-label">1er Semestre</p>
+
+    <div class="subjects">
+
+      <!-- INF110-SF -->
+      <div class="subject-card">
+        <div class="subject-head">
+          <div>
+            <div class="subject-name">Sistemas Digitales</div>
+            <div class="subject-code">INF110-SF</div>
+          </div>
+          <span class="badge badge-teal">Activo</span>
+        </div>
+        <div class="topics">
+          <a href="1er-semestre/inf110-sf/compuertas-logicas.html" class="topic-item has-visual">
+            <span class="topic-name">Compuertas lógicas</span>
+            <span class="topic-status">● visual</span>
+          </a>
+          <div class="topic-item">
+            <span class="topic-name">Álgebra de Boole</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Circuitos combinacionales</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Circuitos secuenciales</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Flip-flops y registros</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Física -->
+      <div class="subject-card">
+        <div class="subject-head">
+          <div>
+            <div class="subject-name">Física</div>
+            <div class="subject-code">FIS100</div>
+          </div>
+          <span class="badge badge-amber">En progreso</span>
+        </div>
+        <div class="topics">
+          <div class="topic-item">
+            <span class="topic-name">Magnitudes y vectores</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Cinemática</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Dinámica — Leyes de Newton</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Trabajo, energía y potencia</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Movimiento circular</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Matemáticas -->
+      <div class="subject-card">
+        <div class="subject-head">
+          <div>
+            <div class="subject-name">Matemáticas</div>
+            <div class="subject-code">MAT100</div>
+          </div>
+          <span class="badge badge-purple">En progreso</span>
+        </div>
+        <div class="topics">
+          <div class="topic-item">
+            <span class="topic-name">Álgebra elemental</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Funciones</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Límites</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Cálculo diferencial</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+          <div class="topic-item">
+            <span class="topic-name">Números complejos</span>
+            <span class="topic-status">próximamente</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const topics = document.querySelectorAll('.topic-item');
+  document.getElementById('count-topics').textContent = topics.length;
+</script>
+</body>
+</html>
