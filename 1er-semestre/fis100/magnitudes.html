@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magnitudes — FIS100</title>
+<link rel="stylesheet" href="../../assets/shared.css">
+<style>
+  body { padding-bottom: 4rem; }
+
+  /* ── HERO ── */
+  .hero { padding: 2.5rem 0 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--teal-l); text-transform: uppercase; margin-bottom: 10px; }
+  h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 10px; }
+  h1 span { color: var(--teal-l); }
+  .subtitle { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+  /* ── SECTION TITLE ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  /* ── FILTER CHIPS (fundamentales) ── */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+
+  .chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .18s;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .chip:hover { border-color: var(--border-h); color: var(--text); background: var(--bg3); }
+
+  .chip.active {
+    background: var(--teal-bg2);
+    border-color: rgba(93,202,165,0.4);
+    color: var(--teal-l);
+  }
+
+  .chip-sym {
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* ── FUNDAMENTALES GRID ── */
+  .fund-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+
+  .fund-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .fund-card:hover { border-color: var(--border-h); background: var(--bg3); }
+
+  .fund-card.active {
+    border-color: rgba(93,202,165,0.5);
+    background: var(--teal-bg);
+  }
+
+  .fund-sym-badge {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--teal-l);
+    background: var(--teal-bg2);
+    border: 1px solid rgba(93,202,165,0.25);
+    border-radius: var(--radius-sm);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .2s;
+  }
+
+  .fund-card.active .fund-sym-badge {
+    background: rgba(29,158,117,0.35);
+  }
+
+  .fund-info { min-width: 0; }
+
+  .fund-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fund-unit {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+  }
+
+  .fund-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    margin-left: auto;
+    flex-shrink: 0;
+    transition: color .2s;
+  }
+
+  .fund-card.active .fund-num { color: var(--teal-l); }
+
+  /* ── DERIVADAS GRID ── */
+  .deriv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .deriv-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    transition: border-color .2s, background .2s, opacity .25s;
+  }
+
+  .deriv-card:hover { border-color: var(--border-h); background: var(--bg3); }
+
+  .deriv-card.dimmed {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .deriv-card.highlighted {
+    border-color: rgba(93,202,165,0.4);
+  }
+
+  .deriv-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+
+  .deriv-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .deriv-sym-badge {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--amber);
+    background: var(--amber-bg);
+    border: 1px solid rgba(239,159,39,0.25);
+    border-radius: 6px;
+    padding: 3px 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .deriv-formula {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    padding: 7px 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+
+  .deriv-formula span { color: var(--teal-l); font-weight: 700; }
+
+  .deriv-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+  }
+
+  .deriv-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--dim);
+    transition: background .18s, color .18s, border-color .18s;
+  }
+
+  .deriv-tag.uses-active {
+    background: var(--teal-bg);
+    border-color: rgba(93,202,165,0.3);
+    color: var(--teal-l);
+  }
+
+  /* ── INFO BOXES ── */
+  .info-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 1rem; }
+  .info-title { font-size: 13px; font-weight: 700; color: var(--teal-l); margin-bottom: 8px; font-family: var(--mono); }
+  .info-body { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.8; }
+  .info-body code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
+  .info-body strong { color: var(--text); }
+
+  /* ── FILTER HINT ── */
+  .filter-hint {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 18px;
+    transition: color .2s;
+  }
+
+  .filter-hint.active-hint { color: var(--teal-l); }
+
+  .hint-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+
+  .filter-hint.active-hint .hint-dot { opacity: 1; }
+
+  /* ── COUNTER STRIP ── */
+  .counter-strip {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    padding: 16px 20px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .counter-item { display: flex; flex-direction: column; gap: 2px; }
+
+  .counter-num {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .counter-num.teal { color: var(--teal-l); }
+  .counter-num.amber { color: var(--amber); }
+
+  .counter-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">apuntes<span>/</span>visuales</div>
+  <a href="../../index.html" class="nav-back">← volver al dashboard</a>
+</nav>
+
+<div class="container">
+
+  <div class="hero">
+    <p class="eyebrow">FIS100 — Física</p>
+    <h1>Magnitudes <span>físicas</span></h1>
+    <p class="subtitle">Haz clic en una magnitud fundamental para ver qué derivadas la usan</p>
+  </div>
+
+  <div class="counter-strip">
+    <div class="counter-item">
+      <span class="counter-num teal">7</span>
+      <span class="counter-label">Fundamentales (SI)</span>
+    </div>
+    <div class="counter-item">
+      <span class="counter-num amber" id="countDeriv">11</span>
+      <span class="counter-label">Derivadas</span>
+    </div>
+    <div class="counter-item">
+      <span class="counter-num" style="color:var(--muted)" id="countFiltered">—</span>
+      <span class="counter-label">Derivadas en filtro</span>
+    </div>
+  </div>
+
+  <!-- FUNDAMENTALES -->
+  <p class="section-label">Magnitudes fundamentales — Sistema Internacional (SI)</p>
+
+  <div class="fund-grid" id="fundGrid"></div>
+
+  <div class="info-box" style="margin-bottom:2rem">
+    <div class="info-title">¿Qué es una magnitud fundamental?</div>
+    <div class="info-body">
+      Son las 7 magnitudes <strong>base</strong> del Sistema Internacional. No se pueden descomponer en otras — el resto del mundo físico se construye a partir de ellas.<br>
+      Cada una tiene una unidad oficial y un símbolo único.
+    </div>
+  </div>
+
+  <!-- DERIVADAS -->
+  <p class="section-label">Magnitudes derivadas</p>
+
+  <div class="filter-hint" id="filterHint">
+    <div class="hint-dot"></div>
+    <span id="filterHintText">Selecciona una fundamental para filtrar</span>
+  </div>
+
+  <div class="deriv-grid" id="derivGrid"></div>
+
+  <div class="info-box" style="border-left-color:var(--amber)">
+    <div class="info-title" style="color:var(--amber)">¿Cómo se forman?</div>
+    <div class="info-body">
+      Las magnitudes derivadas se obtienen combinando fundamentales con <code>×</code> <code>/</code> o potencias.<br>
+      Por ejemplo: la <strong>velocidad</strong> es <code>longitud / tiempo</code> → <code>m/s</code>.<br>
+      La <strong>fuerza</strong> es <code>masa × longitud / tiempo²</code> → <code>kg·m/s²</code> = <code>N</code>.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const fundamentales = [
+    { id:'lon', name:'Longitud',           sym:'m',   unit:'metro',      num:'01' },
+    { id:'mas', name:'Masa',               sym:'kg',  unit:'kilogramo',  num:'02' },
+    { id:'tie', name:'Tiempo',             sym:'s',   unit:'segundo',    num:'03' },
+    { id:'tem', name:'Temperatura',        sym:'K',   unit:'kelvin',     num:'04' },
+    { id:'cor', name:'Corriente eléctrica',sym:'A',   unit:'ampere',     num:'05' },
+    { id:'sus', name:'Cant. de sustancia', sym:'mol', unit:'mol',        num:'06' },
+    { id:'lum', name:'Intensidad luminosa',sym:'cd',  unit:'candela',    num:'07' },
+  ];
+
+  const derivadas = [
+    { name:'Velocidad',       sym:'m/s',  formula:'longitud / tiempo',              usa:['lon','tie'] },
+    { name:'Aceleración',     sym:'m/s²', formula:'velocidad / tiempo',             usa:['lon','tie'] },
+    { name:'Fuerza',          sym:'N',    formula:'masa × longitud / tiempo²',      usa:['mas','lon','tie'] },
+    { name:'Energía / Trabajo',sym:'J',   formula:'fuerza × longitud',              usa:['mas','lon','tie'] },
+    { name:'Potencia',        sym:'W',    formula:'energía / tiempo',               usa:['mas','lon','tie'] },
+    { name:'Presión',         sym:'Pa',   formula:'fuerza / área',                  usa:['mas','lon','tie'] },
+    { name:'Frecuencia',      sym:'Hz',   formula:'1 / tiempo',                     usa:['tie'] },
+    { name:'Voltaje',         sym:'V',    formula:'energía / carga eléctrica',      usa:['mas','lon','tie','cor'] },
+    { name:'Carga eléctrica', sym:'C',    formula:'corriente × tiempo',             usa:['cor','tie'] },
+    { name:'Área',            sym:'m²',   formula:'longitud × longitud',            usa:['lon'] },
+    { name:'Volumen',         sym:'m³',   formula:'longitud × longitud × longitud', usa:['lon'] },
+  ];
+
+  const fundMap = {};
+  fundamentales.forEach(f => { fundMap[f.id] = f; });
+
+  let activeFilter = null;
+
+  function renderFundamentales() {
+    const grid = document.getElementById('fundGrid');
+    grid.innerHTML = '';
+    fundamentales.forEach(f => {
+      const div = document.createElement('div');
+      div.className = 'fund-card' + (activeFilter === f.id ? ' active' : '');
+      div.innerHTML = `
+        <div class="fund-sym-badge">${f.sym}</div>
+        <div class="fund-info">
+          <div class="fund-name">${f.name}</div>
+          <div class="fund-unit">${f.unit}</div>
+        </div>
+        <div class="fund-num">${f.num}</div>
+      `;
+      div.addEventListener('click', () => {
+        activeFilter = activeFilter === f.id ? null : f.id;
+        renderAll();
+      });
+      grid.appendChild(div);
+    });
+  }
+
+  function renderDerivadas() {
+    const grid = document.getElementById('derivGrid');
+    grid.innerHTML = '';
+    let visibleCount = 0;
+
+    derivadas.forEach(d => {
+      const uses = activeFilter ? d.usa.includes(activeFilter) : true;
+      const dimmed = activeFilter && !uses;
+      if (uses) visibleCount++;
+
+      const card = document.createElement('div');
+      card.className = 'deriv-card' + (dimmed ? ' dimmed' : '') + (!dimmed && activeFilter ? ' highlighted' : '');
+
+      const tagsHtml = d.usa.map(uid => {
+        const f = fundMap[uid];
+        const isActive = uid === activeFilter;
+        return `<span class="deriv-tag ${isActive ? 'uses-active' : ''}">${f.sym} — ${f.name}</span>`;
+      }).join('');
+
+      card.innerHTML = `
+        <div class="deriv-head">
+          <div class="deriv-name">${d.name}</div>
+          <div class="deriv-sym-badge">${d.sym}</div>
+        </div>
+        <div class="deriv-formula">= <span>${d.formula}</span></div>
+        <div class="deriv-tags">${tagsHtml}</div>
+      `;
+      grid.appendChild(card);
+    });
+
+    return visibleCount;
+  }
+
+  function updateHint(count) {
+    const hint = document.getElementById('filterHint');
+    const text = document.getElementById('filterHintText');
+    const counter = document.getElementById('countFiltered');
+
+    if (activeFilter) {
+      const f = fundMap[activeFilter];
+      hint.classList.add('active-hint');
+      text.textContent = `Filtrando por: ${f.name} (${f.sym}) — ${count} derivadas la usan`;
+      counter.textContent = count;
+    } else {
+      hint.classList.remove('active-hint');
+      text.textContent = 'Selecciona una fundamental para filtrar';
+      counter.textContent = '—';
+    }
+  }
+
+  function renderAll() {
+    renderFundamentales();
+    const count = renderDerivadas();
+    updateHint(count);
+  }
+
+  renderAll();
+</script>
+
+</body>
+</html>
