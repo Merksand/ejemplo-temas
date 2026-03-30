@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSeInt — INF110-SF</title>
+<link rel="stylesheet" href="../../assets/shared.css">
+<style>
+  body { padding-bottom: 5rem; }
+
+  /* ── HERO ── */
+  .hero { padding: 2.5rem 0 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--teal-l); text-transform: uppercase; margin-bottom: 10px; }
+  h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 10px; }
+  h1 span { color: var(--teal-l); }
+  .subtitle { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px; margin-bottom: 1.5rem; }
+  .tab-btn { font-family: var(--mono); font-size: 12px; padding: 7px 15px; border-radius: var(--radius-sm); border: none; background: transparent; color: var(--muted); cursor: pointer; transition: all .18s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--text); background: var(--bg3); }
+  .tab-btn.active { background: var(--teal-bg2); color: var(--teal-l); border: 1px solid rgba(93,202,165,0.3); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SECTION LABEL ── */
+  .section-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+
+  /* ── INFO BOXES ── */
+  .info-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 1rem; }
+  .info-title { font-size: 13px; font-weight: 700; color: var(--teal-l); margin-bottom: 8px; font-family: var(--mono); }
+  .info-body { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.9; }
+  .info-body code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
+  .info-body strong { color: var(--text); }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 1rem;
+  }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal-l); }
+  .code-title { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+  pre {
+    margin: 0; padding: 16px 18px;
+    font-family: var(--mono); font-size: 13px;
+    line-height: 1.8; overflow-x: auto;
+    color: var(--muted);
+  }
+  /* syntax highlight clases */
+  .kw  { color: #7F77DD; font-weight: 700; } /* keywords */
+  .fn  { color: #5DCAA5; }                   /* funciones / acciones */
+  .str { color: #EF9F27; }                   /* strings */
+  .num { color: #E24B4A; }                   /* números */
+  .cmt { color: #555562; font-style: italic; }/* comentarios */
+  .var { color: #e8e8ec; }                   /* variables */
+  .op  { color: #888896; }                   /* operadores */
+
+  /* ── CARDS GRID ── */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; transition: border-color .2s, background .2s; }
+  .card:hover { border-color: var(--border-h); background: var(--bg3); }
+  .card-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .card-body { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .card-body code { color: var(--amber); background: var(--amber-bg); padding: 1px 5px; border-radius: 4px; }
+
+  /* ── PALABRAS RESERVADAS TABLE ── */
+  .kw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .kw-group { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .kw-group-head { padding: 8px 14px; background: var(--bg3); border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--dim); }
+  .kw-row { display: flex; align-items: baseline; gap: 10px; padding: 7px 14px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .kw-row:last-child { border-bottom: none; }
+  .kw-word { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--purple); min-width: 90px; flex-shrink: 0; }
+  .kw-desc { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  /* ── DIAGRAMA SHAPES ── */
+  .shapes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .shape-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; display: flex; align-items: center; gap: 14px; transition: border-color .2s; }
+  .shape-card:hover { border-color: var(--border-h); }
+  .shape-svg { flex-shrink: 0; }
+  .shape-info { min-width: 0; }
+  .shape-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .shape-desc { font-family: var(--mono); font-size: 11px; color: var(--dim); line-height: 1.5; }
+
+  /* ── OPERATORS TABLE ── */
+  .ops-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; margin-bottom: 1.5rem; }
+  .ops-table th { color: var(--dim); font-weight: 500; padding: 7px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .ops-table td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--muted); }
+  .ops-table tr:last-child td { border-bottom: none; }
+  .ops-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .ops-table td:first-child { color: var(--amber); font-weight: 700; font-size: 14px; }
+  .ops-table td:nth-child(2) { color: var(--text); }
+
+  /* ── EJEMPLO CARD (estructura + código) ── */
+  .ejemplo-wrap { margin-bottom: 1.5rem; }
+  .ejemplo-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-bottom: none; border-radius: var(--radius) var(--radius) 0 0;
+    padding: 10px 16px;
+  }
+  .ejemplo-title { font-size: 14px; font-weight: 700; color: var(--text); }
+  .ejemplo-badge { font-family: var(--mono); font-size: 10px; padding: 2px 9px; border-radius: 20px; font-weight: 700; }
+  .eb-sec  { color: var(--teal-l);  background: var(--teal-bg);  border: 1px solid rgba(93,202,165,0.25); }
+  .eb-cond { color: var(--amber);   background: var(--amber-bg); border: 1px solid rgba(239,159,39,0.25); }
+  .eb-iter { color: var(--purple);  background: var(--purple-bg);border: 1px solid rgba(127,119,221,0.25); }
+  .eb-fun  { color: var(--blue);    background: var(--blue-bg);  border: 1px solid rgba(55,138,221,0.25); }
+
+  .ejemplo-body {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius);
+    overflow: hidden;
+  }
+  @media (max-width: 620px) { .ejemplo-body { grid-template-columns: 1fr; } }
+
+  .ejemplo-explain {
+    background: var(--bg2); padding: 14px 16px;
+    border-right: 1px solid var(--border);
+    font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.8;
+  }
+  .ejemplo-explain strong { color: var(--text); }
+  .ejemplo-explain code { color: var(--amber); background: var(--amber-bg); padding: 1px 5px; border-radius: 4px; }
+  @media (max-width: 620px) { .ejemplo-explain { border-right: none; border-bottom: 1px solid var(--border); } }
+
+  .ejemplo-code { background: var(--bg); padding: 14px 16px; }
+  .ejemplo-code pre { margin: 0; padding: 0; font-size: 12px; line-height: 1.85; overflow-x: auto; }
+
+  /* ── INTERACTIVE TRACE ── */
+  .trace-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 1.5rem; }
+  .trace-title { font-family: var(--mono); font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+  .trace-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .trace-layout { grid-template-columns: 1fr; } }
+  .trace-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .trace-label { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 60px; }
+  .trace-input { font-family: var(--mono); font-size: 13px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); padding: 6px 10px; width: 90px; outline: none; transition: border-color .18s; -webkit-appearance: none; text-align: center; }
+  .trace-input:focus { border-color: rgba(93,202,165,0.5); }
+  .trace-console { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; min-height: 130px; font-family: var(--mono); font-size: 12px; line-height: 1.9; }
+  .tc-line { color: var(--muted); }
+  .tc-out { color: var(--teal-l); }
+  .tc-err { color: var(--red); }
+  .tc-prompt { color: var(--amber); }
+  .tc-step { color: var(--dim); font-size: 11px; margin-top: 4px; }
+  .trace-btn { font-family: var(--mono); font-size: 12px; background: var(--teal-bg2); border: 1px solid rgba(93,202,165,0.35); color: var(--teal-l); border-radius: var(--radius-sm); padding: 7px 18px; cursor: pointer; transition: all .18s; }
+  .trace-btn:hover { background: rgba(29,158,117,0.3); }
+
+  /* ── FLOWCHART DIAGRAM ── */
+  .flow-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+  .flow-diagram { flex-shrink: 0; }
+  .flow-legend { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 2.2; }
+  .flow-legend span { color: var(--teal-l); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">apuntes<span>/</span>visuales</div>
+  <a href="../../index.html" class="nav-back">← volver al dashboard</a>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <p class="eyebrow">INF110-SF — Sistemas Digitales</p>
+    <h1>PS<span>eInt</span></h1>
+    <p class="subtitle">Diagramas de flujo · Palabras reservadas · Estructuras · Ejemplos</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="diagrama">Diagrama de flujo</button>
+    <button class="tab-btn" data-tab="palabras">Palabras reservadas</button>
+    <button class="tab-btn" data-tab="secuencial">Secuencial</button>
+    <button class="tab-btn" data-tab="condicional">Condicional</button>
+    <button class="tab-btn" data-tab="bucles">Bucles</button>
+    <button class="tab-btn" data-tab="funciones">Funciones</button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: DIAGRAMA DE FLUJO
+  ══════════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-diagrama">
+
+    <div class="info-box" style="margin-bottom:1.5rem">
+      <div class="info-title">¿Qué es un diagrama de flujo?</div>
+      <div class="info-body">
+        Es una representación gráfica de un algoritmo. Cada figura geométrica representa una operación distinta y las flechas indican el orden de ejecución.<br>
+        PSeInt genera estos diagramas automáticamente desde el pseudocódigo — entender las formas es clave para leerlos e interpretarlos.
+      </div>
+    </div>
+
+    <p class="section-label">Formas y su significado</p>
+
+    <div class="shapes-grid">
+      <div class="shape-card">
+        <div class="shape-svg">
+          <svg width="60" height="44" viewBox="0 0 60 44">
+            <rect x="2" y="2" width="56" height="40" rx="20" ry="20" fill="none" stroke="#5DCAA5" stroke-width="1.5"/>
+            <text x="30" y="26" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#5DCAA5">INICIO/FIN</text>
+          </svg>
+        </div>
+        <div class="shape-info">
+          <div class="shape-name">Óvalo / Terminal</div>
+          <div class="shape-desc">Inicio o Fin del algoritmo. Siempre uno de cada uno.</div>
+        </div>
+      </div>
+      <div class="shape-card">
+        <div class="shape-svg">
+          <svg width="60" height="44" viewBox="0 0 60 44">
+            <rect x="2" y="4" width="56" height="36" rx="4" fill="none" stroke="#7F77DD" stroke-width="1.5"/>
+            <text x="30" y="26" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#7F77DD">proceso</text>
+          </svg>
+        </div>
+        <div class="shape-info">
+          <div class="shape-name">Rectángulo</div>
+          <div class="shape-desc">Proceso / instrucción. Asignaciones, operaciones.</div>
+        </div>
+      </div>
+      <div class="shape-card">
+        <div class="shape-svg">
+          <svg width="60" height="44" viewBox="0 0 60 44">
+            <polygon points="2,22 15,4 58,4 45,40 2,40" fill="none" stroke="#EF9F27" stroke-width="1.5"/>
+            <text x="30" y="26" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#EF9F27">E/S</text>
+          </svg>
+        </div>
+        <div class="shape-info">
+          <div class="shape-name">Paralelogramo</div>
+          <div class="shape-desc">Entrada / Salida. Leer o Escribir datos.</div>
+        </div>
+      </div>
+      <div class="shape-card">
+        <div class="shape-svg">
+          <svg width="60" height="50" viewBox="0 0 60 50">
+            <polygon points="30,2 58,25 30,48 2,25" fill="none" stroke="#E24B4A" stroke-width="1.5"/>
+            <text x="30" y="29" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#E24B4A">¿cond?</text>
+          </svg>
+        </div>
+        <div class="shape-info">
+          <div class="shape-name">Rombo</div>
+          <div class="shape-desc">Decisión. Condición con rama Sí / No.</div>
+        </div>
+      </div>
+      <div class="shape-card">
+        <div class="shape-svg">
+          <svg width="60" height="44" viewBox="0 0 60 44">
+            <rect x="2" y="4" width="56" height="36" rx="4" fill="none" stroke="#378ADD" stroke-width="1.5"/>
+            <line x1="10" y1="4" x2="10" y2="40" stroke="#378ADD" stroke-width="1.5"/>
+            <line x1="50" y1="4" x2="50" y2="40" stroke="#378ADD" stroke-width="1.5"/>
+            <text x="30" y="26" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#378ADD">subproceso</text>
+          </svg>
+        </div>
+        <div class="shape-info">
+          <div class="shape-name">Rectángulo doble</div>
+          <div class="shape-desc">Llamada a subproceso / función / subalgoritmo.</div>
+        </div>
+      </div>
+      <div class="shape-card">
+        <div class="shape-svg">
+          <svg width="60" height="44" viewBox="0 0 60 44">
+            <circle cx="30" cy="22" r="16" fill="none" stroke="#888896" stroke-width="1.5"/>
+            <text x="30" y="26" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#888896">A</text>
+          </svg>
+        </div>
+        <div class="shape-info">
+          <div class="shape-name">Círculo / Conector</div>
+          <div class="shape-desc">Conecta partes del diagrama que no caben juntas.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Ejemplo de diagrama — suma de dos números</p>
+
+    <div class="flow-wrap">
+      <div class="flow-diagram">
+        <svg width="180" height="520" viewBox="0 0 180 520">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#555562" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+
+          <!-- INICIO -->
+          <rect x="40" y="10" width="100" height="36" rx="18" fill="none" stroke="#5DCAA5" stroke-width="1.5"/>
+          <text x="90" y="33" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#5DCAA5">Inicio</text>
+
+          <line x1="90" y1="46" x2="90" y2="72" stroke="#555562" stroke-width="1" marker-end="url(#arr)"/>
+
+          <!-- Leer A -->
+          <polygon points="20,90 40,74 160,74 140,106 20,106" fill="none" stroke="#EF9F27" stroke-width="1.5"/>
+          <text x="90" y="94" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#EF9F27">Leer A</text>
+
+          <line x1="90" y1="106" x2="90" y2="130" stroke="#555562" stroke-width="1" marker-end="url(#arr)"/>
+
+          <!-- Leer B -->
+          <polygon points="20,148 40,132 160,132 140,164 20,164" fill="none" stroke="#EF9F27" stroke-width="1.5"/>
+          <text x="90" y="152" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#EF9F27">Leer B</text>
+
+          <line x1="90" y1="164" x2="90" y2="188" stroke="#555562" stroke-width="1" marker-end="url(#arr)"/>
+
+          <!-- Proceso suma -->
+          <rect x="25" y="190" width="130" height="38" rx="4" fill="none" stroke="#7F77DD" stroke-width="1.5"/>
+          <text x="90" y="214" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#7F77DD">suma ← A + B</text>
+
+          <line x1="90" y1="228" x2="90" y2="252" stroke="#555562" stroke-width="1" marker-end="url(#arr)"/>
+
+          <!-- Escribir -->
+          <polygon points="20,270 40,254 160,254 140,286 20,286" fill="none" stroke="#EF9F27" stroke-width="1.5"/>
+          <text x="90" y="274" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#EF9F27">Escribir suma</text>
+
+          <line x1="90" y1="286" x2="90" y2="310" stroke="#555562" stroke-width="1" marker-end="url(#arr)"/>
+
+          <!-- FIN -->
+          <rect x="40" y="312" width="100" height="36" rx="18" fill="none" stroke="#5DCAA5" stroke-width="1.5"/>
+          <text x="90" y="335" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#5DCAA5">Fin</text>
+        </svg>
+      </div>
+      <div class="flow-legend">
+        <div><span>①</span> Inicio del algoritmo</div>
+        <div><span>②</span> Pedir dato A al usuario</div>
+        <div><span>③</span> Pedir dato B al usuario</div>
+        <div><span>④</span> Calcular suma ← A + B</div>
+        <div><span>⑤</span> Mostrar el resultado</div>
+        <div><span>⑥</span> Fin del algoritmo</div>
+        <br>
+        <div style="color:var(--dim)">Las flechas indican el<br>orden de ejecución.</div>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--amber)">
+      <div class="info-title" style="color:var(--amber)">Reglas básicas de un diagrama de flujo</div>
+      <div class="info-body">
+        • Siempre empieza y termina con un <strong>óvalo</strong><br>
+        • Las flechas siempre apuntan en una sola dirección (no se pueden cruzar sin conector)<br>
+        • El rombo (decisión) siempre tiene <strong>dos salidas</strong>: Sí y No<br>
+        • Toda entrada o salida de datos usa el <strong>paralelogramo</strong>, no el rectángulo
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: PALABRAS RESERVADAS
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-palabras">
+
+    <div class="info-box" style="margin-bottom:1.5rem">
+      <div class="info-title">Palabras reservadas en PSeInt</div>
+      <div class="info-body">
+        Son palabras que PSeInt ya entiende — no se pueden usar como nombres de variables.<br>
+        PSeInt acepta variantes en español e inglés, pero acá usamos <strong>el perfil en español</strong>.
+      </div>
+    </div>
+
+    <div class="kw-grid">
+      <div class="kw-group">
+        <div class="kw-group-head">Estructura del algoritmo</div>
+        <div class="kw-row"><span class="kw-word">Algoritmo</span><span class="kw-desc">Abre el bloque principal</span></div>
+        <div class="kw-row"><span class="kw-word">FinAlgoritmo</span><span class="kw-desc">Cierra el bloque principal</span></div>
+        <div class="kw-row"><span class="kw-word">Proceso</span><span class="kw-desc">Abre un subproceso (sin retorno)</span></div>
+        <div class="kw-row"><span class="kw-word">FinProceso</span><span class="kw-desc">Cierra el subproceso</span></div>
+        <div class="kw-row"><span class="kw-word">Funcion</span><span class="kw-desc">Declara una función (con retorno)</span></div>
+        <div class="kw-row"><span class="kw-word">FinFuncion</span><span class="kw-desc">Cierra la función</span></div>
+      </div>
+      <div class="kw-group">
+        <div class="kw-group-head">Entrada / Salida</div>
+        <div class="kw-row"><span class="kw-word">Leer</span><span class="kw-desc">Pide un dato al usuario (stdin)</span></div>
+        <div class="kw-row"><span class="kw-word">Escribir</span><span class="kw-desc">Muestra algo en pantalla</span></div>
+        <div class="kw-row"><span class="kw-word">Mostrar</span><span class="kw-desc">Sinónimo de Escribir</span></div>
+        <div class="kw-row"><span class="kw-word">Imprimir</span><span class="kw-desc">Sinónimo de Escribir</span></div>
+        <div class="kw-row"><span class="kw-word">Sin Saltar</span><span class="kw-desc">Escribir sin salto de línea</span></div>
+      </div>
+      <div class="kw-group">
+        <div class="kw-group-head">Decisión</div>
+        <div class="kw-row"><span class="kw-word">Si</span><span class="kw-desc">Abre el condicional</span></div>
+        <div class="kw-row"><span class="kw-word">Entonces</span><span class="kw-desc">Después de la condición</span></div>
+        <div class="kw-row"><span class="kw-word">SiNo</span><span class="kw-desc">Rama alternativa del Si</span></div>
+        <div class="kw-row"><span class="kw-word">FinSi</span><span class="kw-desc">Cierra el Si</span></div>
+        <div class="kw-row"><span class="kw-word">Segun</span><span class="kw-desc">Switch / case múltiple</span></div>
+        <div class="kw-row"><span class="kw-word">FinSegun</span><span class="kw-desc">Cierra el Segun</span></div>
+        <div class="kw-row"><span class="kw-word">De Otro Modo</span><span class="kw-desc">Caso por defecto (Segun)</span></div>
+      </div>
+      <div class="kw-group">
+        <div class="kw-group-head">Bucles</div>
+        <div class="kw-row"><span class="kw-word">Mientras</span><span class="kw-desc">Bucle con condición al inicio</span></div>
+        <div class="kw-row"><span class="kw-word">Hacer</span><span class="kw-desc">Abre el bloque del Mientras</span></div>
+        <div class="kw-row"><span class="kw-word">FinMientras</span><span class="kw-desc">Cierra el Mientras</span></div>
+        <div class="kw-row"><span class="kw-word">Repetir</span><span class="kw-desc">Bucle con condición al final</span></div>
+        <div class="kw-row"><span class="kw-word">HastaQue</span><span class="kw-desc">Condición de salida del Repetir</span></div>
+        <div class="kw-row"><span class="kw-word">Para</span><span class="kw-desc">Bucle con contador</span></div>
+        <div class="kw-row"><span class="kw-word">Hasta</span><span class="kw-desc">Límite superior del Para</span></div>
+        <div class="kw-row"><span class="kw-word">Con Paso</span><span class="kw-desc">Incremento del Para (opcional)</span></div>
+        <div class="kw-row"><span class="kw-word">FinPara</span><span class="kw-desc">Cierra el Para</span></div>
+      </div>
+      <div class="kw-group">
+        <div class="kw-group-head">Tipos y operadores</div>
+        <div class="kw-row"><span class="kw-word">Definir</span><span class="kw-desc">Declara el tipo de una variable</span></div>
+        <div class="kw-row"><span class="kw-word">Como</span><span class="kw-desc">Acompaña a Definir</span></div>
+        <div class="kw-row"><span class="kw-word">Entero</span><span class="kw-desc">Tipo número entero</span></div>
+        <div class="kw-row"><span class="kw-word">Real</span><span class="kw-desc">Tipo número decimal</span></div>
+        <div class="kw-row"><span class="kw-word">Caracter</span><span class="kw-desc">Tipo texto / cadena</span></div>
+        <div class="kw-row"><span class="kw-word">Logico</span><span class="kw-desc">Tipo verdadero / falso</span></div>
+        <div class="kw-row"><span class="kw-word">Arreglo</span><span class="kw-desc">Declara un array</span></div>
+        <div class="kw-row"><span class="kw-word">Retornar</span><span class="kw-desc">Devuelve el valor de una función</span></div>
+      </div>
+      <div class="kw-group">
+        <div class="kw-group-head">Operadores lógicos</div>
+        <div class="kw-row"><span class="kw-word">Y</span><span class="kw-desc">AND — ambas condiciones verdaderas</span></div>
+        <div class="kw-row"><span class="kw-word">O</span><span class="kw-desc">OR — al menos una verdadera</span></div>
+        <div class="kw-row"><span class="kw-word">No</span><span class="kw-desc">NOT — niega la condición</span></div>
+        <div class="kw-row"><span class="kw-word">Verdadero</span><span class="kw-desc">Literal booleano true</span></div>
+        <div class="kw-row"><span class="kw-word">Falso</span><span class="kw-desc">Literal booleano false</span></div>
+      </div>
+    </div>
+
+    <p class="section-label">Operadores aritméticos y relacionales</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem">
+      <table class="ops-table">
+        <thead><tr><th>Símbolo</th><th>Operación</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td>+</td><td>Suma</td><td>a + b</td></tr>
+          <tr><td>-</td><td>Resta</td><td>a - b</td></tr>
+          <tr><td>*</td><td>Multiplicación</td><td>a * b</td></tr>
+          <tr><td>/</td><td>División real</td><td>a / b</td></tr>
+          <tr><td>^</td><td>Potencia</td><td>a ^ 2</td></tr>
+          <tr><td>MOD</td><td>Módulo (resto)</td><td>10 MOD 3 = 1</td></tr>
+          <tr><td>DIV</td><td>División entera</td><td>10 DIV 3 = 3</td></tr>
+        </tbody>
+      </table>
+      <table class="ops-table">
+        <thead><tr><th>Símbolo</th><th>Comparación</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td>=</td><td>Igual a</td><td>a = b</td></tr>
+          <tr><td>&lt;&gt;</td><td>Distinto de</td><td>a &lt;&gt; b</td></tr>
+          <tr><td>&lt;</td><td>Menor que</td><td>a &lt; 10</td></tr>
+          <tr><td>&gt;</td><td>Mayor que</td><td>a &gt; 0</td></tr>
+          <tr><td>&lt;=</td><td>Menor o igual</td><td>edad &lt;= 18</td></tr>
+          <tr><td>&gt;=</td><td>Mayor o igual</td><td>nota &gt;= 51</td></tr>
+          <tr><td>&lt;-</td><td>Asignación</td><td>x &lt;- 5</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--amber)">
+      <div class="info-title" style="color:var(--amber)">Ojo con la asignación vs comparación</div>
+      <div class="info-body">
+        <code>&lt;-</code> asigna un valor a una variable → <code>x &lt;- 5</code> guarda 5 en x<br>
+        <code>=</code> dentro de una condición <strong>compara</strong> → <code>Si x = 5 Entonces...</code><br>
+        Son cosas distintas. El <code>=</code> en PSeInt siempre es comparación.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: SECUENCIAL
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-secuencial">
+
+    <div class="info-box" style="margin-bottom:1.5rem">
+      <div class="info-title">Estructura secuencial</div>
+      <div class="info-body">
+        Las instrucciones se ejecutan <strong>una tras otra</strong> en el orden en que están escritas.<br>
+        No hay decisiones ni repeticiones — es el flujo más básico de un algoritmo.
+      </div>
+    </div>
+
+    <p class="section-label">Estructura base de un algoritmo</p>
+    <div class="code-block" style="margin-bottom:1.5rem">
+      <div class="code-header"><span class="code-lang">PSeInt</span><span class="code-title">Plantilla base</span></div>
+      <pre><span class="kw">Algoritmo</span> <span class="var">nombre_del_algoritmo</span>
+	<span class="cmt">// Declaración de variables (opcional pero buena práctica)</span>
+	<span class="kw">Definir</span> <span class="var">variable1</span> <span class="kw">Como</span> <span class="kw">Entero</span>
+	<span class="kw">Definir</span> <span class="var">variable2</span> <span class="kw">Como</span> <span class="kw">Real</span>
+	<span class="kw">Definir</span> <span class="var">nombre</span> <span class="kw">Como</span> <span class="kw">Caracter</span>
+
+	<span class="cmt">// Instrucciones</span>
+	<span class="fn">Escribir</span> <span class="str">"Mensaje al usuario"</span>
+	<span class="fn">Leer</span> <span class="var">variable1</span>
+	<span class="var">variable2</span> <span class="op">&lt;-</span> <span class="var">variable1</span> <span class="op">*</span> <span class="num">2.5</span>
+	<span class="fn">Escribir</span> <span class="str">"Resultado: "</span><span class="op">,</span> <span class="var">variable2</span>
+<span class="kw">FinAlgoritmo</span></pre>
+    </div>
+
+    <div class="ejemplo-wrap">
+      <div class="ejemplo-header">
+        <span class="ejemplo-title">Conversor de temperatura — Celsius a Fahrenheit</span>
+        <span class="ejemplo-badge eb-sec">secuencial</span>
+      </div>
+      <div class="ejemplo-body">
+        <div class="ejemplo-explain">
+          <strong>Fórmula:</strong> F = C × 9/5 + 32<br><br>
+          Pasos:<br>
+          1. Pedirle al usuario la temperatura en °C<br>
+          2. Aplicar la fórmula de conversión<br>
+          3. Mostrar el resultado en °F<br><br>
+          <code>Leer</code> guarda el dato que escribe el usuario.<br>
+          <code>&lt;-</code> asigna el resultado del cálculo.<br>
+          Las comas en <code>Escribir</code> concatenan textos y variables.
+        </div>
+        <div class="ejemplo-code">
+          <pre><span class="kw">Algoritmo</span> <span class="var">ConversorTemp</span>
+  <span class="kw">Definir</span> <span class="var">celsius</span><span class="op">,</span> <span class="var">fahrenheit</span> <span class="kw">Como</span> <span class="kw">Real</span>
+
+  <span class="fn">Escribir</span> <span class="str">"Ingresá temperatura en °C:"</span>
+  <span class="fn">Leer</span> <span class="var">celsius</span>
+
+  <span class="var">fahrenheit</span> <span class="op">&lt;-</span> <span class="var">celsius</span> <span class="op">*</span> <span class="num">9</span><span class="op">/</span><span class="num">5</span> <span class="op">+</span> <span class="num">32</span>
+
+  <span class="fn">Escribir</span> <span class="var">celsius</span><span class="op">,</span> <span class="str">"°C = "</span><span class="op">,</span> <span class="var">fahrenheit</span><span class="op">,</span> <span class="str">"°F"</span>
+<span class="kw">FinAlgoritmo</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Demo interactivo — probá el conversor</p>
+    <div class="trace-wrap">
+      <div class="trace-title">Simulador de ejecución</div>
+      <div class="trace-layout">
+        <div>
+          <div class="trace-input-row">
+            <span class="trace-label">Celsius:</span>
+            <input class="trace-input" type="number" id="trCels" value="100" step="1">
+          </div>
+          <button class="trace-btn" onclick="runConversor()">▶ Ejecutar</button>
+        </div>
+        <div class="trace-console" id="consoleConversor">
+          <div class="tc-line">Listo para ejecutar...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ejemplo-wrap" style="margin-top:0.5rem">
+      <div class="ejemplo-header">
+        <span class="ejemplo-title">Área y perímetro de un rectángulo</span>
+        <span class="ejemplo-badge eb-sec">secuencial</span>
+      </div>
+      <div class="ejemplo-body">
+        <div class="ejemplo-explain">
+          Calcula dos resultados a partir de dos entradas.<br><br>
+          <strong>Área</strong> = base × altura<br>
+          <strong>Perímetro</strong> = 2 × (base + altura)<br><br>
+          Una variable puede usarse en múltiples operaciones.<br>
+          Podés definir varias variables del mismo tipo separadas por coma.
+        </div>
+        <div class="ejemplo-code">
+          <pre><span class="kw">Algoritmo</span> <span class="var">RectanguloGeometria</span>
+  <span class="kw">Definir</span> <span class="var">base</span><span class="op">,</span> <span class="var">altura</span><span class="op">,</span> <span class="var">area</span><span class="op">,</span> <span class="var">perim</span> <span class="kw">Como</span> <span class="kw">Real</span>
+
+  <span class="fn">Escribir</span> <span class="str">"Base del rectángulo:"</span>
+  <span class="fn">Leer</span> <span class="var">base</span>
+  <span class="fn">Escribir</span> <span class="str">"Altura del rectángulo:"</span>
+  <span class="fn">Leer</span> <span class="var">altura</span>
+
+  <span class="var">area</span>  <span class="op">&lt;-</span> <span class="var">base</span> <span class="op">*</span> <span class="var">altura</span>
+  <span class="var">perim</span> <span class="op">&lt;-</span> <span class="num">2</span> <span class="op">*</span> <span class="op">(</span><span class="var">base</span> <span class="op">+</span> <span class="var">altura</span><span class="op">)</span>
+
+  <span class="fn">Escribir</span> <span class="str">"Área:      "</span><span class="op">,</span> <span class="var">area</span>
+  <span class="fn">Escribir</span> <span class="str">"Perímetro: "</span><span class="op">,</span> <span class="var">perim</span>
+<span class="kw">FinAlgoritmo</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: CONDICIONAL
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-condicional">
+
+    <div class="cards-grid" style="margin-bottom:1.5rem">
+      <div class="card" style="border-left:3px solid var(--amber)">
+        <div class="card-name">Si … Entonces</div>
+        <div class="card-body">Rama simple. Ejecuta el bloque solo si la condición es verdadera.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--amber)">
+        <div class="card-name">Si … SiNo</div>
+        <div class="card-body">Rama doble. Un camino si es verdadero, otro si es falso.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--amber)">
+        <div class="card-name">Si anidados</div>
+        <div class="card-body">Si dentro de Si. Para condiciones en cascada o múltiples rangos.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--amber)">
+        <div class="card-name">Segun … Hacer</div>
+        <div class="card-body">Múltiples casos exactos de una variable. Más limpio que Si anidados cuando hay muchas opciones.</div>
+      </div>
+    </div>
+
+    <div class="ejemplo-wrap">
+      <div class="ejemplo-header">
+        <span class="ejemplo-title">Aprobación de materia (Si simple y Si/SiNo)</span>
+        <span class="ejemplo-badge eb-cond">condicional</span>
+      </div>
+      <div class="ejemplo-body">
+        <div class="ejemplo-explain">
+          Condición: aprueba si nota &gt;= 51.<br><br>
+          <strong>Si simple:</strong> solo hace algo si es verdadero.<br>
+          <strong>Si/SiNo:</strong> hace algo en cada caso.<br><br>
+          La condición puede usar <code>Y</code>, <code>O</code>, <code>No</code> para combinar.
+        </div>
+        <div class="ejemplo-code">
+          <pre><span class="kw">Algoritmo</span> <span class="var">Aprobacion</span>
+  <span class="kw">Definir</span> <span class="var">nota</span> <span class="kw">Como</span> <span class="kw">Entero</span>
+
+  <span class="fn">Escribir</span> <span class="str">"Ingresá tu nota (0-100):"</span>
+  <span class="fn">Leer</span> <span class="var">nota</span>
+
+  <span class="kw">Si</span> <span class="var">nota</span> <span class="op">&gt;=</span> <span class="num">51</span> <span class="kw">Entonces</span>
+    <span class="fn">Escribir</span> <span class="str">"¡Aprobaste!"</span>
+  <span class="kw">SiNo</span>
+    <span class="fn">Escribir</span> <span class="str">"Reprobaste."</span>
+  <span class="kw">FinSi</span>
+
+  <span class="cmt">// Con rango de notas (Si anidado)</span>
+  <span class="kw">Si</span> <span class="var">nota</span> <span class="op">&gt;=</span> <span class="num">90</span> <span class="kw">Entonces</span>
+    <span class="fn">Escribir</span> <span class="str">"Excelente"</span>
+  <span class="kw">SiNo</span>
+    <span class="kw">Si</span> <span class="var">nota</span> <span class="op">&gt;=</span> <span class="num">51</span> <span class="kw">Entonces</span>
+      <span class="fn">Escribir</span> <span class="str">"Aprobado"</span>
+    <span class="kw">SiNo</span>
+      <span class="fn">Escribir</span> <span class="str">"Reprobado"</span>
+    <span class="kw">FinSi</span>
+  <span class="kw">FinSi</span>
+<span class="kw">FinAlgoritmo</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Demo interactivo — probá la aprobación</p>
+    <div class="trace-wrap">
+      <div class="trace-title">Simulador de ejecución</div>
+      <div class="trace-layout">
+        <div>
+          <div class="trace-input-row">
+            <span class="trace-label">Nota:</span>
+            <input class="trace-input" type="number" id="trNota" value="75" min="0" max="100">
+          </div>
+          <button class="trace-btn" onclick="runAprobacion()">▶ Ejecutar</button>
+        </div>
+        <div class="trace-console" id="consoleAprobacion">
+          <div class="tc-line">Listo para ejecutar...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ejemplo-wrap" style="margin-top:0.5rem">
+      <div class="ejemplo-header">
+        <span class="ejemplo-title">Menú de opciones con Segun</span>
+        <span class="ejemplo-badge eb-cond">condicional</span>
+      </div>
+      <div class="ejemplo-body">
+        <div class="ejemplo-explain">
+          <code>Segun</code> es el equivalente al <code>switch</code> de otros lenguajes.<br><br>
+          Cada bloque termina con una coma o con el separador implícito.<br>
+          <code>De Otro Modo</code> es el caso por defecto (si ninguno coincide).<br><br>
+          Ideal cuando tenés muchas opciones de un mismo valor en vez de Si anidados.
+        </div>
+        <div class="ejemplo-code">
+          <pre><span class="kw">Algoritmo</span> <span class="var">MenuOpciones</span>
+  <span class="kw">Definir</span> <span class="var">opcion</span> <span class="kw">Como</span> <span class="kw">Entero</span>
+
+  <span class="fn">Escribir</span> <span class="str">"1) Sumar  2) Restar  3) Salir"</span>
+  <span class="fn">Leer</span> <span class="var">opcion</span>
+
+  <span class="kw">Segun</span> <span class="var">opcion</span> <span class="kw">Hacer</span>
+    <span class="num">1</span><span class="op">:</span>
+      <span class="fn">Escribir</span> <span class="str">"Elegiste Sumar"</span>
+    <span class="num">2</span><span class="op">:</span>
+      <span class="fn">Escribir</span> <span class="str">"Elegiste Restar"</span>
+    <span class="num">3</span><span class="op">:</span>
+      <span class="fn">Escribir</span> <span class="str">"Saliendo..."</span>
+    <span class="kw">De Otro Modo</span><span class="op">:</span>
+      <span class="fn">Escribir</span> <span class="str">"Opción inválida"</span>
+  <span class="kw">FinSegun</span>
+<span class="kw">FinAlgoritmo</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: BUCLES
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-bucles">
+
+    <div class="cards-grid" style="margin-bottom:1.5rem">
+      <div class="card" style="border-left:3px solid var(--purple)">
+        <div class="card-name">Mientras … FinMientras</div>
+        <div class="card-body">Condición al <strong style="color:var(--text)">inicio</strong>. Puede no ejecutarse ni una vez si la condición es falsa desde el principio. Usar cuando no sabés cuántas veces va a repetir.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--purple)">
+        <div class="card-name">Repetir … HastaQue</div>
+        <div class="card-body">Condición al <strong style="color:var(--text)">final</strong>. Se ejecuta <strong style="color:var(--text)">al menos una vez</strong> siempre. Se repite mientras la condición sea <strong style="color:var(--text)">falsa</strong>; sale cuando es verdadera.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--purple)">
+        <div class="card-name">Para … FinPara</div>
+        <div class="card-body">Con <strong style="color:var(--text)">contador</strong>. El más limpio cuando sabés exactamente cuántas iteraciones necesitás. El paso por defecto es +1.</div>
+      </div>
+    </div>
+
+    <div class="ejemplo-wrap">
+      <div class="ejemplo-header">
+        <span class="ejemplo-title">Tabla de multiplicar con Para</span>
+        <span class="ejemplo-badge eb-iter">bucle Para</span>
+      </div>
+      <div class="ejemplo-body">
+        <div class="ejemplo-explain">
+          El contador <code>i</code> va de 1 a 10, incrementando de a 1.<br><br>
+          <code>Con Paso</code> es opcional — por defecto es +1.<br>
+          Para contar al revés: <code>Para i &lt;- 10 Hasta 1 Con Paso -1</code><br><br>
+          El valor de <code>i</code> está disponible dentro del bloque en cada iteración.
+        </div>
+        <div class="ejemplo-code">
+          <pre><span class="kw">Algoritmo</span> <span class="var">TablaMultiplicar</span>
+  <span class="kw">Definir</span> <span class="var">n</span><span class="op">,</span> <span class="var">i</span> <span class="kw">Como</span> <span class="kw">Entero</span>
+
+  <span class="fn">Escribir</span> <span class="str">"¿De qué número?"</span>
+  <span class="fn">Leer</span> <span class="var">n</span>
+
+  <span class="kw">Para</span> <span class="var">i</span> <span class="op">&lt;-</span> <span class="num">1</span> <span class="kw">Hasta</span> <span class="num">10</span> <span class="kw">Con Paso</span> <span class="num">1</span> <span class="kw">Hacer</span>
+    <span class="fn">Escribir</span> <span class="var">n</span><span class="op">,</span> <span class="str">" x "</span><span class="op">,</span> <span class="var">i</span><span class="op">,</span> <span class="str">" = "</span><span class="op">,</span> <span class="var">n</span><span class="op">*</span><span class="var">i</span>
+  <span class="kw">FinPara</span>
+<span class="kw">FinAlgoritmo</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="ejemplo-wrap">
+      <div class="ejemplo-header">
+        <span class="ejemplo-title">Acumulador de suma con Mientras</span>
+        <span class="ejemplo-badge eb-iter">bucle Mientras</span>
+      </div>
+      <div class="ejemplo-body">
+        <div class="ejemplo-explain">
+          Suma números que el usuario ingresa hasta que ingresa 0.<br><br>
+          El <code>acum</code> arranca en 0 y se va sumando en cada iteración.<br>
+          La condición se evalúa <strong style="color:var(--text)">antes</strong> de entrar — si el primer número es 0, no suma nada.<br><br>
+          Patrón común: inicializar acumulador → leer primero → bucle → mostrar resultado.
+        </div>
+        <div class="ejemplo-code">
+          <pre><span class="kw">Algoritmo</span> <span class="var">SumaAcumulada</span>
+  <span class="kw">Definir</span> <span class="var">num</span><span class="op">,</span> <span class="var">acum</span> <span class="kw">Como</span> <span class="kw">Real</span>
+
+  <span class="var">acum</span> <span class="op">&lt;-</span> <span class="num">0</span>
+  <span class="fn">Escribir</span> <span class="str">"Ingresá números (0 para terminar):"</span>
+  <span class="fn">Leer</span> <span class="var">num</span>
+
+  <span class="kw">Mientras</span> <span class="var">num</span> <span class="op">&lt;&gt;</span> <span class="num">0</span> <span class="kw">Hacer</span>
+    <span class="var">acum</span> <span class="op">&lt;-</span> <span class="var">acum</span> <span class="op">+</span> <span class="var">num</span>
+    <span class="fn">Leer</span> <span class="var">num</span>
+  <span class="kw">FinMientras</span>
+
+  <span class="fn">Escribir</span> <span class="str">"Suma total: "</span><span class="op">,</span> <span class="var">acum</span>
+<span class="kw">FinAlgoritmo</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="ejemplo-wrap">
+      <div class="ejemplo-header">
+        <span class="ejemplo-title">Validación de entrada con Repetir</span>
+        <span class="ejemplo-badge eb-iter">bucle Repetir</span>
+      </div>
+      <div class="ejemplo-body">
+        <div class="ejemplo-explain">
+          Repite hasta que el usuario ingresa un dato válido.<br><br>
+          El bloque <strong style="color:var(--text)">siempre se ejecuta al menos una vez</strong> — ideal para pedir datos obligatorios.<br>
+          <code>HastaQue</code> sale cuando la condición es <strong style="color:var(--text)">verdadera</strong> (al revés del Mientras).
+        </div>
+        <div class="ejemplo-code">
+          <pre><span class="kw">Algoritmo</span> <span class="var">ValidarEdad</span>
+  <span class="kw">Definir</span> <span class="var">edad</span> <span class="kw">Como</span> <span class="kw">Entero</span>
+
+  <span class="kw">Repetir</span>
+    <span class="fn">Escribir</span> <span class="str">"Ingresá tu edad (1-120):"</span>
+    <span class="fn">Leer</span> <span class="var">edad</span>
+    <span class="kw">Si</span> <span class="var">edad</span> <span class="op">&lt;</span> <span class="num">1</span> <span class="kw">O</span> <span class="var">edad</span> <span class="op">&gt;</span> <span class="num">120</span> <span class="kw">Entonces</span>
+      <span class="fn">Escribir</span> <span class="str">"Edad inválida, intentá de nuevo."</span>
+    <span class="kw">FinSi</span>
+  <span class="kw">HastaQue</span> <span class="var">edad</span> <span class="op">&gt;=</span> <span class="num">1</span> <span class="kw">Y</span> <span class="var">edad</span> <span class="op">&lt;=</span> <span class="num">120</span>
+
+  <span class="fn">Escribir</span> <span class="str">"Edad registrada: "</span><span class="op">,</span> <span class="var">edad</span>
+<span class="kw">FinAlgoritmo</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Demo interactivo — tabla de multiplicar</p>
+    <div class="trace-wrap">
+      <div class="trace-title">Simulador de ejecución</div>
+      <div class="trace-layout">
+        <div>
+          <div class="trace-input-row">
+            <span class="trace-label">Número:</span>
+            <input class="trace-input" type="number" id="trTabla" value="7" min="1" max="20">
+          </div>
+          <button class="trace-btn" onclick="runTabla()">▶ Ejecutar</button>
+        </div>
+        <div class="trace-console" id="consoleTabla" style="min-height:180px">
+          <div class="tc-line">Listo para ejecutar...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--purple)">
+      <div class="info-title" style="color:var(--purple)">¿Cuándo usar cada bucle?</div>
+      <div class="info-body">
+        <strong>Para</strong> → cuando sabés exactamente cuántas veces va a repetir (recorrer 10 elementos, generar tabla del 1 al 10)<br>
+        <strong>Mientras</strong> → cuando la cantidad de repeticiones depende de una condición (el usuario decide cuándo parar)<br>
+        <strong>Repetir</strong> → cuando necesitás que se ejecute <em style="color:var(--text)">al menos una vez</em> (pedir datos con validación, mostrar menú hasta que elija salir)
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: FUNCIONES
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-funciones">
+
+    <div class="cards-grid" style="margin-bottom:1.5rem">
+      <div class="card" style="border-left:3px solid var(--blue)">
+        <div class="card-name">Subproceso (Proceso)</div>
+        <div class="card-body"><strong style="color:var(--text)">No devuelve valor.</strong> Agrupa instrucciones con un nombre. Se llama escribiendo su nombre. Útil para tareas repetidas como mostrar un menú.</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--blue)">
+        <div class="card-name">Función (Funcion)</div>
+        <div class="card-body"><strong style="color:var(--text)">Devuelve un valor</strong> con <code>Retornar</code>. Se puede usar en expresiones como si fuera una variable. El tipo del retorno va en la declaración.</div>
+      </div>
+    </div>
+
+    <div class="ejemplo-wrap">
+      <div class="ejemplo-header">
+        <span class="ejemplo-title">Función que calcula el factorial</span>
+        <span class="ejemplo-badge eb-fun">función</span>
+      </div>
+      <div class="ejemplo-body">
+        <div class="ejemplo-explain">
+          La función recibe un parámetro <code>n</code> y devuelve el factorial.<br><br>
+          <code>Funcion resultado &lt;- nombre(parametros)</code> es la sintaxis.<br>
+          <code>resultado</code> es el nombre que lleva el valor de retorno.<br><br>
+          La función se llama desde el algoritmo principal como si fuera una variable en una expresión.
+        </div>
+        <div class="ejemplo-code">
+          <pre><span class="kw">Funcion</span> <span class="var">resultado</span> <span class="op">&lt;-</span> <span class="fn">Factorial</span><span class="op">(</span><span class="var">n</span><span class="op">)</span>
+  <span class="kw">Definir</span> <span class="var">i</span><span class="op">,</span> <span class="var">resultado</span> <span class="kw">Como</span> <span class="kw">Entero</span>
+  <span class="var">resultado</span> <span class="op">&lt;-</span> <span class="num">1</span>
+  <span class="kw">Para</span> <span class="var">i</span> <span class="op">&lt;-</span> <span class="num">2</span> <span class="kw">Hasta</span> <span class="var">n</span> <span class="kw">Hacer</span>
+    <span class="var">resultado</span> <span class="op">&lt;-</span> <span class="var">resultado</span> <span class="op">*</span> <span class="var">i</span>
+  <span class="kw">FinPara</span>
+<span class="kw">FinFuncion</span>
+
+<span class="kw">Algoritmo</span> <span class="var">UsarFactorial</span>
+  <span class="kw">Definir</span> <span class="var">num</span><span class="op">,</span> <span class="var">res</span> <span class="kw">Como</span> <span class="kw">Entero</span>
+  <span class="fn">Escribir</span> <span class="str">"Número para calcular factorial:"</span>
+  <span class="fn">Leer</span> <span class="var">num</span>
+  <span class="var">res</span> <span class="op">&lt;-</span> <span class="fn">Factorial</span><span class="op">(</span><span class="var">num</span><span class="op">)</span>
+  <span class="fn">Escribir</span> <span class="var">num</span><span class="op">,</span> <span class="str">"! = "</span><span class="op">,</span> <span class="var">res</span>
+<span class="kw">FinAlgoritmo</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="ejemplo-wrap">
+      <div class="ejemplo-header">
+        <span class="ejemplo-title">Subproceso que muestra un separador</span>
+        <span class="ejemplo-badge eb-fun">subproceso</span>
+      </div>
+      <div class="ejemplo-body">
+        <div class="ejemplo-explain">
+          Un <code>Proceso</code> no retorna nada — solo ejecuta instrucciones.<br><br>
+          Se define fuera del algoritmo principal y se llama por nombre.<br>
+          Puede recibir parámetros o no.<br><br>
+          Útil para no repetir código (DRY — Don't Repeat Yourself).
+        </div>
+        <div class="ejemplo-code">
+          <pre><span class="kw">Proceso</span> <span class="fn">MostrarLinea</span>
+  <span class="fn">Escribir</span> <span class="str">"========================"</span>
+<span class="kw">FinProceso</span>
+
+<span class="kw">Proceso</span> <span class="fn">Saludo</span><span class="op">(</span><span class="var">nombre</span><span class="op">)</span>
+  <span class="fn">Escribir</span> <span class="str">"Hola, "</span><span class="op">,</span> <span class="var">nombre</span><span class="op">,</span> <span class="str">"!"</span>
+<span class="kw">FinProceso</span>
+
+<span class="kw">Algoritmo</span> <span class="var">PrincipalConSubprocesos</span>
+  <span class="kw">Definir</span> <span class="var">nom</span> <span class="kw">Como</span> <span class="kw">Caracter</span>
+  <span class="fn">Leer</span> <span class="var">nom</span>
+  <span class="fn">MostrarLinea</span>
+  <span class="fn">Saludo</span><span class="op">(</span><span class="var">nom</span><span class="op">)</span>
+  <span class="fn">MostrarLinea</span>
+<span class="kw">FinAlgoritmo</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Demo interactivo — factorial</p>
+    <div class="trace-wrap">
+      <div class="trace-title">Simulador de ejecución</div>
+      <div class="trace-layout">
+        <div>
+          <div class="trace-input-row">
+            <span class="trace-label">n:</span>
+            <input class="trace-input" type="number" id="trFact" value="6" min="0" max="12">
+          </div>
+          <button class="trace-btn" onclick="runFactorial()">▶ Ejecutar</button>
+        </div>
+        <div class="trace-console" id="consoleFactorial">
+          <div class="tc-line">Listo para ejecutar...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--blue)">
+      <div class="info-title" style="color:var(--blue)">Funciones predefinidas de PSeInt</div>
+      <div class="info-body">
+        <code>RC(x)</code> → raíz cuadrada &nbsp;&nbsp; <code>ABS(x)</code> → valor absoluto<br>
+        <code>TRUNC(x)</code> → parte entera &nbsp;&nbsp; <code>REDONDEAR(x,n)</code> → redondeo a n decimales<br>
+        <code>ALEATORIO(a,b)</code> → número entero aleatorio entre a y b<br>
+        <code>LONGITUD(cad)</code> → cantidad de caracteres de una cadena<br>
+        <code>MAYUSCULAS(cad)</code> / <code>MINUSCULAS(cad)</code> → convertir texto<br>
+        <code>SUBCADENA(cad, desde, hasta)</code> → extraer parte de un texto
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ── TABS ── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ── SIMULADORES ── */
+function setConsole(id, lines) {
+  const el = document.getElementById(id);
+  el.innerHTML = lines.map(l => `<div class="${l.cls}">${l.text}</div>`).join('');
+}
+
+function runConversor() {
+  const c = parseFloat(document.getElementById('trCels').value);
+  if (isNaN(c)) return;
+  const f = c * 9/5 + 32;
+  setConsole('consoleConversor', [
+    { cls: 'tc-prompt', text: '▶ Ejecutando ConversorTemp...' },
+    { cls: 'tc-step',   text: 'Leer celsius ← ' + c },
+    { cls: 'tc-step',   text: 'fahrenheit ← ' + c + ' × 9/5 + 32' },
+    { cls: 'tc-out',    text: c + '°C = ' + f.toFixed(2) + '°F' },
+    { cls: 'tc-step',   text: '— FinAlgoritmo —' },
+  ]);
+}
+
+function runAprobacion() {
+  const n = parseInt(document.getElementById('trNota').value);
+  if (isNaN(n)) return;
+  const aprueba = n >= 51;
+  const nivel = n >= 90 ? 'Excelente' : n >= 51 ? 'Aprobado' : 'Reprobado';
+  setConsole('consoleAprobacion', [
+    { cls: 'tc-prompt', text: '▶ Ejecutando Aprobacion...' },
+    { cls: 'tc-step',   text: 'Leer nota ← ' + n },
+    { cls: 'tc-step',   text: 'Si ' + n + ' >= 51 → ' + aprueba },
+    { cls: aprueba ? 'tc-out' : 'tc-err', text: aprueba ? '¡Aprobaste!' : 'Reprobaste.' },
+    { cls: 'tc-step',   text: 'Nivel: ' + nivel },
+    { cls: 'tc-step',   text: '— FinAlgoritmo —' },
+  ]);
+}
+
+function runTabla() {
+  const n = parseInt(document.getElementById('trTabla').value) || 1;
+  const lines = [
+    { cls: 'tc-prompt', text: '▶ Ejecutando TablaMultiplicar (n=' + n + ')...' },
+  ];
+  for (let i = 1; i <= 10; i++) {
+    lines.push({ cls: 'tc-out', text: n + ' x ' + i + ' = ' + (n * i) });
+  }
+  lines.push({ cls: 'tc-step', text: '— FinAlgoritmo —' });
+  setConsole('consoleTabla', lines);
+}
+
+function runFactorial() {
+  const n = parseInt(document.getElementById('trFact').value);
+  if (isNaN(n) || n < 0) return;
+  const lines = [{ cls: 'tc-prompt', text: '▶ Ejecutando Factorial(n=' + n + ')...' }];
+  let result = 1;
+  lines.push({ cls: 'tc-step', text: 'resultado ← 1' });
+  for (let i = 2; i <= n; i++) {
+    result *= i;
+    lines.push({ cls: 'tc-step', text: 'resultado ← ' + (result / i) + ' × ' + i + ' = ' + result });
+  }
+  lines.push({ cls: 'tc-out',  text: n + '! = ' + result });
+  lines.push({ cls: 'tc-step', text: '— FinAlgoritmo —' });
+  setConsole('consoleFactorial', lines);
+}
+</script>
+</body>
+</html>

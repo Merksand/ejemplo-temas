@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vectores — FIS100</title>
+<link rel="stylesheet" href="../../assets/shared.css">
+<style>
+  body { padding-bottom: 5rem; }
+
+  /* ── HERO ── */
+  .hero { padding: 2.5rem 0 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--amber); text-transform: uppercase; margin-bottom: 10px; }
+  h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 10px; }
+  h1 span { color: var(--amber); }
+  .subtitle { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 5px; margin-bottom: 1.5rem; }
+  .tab-btn { font-family: var(--mono); font-size: 12px; padding: 7px 16px; border-radius: var(--radius-sm); border: none; background: transparent; color: var(--muted); cursor: pointer; transition: all .18s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--text); background: var(--bg3); }
+  .tab-btn.active { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(239,159,39,0.3); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SECTION LABEL ── */
+  .section-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+
+  /* ── INFO BOXES ── */
+  .info-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--amber); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 1rem; }
+  .info-title { font-size: 13px; font-weight: 700; color: var(--amber); margin-bottom: 8px; font-family: var(--mono); }
+  .info-body { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.9; }
+  .info-body code { color: var(--teal-l); background: var(--teal-bg); padding: 1px 6px; border-radius: 4px; }
+  .info-body strong { color: var(--text); }
+
+  /* ── GRID CARDS ── */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px 17px; transition: border-color .2s, background .2s; }
+  .card:hover { border-color: var(--border-h); background: var(--bg3); }
+  .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .card-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .card-badge { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--amber); background: var(--amber-bg); border: 1px solid rgba(239,159,39,0.25); border-radius: 6px; padding: 2px 9px; }
+  .card-body { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .card-body code { color: var(--teal-l); background: var(--teal-bg); padding: 1px 5px; border-radius: 4px; }
+
+  /* ── ELEMENTOS TABLE ── */
+  .elem-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; margin-bottom: 1.5rem; }
+  .elem-table th { color: var(--dim); font-weight: 500; padding: 6px 12px; text-align: left; border-bottom: 1px solid var(--border); letter-spacing: 0.08em; font-size: 11px; text-transform: uppercase; }
+  .elem-table td { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--muted); vertical-align: top; line-height: 1.6; }
+  .elem-table tr:last-child td { border-bottom: none; }
+  .elem-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .elem-table td:first-child { color: var(--amber); font-weight: 700; white-space: nowrap; }
+  .elem-table td:nth-child(2) { color: var(--text); }
+
+  /* ── INTERACTIVE VECTOR CANVAS ── */
+  .canvas-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 1.5rem; }
+  .canvas-title { font-family: var(--mono); font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+  .vc-layout { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start; }
+  @media (max-width: 600px) { .vc-layout { grid-template-columns: 1fr; } }
+  canvas#vecCanvas { display: block; border-radius: var(--radius-sm); border: 1px solid var(--border); cursor: crosshair; width: 100%; }
+  .vc-panel { min-width: 190px; display: flex; flex-direction: column; gap: 14px; }
+  .vc-field { display: flex; flex-direction: column; gap: 5px; }
+  .vc-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--dim); }
+  .vc-input { font-family: var(--mono); font-size: 14px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); padding: 7px 10px; outline: none; transition: border-color .18s; -webkit-appearance: none; }
+  .vc-input:focus { border-color: rgba(239,159,39,0.5); }
+  .vc-results { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+  .vc-result-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; font-family: var(--mono); font-size: 12px; }
+  .vc-result-key { color: var(--dim); }
+  .vc-result-val { color: var(--teal-l); font-weight: 700; }
+  .vc-result-val.amber { color: var(--amber); }
+  .vc-hint { font-family: var(--mono); font-size: 11px; color: var(--dim); text-align: center; margin-top: 6px; }
+
+  /* ── SUMA DEMO ── */
+  .suma-demo { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-top: 12px; }
+  .suma-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 500px) { .suma-inputs { grid-template-columns: 1fr; } }
+  .suma-vec-title { font-family: var(--mono); font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .suma-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .suma-input-lbl { font-family: var(--mono); font-size: 12px; color: var(--muted); width: 30px; }
+  .suma-input { font-family: var(--mono); font-size: 13px; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); padding: 5px 9px; width: 70px; outline: none; text-align: center; -webkit-appearance: none; transition: border-color .18s; }
+  .suma-input:focus { border-color: rgba(239,159,39,0.5); }
+  .suma-result-box { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; }
+  .suma-result-title { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .suma-result-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+  .suma-result-item { font-family: var(--mono); font-size: 12px; }
+  .sri-label { color: var(--dim); margin-bottom: 3px; }
+  .sri-val { font-size: 15px; font-weight: 700; color: var(--amber); }
+  .suma-steps { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; line-height: 2.1; }
+  .suma-steps .hl { color: var(--teal-l); }
+  .suma-steps .hla { color: var(--amber); font-weight: 700; }
+  canvas#sumaCanvas { display: block; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-top: 14px; width: 100%; }
+
+  /* ── PRODUCTOS ── */
+  .prod-demo { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-top: 12px; }
+  .prod-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 14px; }
+  @media (max-width: 500px) { .prod-inputs { grid-template-columns: 1fr; } }
+  .prod-vec-lbl { font-family: var(--mono); font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .prod-result { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; }
+  .prod-result-title { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .prod-result-row { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-bottom: 6px; line-height: 1.8; }
+  .prod-result-row .val { color: var(--amber); font-weight: 700; font-size: 14px; }
+  .prod-result-row code { color: var(--teal-l); background: var(--teal-bg); padding: 1px 5px; border-radius: 4px; }
+
+  /* ── QUADRANT CHIPS ── */
+  .quad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem; }
+  .quad-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-family: var(--mono); font-size: 12px; }
+  .quad-num { font-size: 13px; font-weight: 700; color: var(--amber); margin-bottom: 4px; }
+  .quad-range { color: var(--muted); }
+  .quad-sign { color: var(--teal-l); font-size: 11px; margin-top: 4px; }
+
+  /* ── RIGHT HAND RULE ── */
+  .rhr-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--purple); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 1rem; }
+  .rhr-title { font-size: 13px; font-weight: 700; color: var(--purple); margin-bottom: 8px; font-family: var(--mono); }
+  .rhr-steps { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 2; counter-reset: rhr; }
+  .rhr-step { display: flex; gap: 10px; align-items: baseline; }
+  .rhr-step::before { counter-increment: rhr; content: counter(rhr) "."; color: var(--purple); font-weight: 700; flex-shrink: 0; }
+
+  /* ── UNIT VECTORS ── */
+  .uv-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .uv-chip { font-family: var(--mono); font-size: 13px; font-weight: 700; padding: 8px 16px; border-radius: var(--radius-sm); border: 1px solid; }
+  .uv-i { color: var(--amber); background: var(--amber-bg); border-color: rgba(239,159,39,0.3); }
+  .uv-j { color: var(--teal-l); background: var(--teal-bg); border-color: rgba(29,158,117,0.3); }
+  .uv-k { color: var(--purple); background: var(--purple-bg); border-color: rgba(127,119,221,0.3); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">apuntes<span>/</span>visuales</div>
+  <a href="../../index.html" class="nav-back">← volver al dashboard</a>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <p class="eyebrow">FIS100 — Física</p>
+    <h1>Vec<span>tores</span></h1>
+    <p class="subtitle">Concepto, componentes, operaciones y productos vectoriales</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="concepto">Concepto</button>
+    <button class="tab-btn" data-tab="componentes">Componentes</button>
+    <button class="tab-btn" data-tab="operaciones">Suma y Resta</button>
+    <button class="tab-btn" data-tab="productos">Productos</button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: CONCEPTO
+  ══════════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-concepto">
+
+    <div class="info-box" style="margin-bottom:1.5rem">
+      <div class="info-title">¿Qué es un vector?</div>
+      <div class="info-body">
+        Es un ente matemático que necesita <strong>módulo, dirección y sentido</strong> para describirse completamente.<br>
+        Un escalar solo es un número (temperatura, masa). Un vector es un número <em style="color:var(--text)">con rumbo</em>.<br><br>
+        Decir <code>"la fuerza es 10 N"</code> está incompleto → <code>"10 N hacia la derecha a 30°"</code> es un vector completo.
+      </div>
+    </div>
+
+    <p class="section-label">Elementos de un vector</p>
+
+    <table class="elem-table">
+      <thead><tr><th>Elemento</th><th>¿Qué es?</th><th>Fórmula / nota</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Módulo |A|</td>
+          <td>Tamaño o intensidad — siempre ≥ 0</td>
+          <td><code>|A| = √(Ax² + Ay²)</code></td>
+        </tr>
+        <tr>
+          <td>Dirección θ</td>
+          <td>Ángulo con el eje x positivo, en grados o radianes</td>
+          <td><code>θ = arctan(Ay / Ax)</code> — verificar cuadrante</td>
+        </tr>
+        <tr>
+          <td>Sentido</td>
+          <td>Hacia qué lado apunta la punta de la flecha</td>
+          <td>Lo representa la punta de la flecha →</td>
+        </tr>
+        <tr>
+          <td>Punto de aplicación</td>
+          <td>Desde dónde actúa el vector (importa en torques)</td>
+          <td>El extremo de inicio de la flecha</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">Notación</p>
+    <div class="info-box" style="border-left-color:var(--teal); margin-bottom:1.5rem">
+      <div class="info-title" style="color:var(--teal-l)">Formas de escribir un vector</div>
+      <div class="info-body">
+        <code>→A</code> → flecha sobre la letra (notación manual)<br>
+        <strong style="color:var(--text)">A</strong> → negrita (en texto impreso)<br>
+        <code>A = (Ax, Ay)</code> → notación por componentes<br>
+        <code>A = Ax·î + Ay·ĵ</code> → notación con vectores unitarios<br>
+        <code>|A|</code> o <code>A</code> (sin flecha) → solo el módulo, un escalar
+      </div>
+    </div>
+
+    <p class="section-label">Tipos según posición</p>
+    <div class="cards-grid" style="margin-bottom:1.5rem">
+      <div class="card">
+        <div class="card-head"><span class="card-name">Vector libre</span><span class="card-badge">libre</span></div>
+        <div class="card-body">Se puede trasladar en el espacio sin cambiar su significado. Solo importan módulo, dirección y sentido.<br><br>Ejemplo: <code>velocidad</code>, <code>desplazamiento</code></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-name">Vector deslizante</span><span class="card-badge">deslizante</span></div>
+        <div class="card-body">Solo puede moverse a lo largo de su línea de acción.<br><br>Ejemplo: <code>fuerzas sobre cuerpos rígidos</code></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-name">Vector fijo</span><span class="card-badge">fijo</span></div>
+        <div class="card-body">Tiene un punto de aplicación específico que no puede cambiar.<br><br>Ejemplo: <code>fuerza en un punto de una estructura</code></div>
+      </div>
+    </div>
+
+    <p class="section-label">Vectores especiales</p>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-head"><span class="card-name">Vector nulo</span><span class="card-badge">|A| = 0</span></div>
+        <div class="card-body">Módulo igual a cero. No tiene dirección ni sentido definidos.<br><code>A + (−A) = 0</code></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-name">Vector unitario</span><span class="card-badge">|û| = 1</span></div>
+        <div class="card-body">Módulo igual a 1 — solo indica dirección y sentido.<br><code>û = A / |A|</code></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-name">Vector opuesto</span><span class="card-badge">−A</span></div>
+        <div class="card-body">Mismo módulo y dirección pero sentido contrario.<br><code>A + (−A) = vector nulo</code></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: COMPONENTES
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-componentes">
+
+    <div class="info-box" style="margin-bottom:1.5rem">
+      <div class="info-title">¿Por qué descomponer?</div>
+      <div class="info-body">
+        Trabajar con componentes es mucho más fácil que con ángulos directamente.<br>
+        Cada componente es un escalar (puede ser + o −), y permite sumar vectores con álgebra simple.<br>
+        <strong>Es la base de todo el cálculo vectorial analítico.</strong>
+      </div>
+    </div>
+
+    <p class="section-label">Fórmulas de descomposición en 2D</p>
+
+    <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); margin-bottom:1.5rem">
+      <div class="card" style="border-left: 3px solid var(--amber)">
+        <div class="card-head"><span class="card-name">Componente X</span></div>
+        <div class="card-body" style="font-size:15px; color:var(--amber); font-weight:700; margin-bottom:6px">Ax = |A| · cos(θ)</div>
+        <div class="card-body">Proyección sobre el eje x.<br>+ si apunta a la derecha<br>− si apunta a la izquierda</div>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--teal)">
+        <div class="card-head"><span class="card-name">Componente Y</span></div>
+        <div class="card-body" style="font-size:15px; color:var(--teal-l); font-weight:700; margin-bottom:6px">Ay = |A| · sen(θ)</div>
+        <div class="card-body">Proyección sobre el eje y.<br>+ si apunta hacia arriba<br>− si apunta hacia abajo</div>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--purple)">
+        <div class="card-head"><span class="card-name">Módulo desde componentes</span></div>
+        <div class="card-body" style="font-size:15px; color:var(--purple); font-weight:700; margin-bottom:6px">|A| = √(Ax² + Ay²)</div>
+        <div class="card-body">Pitágoras aplicado al triángulo que forman las componentes y el vector.</div>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--blue)">
+        <div class="card-head"><span class="card-name">Ángulo desde componentes</span></div>
+        <div class="card-body" style="font-size:15px; color:var(--blue); font-weight:700; margin-bottom:6px">θ = arctan(Ay / Ax)</div>
+        <div class="card-body">⚠ La calculadora da arctan en (−90°, 90°). <strong style="color:var(--text)">Siempre verificar el cuadrante.</strong></div>
+      </div>
+    </div>
+
+    <p class="section-label">Demo interactivo — arrastrá el ángulo o ingresá valores</p>
+    <div class="canvas-wrap">
+      <div class="canvas-title">Descomposición vectorial</div>
+      <div class="vc-layout">
+        <div>
+          <canvas id="vecCanvas" height="280"></canvas>
+          <div class="vc-hint">Clic en el canvas para cambiar el ángulo</div>
+        </div>
+        <div class="vc-panel">
+          <div class="vc-field">
+            <span class="vc-label">Módulo |A|</span>
+            <input class="vc-input" type="number" id="vcMod" value="5" min="0.5" max="20" step="0.5">
+          </div>
+          <div class="vc-field">
+            <span class="vc-label">Ángulo θ (grados)</span>
+            <input class="vc-input" type="number" id="vcAng" value="37" min="0" max="360">
+          </div>
+          <div class="vc-results">
+            <div class="vc-result-row"><span class="vc-result-key">Ax =</span><span class="vc-result-val" id="rcAx">—</span></div>
+            <div class="vc-result-row"><span class="vc-result-key">Ay =</span><span class="vc-result-val" id="rcAy">—</span></div>
+            <div class="vc-result-row"><span class="vc-result-key">|A| =</span><span class="vc-result-val amber" id="rcMod">—</span></div>
+            <div class="vc-result-row"><span class="vc-result-key">θ =</span><span class="vc-result-val amber" id="rcAng">—</span></div>
+            <div class="vc-result-row" style="margin-top:6px; border-top:1px solid var(--border); padding-top:6px"><span class="vc-result-key">Cuadrante</span><span class="vc-result-val" id="rcQuad">—</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Cuadrantes y signos de componentes</p>
+    <div class="quad-grid">
+      <div class="quad-card">
+        <div class="quad-num">I° cuadrante</div>
+        <div class="quad-range">θ entre 0° y 90°</div>
+        <div class="quad-sign">Ax > 0 &nbsp;·&nbsp; Ay > 0</div>
+      </div>
+      <div class="quad-card">
+        <div class="quad-num">II° cuadrante</div>
+        <div class="quad-range">θ entre 90° y 180°</div>
+        <div class="quad-sign">Ax < 0 &nbsp;·&nbsp; Ay > 0</div>
+      </div>
+      <div class="quad-card">
+        <div class="quad-num">III° cuadrante</div>
+        <div class="quad-range">θ entre 180° y 270°</div>
+        <div class="quad-sign">Ax < 0 &nbsp;·&nbsp; Ay < 0</div>
+      </div>
+      <div class="quad-card">
+        <div class="quad-num">IV° cuadrante</div>
+        <div class="quad-range">θ entre 270° y 360°</div>
+        <div class="quad-sign">Ax > 0 &nbsp;·&nbsp; Ay < 0</div>
+      </div>
+    </div>
+
+    <p class="section-label">Vectores unitarios cartesianos</p>
+    <div class="uv-row">
+      <div class="uv-chip uv-i">î &nbsp;→&nbsp; (1, 0, 0) — dirección x</div>
+      <div class="uv-chip uv-j">ĵ &nbsp;→&nbsp; (0, 1, 0) — dirección y</div>
+      <div class="uv-chip uv-k">k̂ &nbsp;→&nbsp; (0, 0, 1) — dirección z</div>
+    </div>
+    <div class="info-box" style="border-left-color:var(--teal); margin-top:0.5rem">
+      <div class="info-title" style="color:var(--teal-l)">Notación con vectores unitarios</div>
+      <div class="info-body">
+        En 2D: <code>A = Ax·î + Ay·ĵ</code><br>
+        En 3D: <code>A = Ax·î + Ay·ĵ + Az·k̂</code><br>
+        Ejemplo: si Ax = 3, Ay = −4 → <code>A = 3î − 4ĵ</code>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: SUMA Y RESTA
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-operaciones">
+
+    <p class="section-label">Métodos para sumar vectores</p>
+    <div class="cards-grid" style="margin-bottom:1.5rem">
+      <div class="card">
+        <div class="card-head"><span class="card-name">Cola a punta</span><span class="card-badge">gráfico</span></div>
+        <div class="card-body">
+          El segundo vector empieza donde termina el primero.<br>
+          El resultante R va desde el inicio del primero hasta el final del último.<br>
+          Funciona para sumar cualquier cantidad de vectores.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-name">Paralelogramo</span><span class="card-badge">gráfico</span></div>
+        <div class="card-body">
+          Los dos vectores desde el mismo punto (cola con cola).<br>
+          Se completa el paralelogramo con paralelas.<br>
+          El resultante es la diagonal. Solo funciona para dos vectores a la vez.
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--amber)">
+        <div class="card-head"><span class="card-name">Método analítico</span><span class="card-badge">el más usado</span></div>
+        <div class="card-body">
+          Exacto (no depende de la precisión del dibujo).<br>
+          <code>Rx = Ax + Bx + ...</code><br>
+          <code>Ry = Ay + By + ...</code><br>
+          <code>|R| = √(Rx² + Ry²)</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--teal); margin-bottom:1.5rem">
+      <div class="info-title" style="color:var(--teal-l)">Resta de vectores</div>
+      <div class="info-body">
+        <code>A − B = A + (−B)</code> → es sumar A con el opuesto de B.<br>
+        El vector −B tiene el mismo módulo que B pero sentido contrario.<br><br>
+        Aplicaciones: <code>Δr = rf − ri</code> (desplazamiento) &nbsp;·&nbsp; <code>Δv = vf − vi</code> (para aceleración)
+      </div>
+    </div>
+
+    <p class="section-label">Demo interactivo — suma analítica de dos vectores</p>
+    <div class="suma-demo">
+      <div class="suma-inputs">
+        <div>
+          <div class="suma-vec-title">Vector A</div>
+          <div class="suma-row"><span class="suma-input-lbl">|A|</span><input class="suma-input" type="number" id="sAMod" value="5" step="0.5"><span style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:4px">unid.</span></div>
+          <div class="suma-row"><span class="suma-input-lbl">θA</span><input class="suma-input" type="number" id="sAAng" value="0"><span style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:4px">grados</span></div>
+        </div>
+        <div>
+          <div class="suma-vec-title">Vector B</div>
+          <div class="suma-row"><span class="suma-input-lbl">|B|</span><input class="suma-input" type="number" id="sBMod" value="8" step="0.5"><span style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:4px">unid.</span></div>
+          <div class="suma-row"><span class="suma-input-lbl">θB</span><input class="suma-input" type="number" id="sBAng" value="90"><span style="font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:4px">grados</span></div>
+        </div>
+      </div>
+      <div class="suma-result-box">
+        <div class="suma-result-title">Resultante R = A + B</div>
+        <div class="suma-result-grid">
+          <div class="suma-result-item"><div class="sri-label">Rx</div><div class="sri-val" id="sRx">—</div></div>
+          <div class="suma-result-item"><div class="sri-label">Ry</div><div class="sri-val" id="sRy">—</div></div>
+          <div class="suma-result-item"><div class="sri-label">|R|</div><div class="sri-val" id="sRMod">—</div></div>
+          <div class="suma-result-item"><div class="sri-label">θR</div><div class="sri-val" id="sRAng">—</div></div>
+        </div>
+        <div class="suma-steps" id="sumaSteps"></div>
+      </div>
+      <canvas id="sumaCanvas" height="220"></canvas>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--purple); margin-top:1rem">
+      <div class="info-title" style="color:var(--purple)">Propiedades de la suma vectorial</div>
+      <div class="info-body">
+        <strong>Conmutativa:</strong> <code>A + B = B + A</code><br>
+        <strong>Asociativa:</strong> <code>(A + B) + C = A + (B + C)</code><br>
+        <strong>Elemento neutro:</strong> <code>A + 0 = A</code><br>
+        <strong>Elemento opuesto:</strong> <code>A + (−A) = 0</code>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: PRODUCTOS
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-productos">
+
+    <div class="cards-grid" style="margin-bottom:1.5rem">
+      <div class="card" style="border-left:3px solid var(--teal)">
+        <div class="card-head"><span class="card-name">Producto punto ·</span><span class="card-badge" style="color:var(--teal-l);background:var(--teal-bg);border-color:rgba(93,202,165,0.25)">escalar</span></div>
+        <div class="card-body">El resultado es un <strong style="color:var(--text)">número</strong>, no un vector.<br><code>A · B = |A|·|B|·cos(θ)</code><br>Mide qué tanto "van en la misma dirección".</div>
+      </div>
+      <div class="card" style="border-left:3px solid var(--purple)">
+        <div class="card-head"><span class="card-name">Producto cruz ×</span><span class="card-badge" style="color:var(--purple);background:var(--purple-bg);border-color:rgba(127,119,221,0.25)">vectorial</span></div>
+        <div class="card-body">El resultado es un <strong style="color:var(--text)">vector</strong>, perpendicular a ambos.<br><code>|A × B| = |A|·|B|·sen(θ)</code><br>Su sentido se determina con la regla de la mano derecha.</div>
+      </div>
+    </div>
+
+    <p class="section-label">Producto punto — demo interactivo</p>
+    <div class="prod-demo" style="margin-bottom:1.5rem">
+      <div class="prod-inputs">
+        <div>
+          <div class="prod-vec-lbl">Vector A (2D)</div>
+          <div class="suma-row"><span class="suma-input-lbl">Ax</span><input class="suma-input" type="number" id="pAx" value="3"></div>
+          <div class="suma-row"><span class="suma-input-lbl">Ay</span><input class="suma-input" type="number" id="pAy" value="4"></div>
+        </div>
+        <div>
+          <div class="prod-vec-lbl">Vector B (2D)</div>
+          <div class="suma-row"><span class="suma-input-lbl">Bx</span><input class="suma-input" type="number" id="pBx" value="1"></div>
+          <div class="suma-row"><span class="suma-input-lbl">By</span><input class="suma-input" type="number" id="pBy" value="2"></div>
+        </div>
+      </div>
+      <div class="prod-result">
+        <div class="prod-result-title">Resultados</div>
+        <div class="prod-result-row">A · B = AxBx + AyBy = <span id="ppStep">—</span> = <span class="val" id="ppVal">—</span></div>
+        <div class="prod-result-row">|A| = <span id="ppModA">—</span> &nbsp;·&nbsp; |B| = <span id="ppModB">—</span></div>
+        <div class="prod-result-row">cos(θ) = (A · B) / (|A|·|B|) = <span id="ppCosT">—</span></div>
+        <div class="prod-result-row">θ entre A y B = <span class="val" id="ppAngle">—</span></div>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--teal); margin-bottom:1.5rem">
+      <div class="info-title" style="color:var(--teal-l)">Casos especiales del producto punto</div>
+      <div class="info-body">
+        <strong>θ = 0° (paralelos):</strong> <code>A · B = |A|·|B|</code> → valor máximo<br>
+        <strong>θ = 90° (perpendiculares):</strong> <code>A · B = 0</code> → si A·B = 0 y ninguno es nulo, son perpendiculares<br>
+        <strong>θ = 180° (antiparalelos):</strong> <code>A · B = −|A|·|B|</code> → valor mínimo<br><br>
+        Aplicación física: <code>W = F · d = F·d·cos(θ)</code> — el trabajo es el producto punto de fuerza y desplazamiento.
+      </div>
+    </div>
+
+    <p class="section-label">Producto cruz — regla de la mano derecha</p>
+    <div class="rhr-box" style="margin-bottom:1.5rem">
+      <div class="rhr-title">Cómo determinar la dirección de A × B</div>
+      <div class="rhr-steps">
+        <div class="rhr-step">Apuntar los dedos de la mano derecha en la dirección de <strong style="color:var(--amber)">A</strong></div>
+        <div class="rhr-step">Curvar los dedos hacia <strong style="color:var(--teal-l)">B</strong> pasando por el ángulo más pequeño</div>
+        <div class="rhr-step">El pulgar extendido apunta en la dirección de <strong style="color:var(--purple)">A × B</strong></div>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--purple); margin-bottom:1.5rem">
+      <div class="info-title" style="color:var(--purple)">Producto cruz en 2D y 3D</div>
+      <div class="info-body">
+        En 2D (resultado solo tiene componente z):<br>
+        <code>A × B = (AxBy − AyBx) k̂</code><br><br>
+        Vectores unitarios y sus cruces:<br>
+        <code>î × ĵ = k̂ &nbsp;·&nbsp; ĵ × k̂ = î &nbsp;·&nbsp; k̂ × î = ĵ</code><br>
+        Al invertir el orden cambia el signo: <code>ĵ × î = −k̂</code>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--amber)">
+      <div class="info-title">Aplicaciones físicas del producto cruz</div>
+      <div class="info-body">
+        <strong>Torque:</strong> <code>τ = r × F</code> — perpendicular al plano de r y F, <code>|τ| = r·F·sen(θ)</code><br>
+        <strong>Momento angular:</strong> <code>L = r × p = r × (m·v)</code><br>
+        <strong>Fuerza magnética:</strong> <code>F = q·v × B</code> — los campos magnéticos curvan trayectorias porque la fuerza es perpendicular a v<br>
+        <strong>Velocidad de rotación:</strong> <code>v = ω × r</code>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /container -->
+
+<script>
+/* ════════════════ TABS ════════════════ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'componentes') setTimeout(drawVecCanvas, 50);
+    if (btn.dataset.tab === 'operaciones') setTimeout(drawSumaCanvas, 50);
+  });
+});
+
+/* ════════════════ VEC CANVAS (componentes) ════════════════ */
+const vc = document.getElementById('vecCanvas');
+const vctx = vc.getContext('2d');
+
+function drawArrow(ctx, ox, oy, ex, ey, color, width, label) {
+  const dx = ex - ox, dy = ey - oy;
+  const len = Math.sqrt(dx*dx + dy*dy);
+  if (len < 2) return;
+  const ux = dx/len, uy = dy/len;
+  const headLen = Math.min(14, len * 0.25);
+  ctx.save();
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width;
+  ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ex, ey); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(ex, ey);
+  ctx.lineTo(ex - headLen*(ux - 0.4*uy), ey - headLen*(uy + 0.4*ux));
+  ctx.lineTo(ex - headLen*(ux + 0.4*uy), ey - headLen*(uy - 0.4*ux));
+  ctx.closePath(); ctx.fill();
+  if (label) {
+    ctx.font = '600 13px "JetBrains Mono", monospace';
+    ctx.fillStyle = color;
+    ctx.fillText(label, ex + 8*ux + 8*(-uy), ey + 8*uy + 8*ux);
+  }
+  ctx.restore();
+}
+
+function drawVecCanvas() {
+  const W = vc.offsetWidth || 400;
+  vc.width = W; vc.height = 280;
+  const ctx = vctx;
+  const cx = W / 2, cy = 140;
+  const scale = Math.min(W, 280) * 0.28;
+
+  const mod = parseFloat(document.getElementById('vcMod').value) || 5;
+  const angDeg = parseFloat(document.getElementById('vcAng').value) || 0;
+  const angRad = angDeg * Math.PI / 180;
+  const ax = mod * Math.cos(angRad);
+  const ay = mod * Math.sin(angRad);
+  const maxComp = Math.max(Math.abs(ax), Math.abs(ay), mod);
+  const s = (scale * 0.9) / Math.max(maxComp, 1);
+
+  ctx.clearRect(0, 0, W, 280);
+
+  // grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 1;
+  for (let i = -10; i <= 10; i++) {
+    ctx.beginPath(); ctx.moveTo(cx + i*s*2, 0); ctx.lineTo(cx + i*s*2, 280); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, cy + i*s*2); ctx.lineTo(W, cy + i*s*2); ctx.stroke();
+  }
+
+  // axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, 280); ctx.stroke();
+
+  // axis labels
+  ctx.font = '11px "JetBrains Mono", monospace';
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.fillText('+x', W - 20, cy - 6);
+  ctx.fillText('+y', cx + 6, 14);
+
+  const ex = cx + ax * s, ey = cy - ay * s;
+
+  // dashed projection lines
+  ctx.setLineDash([5, 5]); ctx.strokeStyle = 'rgba(93,202,165,0.4)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(ex, cy); ctx.lineTo(ex, ey); ctx.stroke(); // vertical proj
+  ctx.strokeStyle = 'rgba(239,159,39,0.4)';
+  ctx.beginPath(); ctx.moveTo(cx, ey); ctx.lineTo(ex, ey); ctx.stroke(); // horizontal proj
+  ctx.setLineDash([]);
+
+  // Ax component arrow
+  drawArrow(ctx, cx, cy, ex, cy, '#EF9F27', 2, '');
+  // Ay component arrow
+  drawArrow(ctx, cx, cy, cx, ey, '#5DCAA5', 2, '');
+
+  // main vector
+  drawArrow(ctx, cx, cy, ex, ey, '#ffffff', 2.5, '');
+
+  // labels
+  ctx.font = 'bold 12px "JetBrains Mono", monospace';
+  // Ax label
+  ctx.fillStyle = '#EF9F27';
+  const axMid = (cx + ex) / 2;
+  ctx.fillText('Ax = ' + (ax).toFixed(2), axMid - 28, cy + 18);
+  // Ay label
+  ctx.fillStyle = '#5DCAA5';
+  const ayMid = (cy + ey) / 2;
+  ctx.fillText('Ay = ' + (ay).toFixed(2), cx - 85, ayMid);
+  // A label
+  ctx.fillStyle = '#ffffff';
+  ctx.fillText('A', ex + 10, ey - 6);
+
+  // angle arc
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 28, 0, -angRad, angRad >= 0 ? true : false);
+  ctx.stroke();
+  ctx.font = '11px "JetBrains Mono", monospace'; ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  const tLbl = (angDeg / 2) * Math.PI / 180;
+  ctx.fillText('θ', cx + 32*Math.cos(-tLbl), cy + 32*Math.sin(-tLbl));
+
+  // update panel
+  const quad = angDeg <= 90 ? 'I°' : angDeg <= 180 ? 'II°' : angDeg <= 270 ? 'III°' : 'IV°';
+  document.getElementById('rcAx').textContent = ax.toFixed(3);
+  document.getElementById('rcAy').textContent = ay.toFixed(3);
+  document.getElementById('rcMod').textContent = mod.toFixed(3);
+  document.getElementById('rcAng').textContent = angDeg + '°';
+  document.getElementById('rcQuad').textContent = quad;
+}
+
+document.getElementById('vcMod').addEventListener('input', drawVecCanvas);
+document.getElementById('vcAng').addEventListener('input', drawVecCanvas);
+vc.addEventListener('click', e => {
+  const rect = vc.getBoundingClientRect();
+  const cx = vc.width / 2, cy = vc.height / 2;
+  const mx = e.clientX - rect.left - cx;
+  const my = -(e.clientY - rect.top - cy);
+  let ang = Math.atan2(my, mx) * 180 / Math.PI;
+  if (ang < 0) ang += 360;
+  document.getElementById('vcAng').value = Math.round(ang);
+  drawVecCanvas();
+});
+
+setTimeout(drawVecCanvas, 100);
+
+/* ════════════════ SUMA CANVAS ════════════════ */
+const sc = document.getElementById('sumaCanvas');
+const sctx = sc.getContext('2d');
+
+function calcSuma() {
+  const aMod = parseFloat(document.getElementById('sAMod').value) || 0;
+  const aAng = (parseFloat(document.getElementById('sAAng').value) || 0) * Math.PI / 180;
+  const bMod = parseFloat(document.getElementById('sBMod').value) || 0;
+  const bAng = (parseFloat(document.getElementById('sBAng').value) || 0) * Math.PI / 180;
+  const ax = aMod * Math.cos(aAng), ay = aMod * Math.sin(aAng);
+  const bx = bMod * Math.cos(bAng), by = bMod * Math.sin(bAng);
+  const rx = ax + bx, ry = ay + by;
+  const rMod = Math.sqrt(rx*rx + ry*ry);
+  let rAng = Math.atan2(ry, rx) * 180 / Math.PI;
+  if (rAng < 0) rAng += 360;
+  return { ax, ay, bx, by, rx, ry, rMod, rAng };
+}
+
+function drawSumaCanvas() {
+  const W = sc.offsetWidth || 400;
+  sc.width = W; sc.height = 220;
+  const ctx = sctx;
+  const { ax, ay, bx, by, rx, ry, rMod, rAng } = calcSuma();
+
+  document.getElementById('sRx').textContent = rx.toFixed(3);
+  document.getElementById('sRy').textContent = ry.toFixed(3);
+  document.getElementById('sRMod').textContent = rMod.toFixed(3);
+  document.getElementById('sRAng').textContent = rAng.toFixed(1) + '°';
+
+  const aMod = parseFloat(document.getElementById('sAMod').value) || 0;
+  const aAngD = parseFloat(document.getElementById('sAAng').value) || 0;
+  const bMod = parseFloat(document.getElementById('sBMod').value) || 0;
+  const bAngD = parseFloat(document.getElementById('sBAng').value) || 0;
+  document.getElementById('sumaSteps').innerHTML =
+    `Ax = ${aMod}·cos(${aAngD}°) = <span class="hl">${ax.toFixed(3)}</span> &nbsp;&nbsp; Ay = ${aMod}·sen(${aAngD}°) = <span class="hl">${ay.toFixed(3)}</span>\n` +
+    `Bx = ${bMod}·cos(${bAngD}°) = <span class="hl">${bx.toFixed(3)}</span> &nbsp;&nbsp; By = ${bMod}·sen(${bAngD}°) = <span class="hl">${by.toFixed(3)}</span>\n` +
+    `Rx = ${ax.toFixed(3)} + ${bx.toFixed(3)} = <span class="hl">${rx.toFixed(3)}</span>\n` +
+    `Ry = ${ay.toFixed(3)} + ${by.toFixed(3)} = <span class="hl">${ry.toFixed(3)}</span>\n` +
+    `|R| = √(${rx.toFixed(2)}² + ${ry.toFixed(2)}²) = <span class="hla">${rMod.toFixed(3)}</span> &nbsp;&nbsp; θR = <span class="hla">${rAng.toFixed(1)}°</span>`;
+
+  const cx = 80, cy = 140;
+  const maxVal = Math.max(Math.abs(ax)+Math.abs(bx), Math.abs(ay)+Math.abs(by), aMod, bMod, rMod, 1);
+  const s = Math.min((W - cx - 20) / maxVal, (180) / maxVal) * 0.72;
+
+  ctx.clearRect(0, 0, W, 220);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1;
+  for (let i = -5; i <= 15; i++) {
+    ctx.beginPath(); ctx.moveTo(cx + i*s*2, 0); ctx.lineTo(cx + i*s*2, 220); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, cy + i*s*2); ctx.lineTo(W, cy + i*s*2); ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, 220); ctx.stroke();
+
+  // vector A from origin
+  drawArrow(ctx, cx, cy, cx + ax*s, cy - ay*s, '#EF9F27', 2.5, 'A');
+  // vector B from tip of A (cola a punta)
+  const tipAx = cx + ax*s, tipAy = cy - ay*s;
+  drawArrow(ctx, tipAx, tipAy, tipAx + bx*s, tipAy - by*s, '#5DCAA5', 2.5, 'B');
+  // resultante R from origin
+  drawArrow(ctx, cx, cy, cx + rx*s, cy - ry*s, '#ffffff', 2, 'R');
+}
+
+['sAMod','sAAng','sBMod','sBAng'].forEach(id => {
+  document.getElementById(id).addEventListener('input', drawSumaCanvas);
+});
+setTimeout(drawSumaCanvas, 100);
+
+/* ════════════════ PRODUCTO PUNTO ════════════════ */
+function calcPunto() {
+  const ax = parseFloat(document.getElementById('pAx').value) || 0;
+  const ay = parseFloat(document.getElementById('pAy').value) || 0;
+  const bx = parseFloat(document.getElementById('pBx').value) || 0;
+  const by = parseFloat(document.getElementById('pBy').value) || 0;
+  const dot = ax*bx + ay*by;
+  const modA = Math.sqrt(ax*ax + ay*ay);
+  const modB = Math.sqrt(bx*bx + by*by);
+  const cosT = (modA > 0 && modB > 0) ? dot / (modA * modB) : null;
+  const angT = cosT !== null ? Math.acos(Math.max(-1, Math.min(1, cosT))) * 180 / Math.PI : null;
+  document.getElementById('ppStep').textContent = `(${ax})(${bx}) + (${ay})(${by}) = ${ax*bx} + ${ay*by}`;
+  document.getElementById('ppVal').textContent = dot.toFixed(4);
+  document.getElementById('ppModA').textContent = modA.toFixed(3);
+  document.getElementById('ppModB').textContent = modB.toFixed(3);
+  document.getElementById('ppCosT').textContent = cosT !== null ? cosT.toFixed(4) : '—';
+  document.getElementById('ppAngle').textContent = angT !== null ? angT.toFixed(2) + '°' : '—';
+}
+['pAx','pAy','pBx','pBy'].forEach(id => document.getElementById(id).addEventListener('input', calcPunto));
+calcPunto();
+</script>
+</body>
+</html>

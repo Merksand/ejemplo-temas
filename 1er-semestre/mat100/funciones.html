@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funciones — MAT100</title>
+<link rel="stylesheet" href="../../assets/shared.css">
+<style>
+  body { padding-bottom: 5rem; }
+
+  /* ── HERO ── */
+  .hero { padding: 2.5rem 0 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--purple); text-transform: uppercase; margin-bottom: 10px; }
+  h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 10px; }
+  h1 span { color: var(--purple); }
+  .subtitle { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--dim);
+    padding-bottom: 8px; border-bottom: 1px solid var(--border); margin-bottom: 1rem;
+  }
+
+  /* ── INFO BOXES ── */
+  .info-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--purple); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 1rem; }
+  .info-title { font-size: 13px; font-weight: 700; color: var(--purple); margin-bottom: 8px; font-family: var(--mono); }
+  .info-body { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.9; }
+  .info-body code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
+  .info-body strong { color: var(--text); }
+
+  /* ── TABS NAV ── */
+  .tabs {
+    display: flex; gap: 4px; flex-wrap: wrap;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 5px; margin-bottom: 1.5rem;
+  }
+  .tab-btn {
+    font-family: var(--mono); font-size: 12px; padding: 7px 16px;
+    border-radius: var(--radius-sm); border: none; background: transparent;
+    color: var(--muted); cursor: pointer; transition: all .18s; white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); background: var(--bg3); }
+  .tab-btn.active { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(127,119,221,0.3); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── DEFINICION ── */
+  .def-diagram {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px; margin-bottom: 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .def-set {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .set-label {
+    font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--dim);
+  }
+  .set-bubble {
+    border: 2px dashed; border-radius: 50%; width: 110px; height: 110px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; position: relative;
+  }
+  .set-bubble.domain { border-color: rgba(55,138,221,0.5); background: rgba(55,138,221,0.05); }
+  .set-bubble.range  { border-color: rgba(93,202,165,0.5); background: rgba(93,202,165,0.05); }
+  .set-elem {
+    font-family: var(--mono); font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all .2s; padding: 2px 7px;
+    border-radius: 6px;
+  }
+  .set-elem.dom-el { color: var(--blue); }
+  .set-elem.ran-el { color: var(--teal-l); }
+  .set-elem.active-el { transform: scale(1.15); }
+  .dom-el.active-el { background: var(--blue-bg); }
+  .ran-el.active-el { background: var(--teal-bg2); }
+
+  .def-arrow-area { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .def-f-label {
+    font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--purple);
+    background: var(--purple-bg); border: 1px solid rgba(127,119,221,0.3);
+    border-radius: 8px; padding: 6px 16px;
+  }
+  .def-arrow { font-size: 28px; color: var(--dim); }
+  .pair-display {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    min-height: 20px; text-align: center; transition: color .2s;
+  }
+  .pair-display.has-pair { color: var(--teal-l); }
+
+  /* ── TYPES GRID ── */
+  .types-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px; margin-bottom: 1.5rem;
+  }
+  .type-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    cursor: pointer; transition: all .2s;
+  }
+  .type-card:hover { border-color: var(--border-h); background: var(--bg3); }
+  .type-card.active { border-color: rgba(127,119,221,0.5); background: var(--purple-bg); }
+
+  .type-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .type-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .type-formula-badge {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--purple); background: rgba(127,119,221,0.15);
+    border: 1px solid rgba(127,119,221,0.25); border-radius: 6px; padding: 2px 8px;
+  }
+  .type-card.active .type-formula-badge { background: rgba(127,119,221,0.3); }
+
+  .type-mini-desc { font-family: var(--mono); font-size: 11px; color: var(--dim); line-height: 1.5; }
+  .type-card.active .type-mini-desc { color: var(--muted); }
+
+  /* ── TYPE DETAIL PANEL ── */
+  .type-detail {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-left: 3px solid var(--purple); border-radius: var(--radius);
+    padding: 20px 22px; margin-bottom: 1.5rem;
+    display: none;
+  }
+  .type-detail.visible { display: block; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .detail-grid { grid-template-columns: 1fr; } }
+
+  .detail-item-label {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--dim); margin-bottom: 5px;
+  }
+  .detail-item-val {
+    font-family: var(--mono); font-size: 13px; color: var(--text); line-height: 1.6;
+  }
+  .detail-item-val code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
+  .detail-item-val .purple { color: var(--purple); }
+
+  .graph-mini {
+    width: 100%; height: 120px;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--bg); margin-top: 8px;
+  }
+
+  /* ── DOM/RAN TABLE ── */
+  .dr-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px; margin-bottom: 1.5rem;
+  }
+  .dr-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px;
+    transition: border-color .2s, background .2s;
+  }
+  .dr-card:hover { border-color: var(--border-h); background: var(--bg3); }
+
+  .dr-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .dr-formula {
+    font-family: var(--mono); font-size: 12px; color: var(--purple);
+    background: var(--purple-bg); border: 1px solid rgba(127,119,221,0.2);
+    border-radius: 6px; padding: 5px 10px; margin-bottom: 10px;
+  }
+
+  .dr-row { display: flex; gap: 8px; margin-bottom: 6px; align-items: flex-start; }
+  .dr-badge {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .dr-badge.dom { color: var(--blue); background: var(--blue-bg); border: 1px solid rgba(55,138,221,0.25); }
+  .dr-badge.ran { color: var(--teal-l); background: var(--teal-bg); border: 1px solid rgba(29,158,117,0.25); }
+  .dr-val { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .dr-val code { color: var(--amber); background: var(--amber-bg); padding: 1px 5px; border-radius: 4px; }
+
+  .dr-trick {
+    font-family: var(--mono); font-size: 11px; color: var(--dim);
+    border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px;
+    line-height: 1.6;
+  }
+  .dr-trick strong { color: var(--amber); }
+
+  /* ── OPERACIONES ── */
+  .ops-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 12px; margin-bottom: 1.5rem;
+  }
+  .op-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px;
+    transition: border-color .2s, background .2s;
+  }
+  .op-card:hover { border-color: var(--border-h); background: var(--bg3); }
+
+  .op-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .op-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .op-symbol {
+    font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--amber);
+  }
+  .op-def {
+    font-family: var(--mono); font-size: 12px; color: var(--purple);
+    background: var(--purple-bg); border: 1px solid rgba(127,119,221,0.2);
+    border-radius: 6px; padding: 6px 10px; margin-bottom: 10px;
+  }
+  .op-example { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.8; }
+  .op-example code { color: var(--teal-l); background: var(--teal-bg); padding: 1px 6px; border-radius: 4px; }
+  .op-example strong { color: var(--text); }
+
+  /* ── COMPOSICION INTERACTIVA ── */
+  .comp-demo {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 22px; margin-top: 12px;
+  }
+  .comp-title { font-family: var(--mono); font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
+  .comp-flow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .comp-box {
+    background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 8px 14px; font-family: var(--mono); font-size: 13px;
+    text-align: center; min-width: 80px;
+  }
+  .comp-box.input-box { border-color: rgba(55,138,221,0.4); color: var(--blue); }
+  .comp-box.g-box { border-color: rgba(127,119,221,0.4); color: var(--purple); }
+  .comp-box.mid-box { border-color: rgba(239,159,39,0.4); color: var(--amber); }
+  .comp-box.f-box { border-color: rgba(29,158,117,0.4); color: var(--teal-l); }
+  .comp-box.out-box { border-color: rgba(93,202,165,0.5); color: var(--teal-l); background: var(--teal-bg); font-weight: 700; font-size: 15px; }
+  .comp-arrow { color: var(--dim); font-size: 18px; }
+
+  .comp-input-row { display: flex; align-items: center; gap: 10px; }
+  .comp-label { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .comp-input {
+    font-family: var(--mono); font-size: 14px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    color: var(--text); padding: 6px 12px; width: 80px;
+    outline: none; transition: border-color .18s; text-align: center;
+  }
+  .comp-input:focus { border-color: rgba(127,119,221,0.5); }
+  .comp-steps { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 2; margin-top: 12px; }
+  .comp-steps span { color: var(--teal-l); }
+  .comp-steps .step-result { color: var(--amber); font-weight: 700; }
+
+  /* ── CLASIFICACION ── */
+  .class-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px; margin-bottom: 1.5rem;
+  }
+  .class-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px; cursor: pointer;
+    transition: all .2s;
+  }
+  .class-card:hover { border-color: var(--border-h); background: var(--bg3); }
+  .class-card.active { border-color: rgba(93,202,165,0.45); background: var(--teal-bg); }
+
+  .class-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .class-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .class-tag {
+    font-family: var(--mono); font-size: 10px; padding: 2px 8px;
+    border-radius: 20px; font-weight: 700;
+  }
+  .class-desc { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .class-cond { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 8px; line-height: 1.6; }
+  .class-cond code { color: var(--amber); background: var(--amber-bg); padding: 1px 5px; border-radius: 4px; }
+  .class-card.active .class-cond { color: var(--muted); }
+
+  /* ── CANVAS GRAPH ── */
+  canvas.graph-mini { display: block; }
+
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">apuntes<span>/</span>visuales</div>
+  <a href="../../index.html" class="nav-back">← volver al dashboard</a>
+</nav>
+
+<div class="container">
+
+  <div class="hero">
+    <p class="eyebrow">MAT100 — Cálculo I</p>
+    <h1>Fun<span>ciones</span></h1>
+    <p class="subtitle">Explora definición, tipos, dominio/rango, operaciones y clasificación</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="definicion">Definición</button>
+    <button class="tab-btn" data-tab="tipos">Tipos</button>
+    <button class="tab-btn" data-tab="domran">Dominio y Rango</button>
+    <button class="tab-btn" data-tab="operaciones">Operaciones</button>
+    <button class="tab-btn" data-tab="clasificacion">Clasificación</button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: DEFINICIÓN
+  ══════════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-definicion">
+
+    <div class="info-box" style="margin-bottom:1.5rem">
+      <div class="info-title">¿Qué es una función?</div>
+      <div class="info-body">
+        Una función <code>f: A → B</code> es una <strong>regla</strong> que a cada elemento del conjunto A (dominio) le asigna <strong>exactamente un</strong> elemento del conjunto B (rango).<br><br>
+        La clave: un valor de entrada → un único valor de salida. Si un x produce dos y distintos, <strong>no es función</strong>.
+      </div>
+    </div>
+
+    <p class="section-label">Diagrama interactivo — haz clic en un elemento de A</p>
+
+    <div class="def-diagram">
+      <div class="def-set">
+        <span class="set-label">Dominio A</span>
+        <div class="set-bubble domain" id="domainBubble">
+          <span class="set-elem dom-el" data-x="1" data-y="3">1</span>
+          <span class="set-elem dom-el" data-x="2" data-y="5">2</span>
+          <span class="set-elem dom-el" data-x="3" data-y="7">3</span>
+        </div>
+      </div>
+
+      <div class="def-arrow-area">
+        <div class="def-f-label">f(x) = 2x + 1</div>
+        <div class="def-arrow">→</div>
+        <div class="pair-display" id="pairDisplay">clic en un número</div>
+      </div>
+
+      <div class="def-set">
+        <span class="set-label">Rango B</span>
+        <div class="set-bubble range" id="rangeBubble">
+          <span class="set-elem ran-el" data-y="3">3</span>
+          <span class="set-elem ran-el" data-y="5">5</span>
+          <span class="set-elem ran-el" data-y="7">7</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--amber); margin-bottom:1.5rem">
+      <div class="info-title" style="color:var(--amber)">Notación importante</div>
+      <div class="info-body">
+        <code>f(x)</code> se lee "f de x" y representa el <strong>valor de salida</strong> cuando la entrada es x.<br>
+        <code>f(3) = 7</code> → al darle 3 a la función, devuelve 7.<br>
+        <code>y = f(x)</code> → y y f(x) son lo mismo, solo formas distintas de escribirlo.
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--red)">
+      <div class="info-title" style="color:var(--red)">¿Cuándo NO es función?</div>
+      <div class="info-body">
+        Si a un mismo x le corresponden <strong>dos o más</strong> valores de y, no es función.<br>
+        Prueba visual: la <strong>prueba de la recta vertical</strong> — si una línea vertical toca la gráfica en más de un punto, no es función.<br>
+        Ejemplo: <code>x² + y² = r²</code> (circunferencia) <strong>no es función</strong>.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: TIPOS
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-tipos">
+
+    <p class="section-label">Tipos de funciones — haz clic para ver detalles</p>
+
+    <div class="types-grid" id="typesGrid"></div>
+
+    <div class="type-detail" id="typeDetail">
+      <div class="detail-grid" id="detailContent"></div>
+      <canvas class="graph-mini" id="typeCanvas" height="140"></canvas>
+    </div>
+
+    <div class="info-box">
+      <div class="info-title">Tip para identificar el tipo</div>
+      <div class="info-body">
+        Mira dónde está la <strong>variable x</strong>:<br>
+        • En la base con exponente constante → <strong>polinómica</strong> (lineal, cuadrática, etc.)<br>
+        • En el exponente → <strong>exponencial</strong><br>
+        • Dentro de un log → <strong>logarítmica</strong><br>
+        • Dentro de sin/cos/tan → <strong>trigonométrica</strong><br>
+        • Dentro de una raíz → <strong>radical / irracional</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: DOMINIO Y RANGO
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-domran">
+
+    <div class="info-box" style="margin-bottom:1.5rem">
+      <div class="info-title">Dominio vs Rango</div>
+      <div class="info-body">
+        <strong>Dominio</strong> → todos los valores de x que puedo meter a la función (entradas válidas).<br>
+        <strong>Rango</strong> → todos los valores de y que puede producir la función (salidas posibles).<br><br>
+        Para hallar el dominio: buscás qué valores de x <strong>rompen</strong> la función (dividir entre 0, raíz de negativo, log de negativo) y los excluís.
+      </div>
+    </div>
+
+    <p class="section-label">Ejemplos con restricciones comunes</p>
+
+    <div class="dr-grid" id="drGrid"></div>
+
+    <div class="info-box" style="border-left-color:var(--amber)">
+      <div class="info-title" style="color:var(--amber)">Restricciones a memorizar</div>
+      <div class="info-body">
+        <code>1/f(x)</code> → f(x) ≠ 0 (no se puede dividir entre cero)<br>
+        <code>√f(x)</code> → f(x) ≥ 0 (no existe raíz de negativos en ℝ)<br>
+        <code>log f(x)</code> → f(x) &gt; 0 (log solo existe para positivos)<br>
+        <code>tan(x)</code> → x ≠ π/2 + nπ (donde cos(x) = 0)
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: OPERACIONES
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-operaciones">
+
+    <div class="info-box" style="margin-bottom:1.5rem">
+      <div class="info-title">Operaciones entre funciones</div>
+      <div class="info-body">
+        Si tenemos <strong>f(x) = 2x + 1</strong> y <strong>g(x) = x² − 3</strong>, podemos combinarlas.<br>
+        El dominio de la operación es la <strong>intersección</strong> de los dominios de f y g.
+      </div>
+    </div>
+
+    <p class="section-label">Suma, resta, multiplicación y división</p>
+
+    <div class="ops-grid" id="opsGrid"></div>
+
+    <p class="section-label" style="margin-top:2rem">Composición de funciones</p>
+
+    <div class="info-box" style="margin-bottom:1rem">
+      <div class="info-title">¿Qué es la composición?</div>
+      <div class="info-body">
+        <code>(f∘g)(x) = f(g(x))</code> → primero aplico g, luego le aplico f al resultado.<br>
+        ¡El orden importa! <code>f∘g ≠ g∘f</code> en general.
+      </div>
+    </div>
+
+    <div class="comp-demo">
+      <div class="comp-title">Demo interactivo — f(x) = 2x + 1, g(x) = x²</div>
+      <div class="comp-flow" id="compFlow">
+        <div class="comp-box input-box" id="cboxX">x = ?</div>
+        <div class="comp-arrow">→</div>
+        <div class="comp-box g-box">g(x) = x²</div>
+        <div class="comp-arrow">→</div>
+        <div class="comp-box mid-box" id="cboxMid">g(x) = ?</div>
+        <div class="comp-arrow">→</div>
+        <div class="comp-box f-box">f(u) = 2u+1</div>
+        <div class="comp-arrow">→</div>
+        <div class="comp-box out-box" id="cboxOut">f∘g = ?</div>
+      </div>
+      <div class="comp-input-row">
+        <span class="comp-label">Ingresá x:</span>
+        <input class="comp-input" type="number" id="compInput" value="3">
+      </div>
+      <div class="comp-steps" id="compSteps"></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB: CLASIFICACIÓN
+  ══════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-clasificacion">
+
+    <p class="section-label">Clasificación — haz clic para expandir</p>
+
+    <div class="class-grid" id="classGrid"></div>
+
+    <div class="info-box" style="margin-top:0.5rem">
+      <div class="info-title">Resumen rápido</div>
+      <div class="info-body">
+        <strong>Par</strong> → simétrica respecto al eje Y → <code>f(-x) = f(x)</code><br>
+        <strong>Impar</strong> → simétrica respecto al origen → <code>f(-x) = -f(x)</code><br>
+        <strong>Inyectiva</strong> → cada salida viene de un solo x → pasa prueba de línea horizontal<br>
+        <strong>Sobreyectiva</strong> → el rango es TODO el codominio<br>
+        <strong>Biyectiva</strong> → inyectiva + sobreyectiva → tiene inversa
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--amber); margin-top:1rem">
+      <div class="info-title" style="color:var(--amber)">Función inversa</div>
+      <div class="info-body">
+        Solo existe si la función es <strong>biyectiva</strong>.<br>
+        Se denota <code>f⁻¹(x)</code> y "deshace" lo que hace f.<br>
+        Para encontrarla: despejás x en y = f(x), luego intercambiás x e y.<br>
+        <code>f(f⁻¹(x)) = x</code> y <code>f⁻¹(f(x)) = x</code>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════ DATA ═══════════════════════════════════ */
+
+const tiposFunciones = [
+  {
+    name: 'Lineal', formula: 'f(x) = mx + b',
+    mini: 'Recta. m = pendiente, b = punto donde corta el eje Y.',
+    domain: 'ℝ — todos los reales', range: 'ℝ — todos los reales',
+    example: 'f(x) = 3x − 2',
+    eval: 'f(4) = 3(4) − 2 = 10',
+    color: '#5DCAA5',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle = '#5DCAA5'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.85); ctx.lineTo(w, h * 0.15);
+      ctx.stroke();
+    }
+  },
+  {
+    name: 'Cuadrática', formula: 'f(x) = ax² + bx + c',
+    mini: 'Parábola. a > 0 abre hacia arriba, a < 0 hacia abajo.',
+    domain: 'ℝ — todos los reales', range: 'a>0: [vértice, ∞) · a<0: (−∞, vértice]',
+    example: 'f(x) = x² − 4',
+    eval: 'f(3) = 9 − 4 = 5',
+    color: '#7F77DD',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle = '#7F77DD'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let px = 0; px <= w; px++) {
+        const x = (px / w) * 6 - 3;
+        const y = x * x / 4;
+        const py = h * 0.9 - y * (h * 0.6);
+        px === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+  },
+  {
+    name: 'Cúbica', formula: 'f(x) = ax³ + ...',
+    mini: 'Curva en S. Pasa por el origen si es f(x) = x³.',
+    domain: 'ℝ — todos los reales', range: 'ℝ — todos los reales',
+    example: 'f(x) = x³',
+    eval: 'f(2) = 8',
+    color: '#EF9F27',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle = '#EF9F27'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let px = 0; px <= w; px++) {
+        const x = (px / w) * 4 - 2;
+        const y = x * x * x / 6;
+        const py = h / 2 - y * (h * 0.4);
+        px === 0 ? ctx.moveTo(px, Math.max(0, Math.min(h, py))) : ctx.lineTo(px, Math.max(0, Math.min(h, py)));
+      }
+      ctx.stroke();
+    }
+  },
+  {
+    name: 'Exponencial', formula: 'f(x) = aˣ, a > 0, a ≠ 1',
+    mini: 'Crece o decrece muy rápido. Base e ≈ 2.718 es la más usada.',
+    domain: 'ℝ — todos los reales', range: '(0, +∞) — siempre positiva',
+    example: 'f(x) = 2ˣ',
+    eval: 'f(3) = 8 · f(0) = 1',
+    color: '#E24B4A',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle = '#E24B4A'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let px = 0; px <= w; px++) {
+        const x = (px / w) * 6 - 4;
+        const y = Math.pow(2, x);
+        const py = h * 0.9 - y * (h * 0.15);
+        px === 0 ? ctx.moveTo(px, Math.max(2, Math.min(h - 2, py))) : ctx.lineTo(px, Math.max(2, Math.min(h - 2, py)));
+      }
+      ctx.stroke();
+    }
+  },
+  {
+    name: 'Logarítmica', formula: 'f(x) = logₐ(x)',
+    mini: 'Inversa de la exponencial. Crece muy lentamente.',
+    domain: '(0, +∞) — solo positivos', range: 'ℝ — todos los reales',
+    example: 'f(x) = log₂(x)',
+    eval: 'f(8) = 3 · f(1) = 0',
+    color: '#378ADD',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle = '#378ADD'; ctx.lineWidth = 2;
+      ctx.beginPath(); let first = true;
+      for (let px = 5; px <= w; px++) {
+        const x = (px / w) * 8;
+        if (x <= 0) continue;
+        const y = Math.log2(x);
+        const py = h / 2 - y * (h * 0.18);
+        first ? (ctx.moveTo(px, py), first = false) : ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+  },
+  {
+    name: 'Valor absoluto', formula: 'f(x) = |x|',
+    mini: 'Siempre devuelve un valor positivo. Forma de V.',
+    domain: 'ℝ — todos los reales', range: '[0, +∞) — solo ≥ 0',
+    example: 'f(x) = |x − 2|',
+    eval: 'f(−3) = 3 · f(5) = 3',
+    color: '#5DCAA5',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle = '#5DCAA5'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.9);
+      ctx.lineTo(w / 2, h * 0.1);
+      ctx.lineTo(w, h * 0.9);
+      ctx.stroke();
+    }
+  },
+  {
+    name: 'Racional', formula: 'f(x) = P(x) / Q(x)',
+    mini: 'División de polinomios. Tiene asíntotas donde Q(x) = 0.',
+    domain: 'ℝ menos zeros de Q(x)', range: 'Depende de la función',
+    example: 'f(x) = 1/x',
+    eval: 'f(2) = 0.5 · f(−1) = −1',
+    color: '#EF9F27',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle = '#EF9F27'; ctx.lineWidth = 2;
+      const cx = w / 2;
+      ctx.beginPath();
+      for (let px = 5; px < cx - 2; px++) {
+        const x = (px / w) * 6 - 3;
+        const y = 1 / x;
+        const py = h / 2 - y * h * 0.3;
+        px === 5 ? ctx.moveTo(px, Math.max(2, Math.min(h - 2, py))) : ctx.lineTo(px, Math.max(2, Math.min(h - 2, py)));
+      }
+      ctx.stroke();
+      ctx.beginPath();
+      for (let px = cx + 2; px < w - 2; px++) {
+        const x = (px / w) * 6 - 3;
+        const y = 1 / x;
+        const py = h / 2 - y * h * 0.3;
+        px === cx + 2 ? ctx.moveTo(px, Math.max(2, Math.min(h - 2, py))) : ctx.lineTo(px, Math.max(2, Math.min(h - 2, py)));
+      }
+      ctx.stroke();
+      ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  },
+  {
+    name: 'Radical', formula: 'f(x) = ⁿ√x',
+    mini: '√x: solo para x ≥ 0. ∛x: definida en todos los reales.',
+    domain: '√x: [0, ∞) · ∛x: ℝ', range: '√x: [0, ∞) · ∛x: ℝ',
+    example: 'f(x) = √(x − 1)',
+    eval: 'f(5) = 2 · f(1) = 0',
+    color: '#7F77DD',
+    draw: (ctx, w, h) => {
+      ctx.strokeStyle = '#7F77DD'; ctx.lineWidth = 2;
+      ctx.beginPath(); let first = true;
+      for (let px = 0; px <= w; px++) {
+        const x = (px / w) * 8;
+        const y = Math.sqrt(x);
+        const py = h * 0.9 - y * (h * 0.22);
+        first ? (ctx.moveTo(px, py), first = false) : ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+  },
+];
+
+const domranData = [
+  {
+    name: 'f(x) = 1 / (x − 3)',
+    formula: 'f(x) = 1/(x − 3)',
+    dom: 'ℝ − {3}    →    x ≠ 3',
+    ran: 'ℝ − {0}    →    y ≠ 0',
+    trick: 'Restricción: denominador ≠ 0 → x − 3 ≠ 0 → x ≠ 3'
+  },
+  {
+    name: 'f(x) = √(2x − 6)',
+    formula: 'f(x) = √(2x − 6)',
+    dom: 'x ≥ 3    →    [3, +∞)',
+    ran: 'y ≥ 0    →    [0, +∞)',
+    trick: 'Restricción: radicando ≥ 0 → 2x − 6 ≥ 0 → x ≥ 3'
+  },
+  {
+    name: 'f(x) = log(x + 5)',
+    formula: 'f(x) = log(x + 5)',
+    dom: 'x > −5    →    (−5, +∞)',
+    ran: 'ℝ — todos los reales',
+    trick: 'Restricción: argumento del log > 0 → x + 5 > 0 → x > −5'
+  },
+  {
+    name: 'f(x) = x² + 2',
+    formula: 'f(x) = x² + 2',
+    dom: 'ℝ — todos los reales',
+    ran: 'y ≥ 2    →    [2, +∞)',
+    trick: 'x² ≥ 0 siempre, entonces x² + 2 ≥ 2. El mínimo es 2 (en x = 0).'
+  },
+  {
+    name: 'f(x) = 1 / √(x² − 9)',
+    formula: 'f(x) = 1/√(x² − 9)',
+    dom: '|x| > 3    →    (−∞,−3) ∪ (3,+∞)',
+    ran: 'y > 0    →    (0, +∞)',
+    trick: 'Doble restricción: radicando > 0 (no puede ser 0 porque está en denominador) → x² − 9 > 0 → x² > 9'
+  },
+  {
+    name: 'f(x) = 2ˣ',
+    formula: 'f(x) = 2ˣ',
+    dom: 'ℝ — todos los reales',
+    ran: 'y > 0    →    (0, +∞)',
+    trick: 'La exponencial siempre es positiva, nunca llega a 0 ni a negativos.'
+  },
+];
+
+const opsData = [
+  {
+    name: 'Suma', symbol: '+',
+    def: '(f + g)(x) = f(x) + g(x)',
+    example: 'f(x) = 2x+1  ,  g(x) = x²−3\n(f+g)(x) = x² + 2x − 2',
+    eval: '(f+g)(2) = 4 + 4 − 2 = 6'
+  },
+  {
+    name: 'Resta', symbol: '−',
+    def: '(f − g)(x) = f(x) − g(x)',
+    example: 'f(x) = 2x+1  ,  g(x) = x²−3\n(f−g)(x) = −x² + 2x + 4',
+    eval: '(f−g)(2) = −4 + 4 + 4 = 4'
+  },
+  {
+    name: 'Multiplicación', symbol: '×',
+    def: '(f · g)(x) = f(x) · g(x)',
+    example: 'f(x) = 2x+1  ,  g(x) = x²−3\n(f·g)(x) = (2x+1)(x²−3)',
+    eval: '(f·g)(2) = 5 · 1 = 5'
+  },
+  {
+    name: 'División', symbol: '÷',
+    def: '(f / g)(x) = f(x) / g(x),  g(x) ≠ 0',
+    example: 'f(x) = 2x+1  ,  g(x) = x²−3\n(f/g)(x) = (2x+1) / (x²−3)',
+    eval: '(f/g)(2) = 5 / 1 = 5\n⚠ excluir x = ±√3'
+  },
+];
+
+const clasifData = [
+  {
+    name: 'Función par', tag: 'Par', tagColor: 'var(--blue)', tagBg: 'var(--blue-bg)', tagBorder: 'rgba(55,138,221,0.3)',
+    desc: 'Simétrica respecto al eje Y. Si plegás la gráfica sobre el eje Y, los dos lados coinciden.',
+    cond: 'Condición: f(−x) = f(x) para todo x\nEjemplo: f(x) = x²   →   f(−3) = 9 = f(3) ✔\nEjemplo: f(x) = cos(x)   →   también es par'
+  },
+  {
+    name: 'Función impar', tag: 'Impar', tagColor: 'var(--purple)', tagBg: 'var(--purple-bg)', tagBorder: 'rgba(127,119,221,0.3)',
+    desc: 'Simétrica respecto al origen (0,0). Si rotás 180° la gráfica, queda igual.',
+    cond: 'Condición: f(−x) = −f(x) para todo x\nEjemplo: f(x) = x³   →   f(−2) = −8 = −f(2) ✔\nEjemplo: f(x) = sin(x)   →   también es impar'
+  },
+  {
+    name: 'Función inyectiva', tag: 'Inyectiva', tagColor: 'var(--teal-l)', tagBg: 'var(--teal-bg)', tagBorder: 'rgba(29,158,117,0.3)',
+    desc: 'A cada valor de y le corresponde como máximo un x. Nunca repite salidas.',
+    cond: 'Condición: si f(a) = f(b)  →  a = b\nPrueba visual: la recta horizontal toca la gráfica en 1 solo punto\nEjemplo: f(x) = 3x + 1 ✔   f(x) = x² ✘ (dos x → mismo y)'
+  },
+  {
+    name: 'Función sobreyectiva', tag: 'Sobreyectiva', tagColor: 'var(--amber)', tagBg: 'var(--amber-bg)', tagBorder: 'rgba(239,159,39,0.3)',
+    desc: 'El rango de f es exactamente igual al codominio — no hay valores "sin alcanzar".',
+    cond: 'Para todo y del codominio, existe al menos un x tal que f(x) = y\nDepende del codominio declarado\nEjemplo: f: ℝ→ℝ  f(x) = 2x+1 ✔'
+  },
+  {
+    name: 'Función biyectiva', tag: 'Biyectiva', tagColor: 'var(--teal-l)', tagBg: 'var(--teal-bg2)', tagBorder: 'rgba(29,158,117,0.45)',
+    desc: 'Es inyectiva Y sobreyectiva al mismo tiempo. Perfecta correspondencia 1 a 1 entre dominio y codominio.',
+    cond: 'Condición: inyectiva + sobreyectiva\n→ Tiene función inversa f⁻¹\nEjemplo: f: ℝ→ℝ  f(x) = 2x+1 es biyectiva'
+  },
+  {
+    name: 'Ni par ni impar', tag: 'Ninguna', tagColor: 'var(--dim)', tagBg: 'rgba(255,255,255,0.04)', tagBorder: 'var(--border)',
+    desc: 'La mayoría de las funciones no son ni pares ni impares. Por ejemplo las exponenciales o las lineales con b ≠ 0.',
+    cond: 'f(−x) ≠ f(x)  Y  f(−x) ≠ −f(x)\nEjemplo: f(x) = x + 1\nf(−1) = 0  ≠  f(1) = 2  →  no es par\nf(−1) = 0  ≠  −f(1) = −2  →  no es impar'
+  },
+];
+
+/* ═══════════════════════════════════ TABS ═══════════════════════════════════ */
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ═══════════════════════════════════ DEFINICION ═══════════════════════════════════ */
+
+document.querySelectorAll('.dom-el').forEach(el => {
+  el.addEventListener('click', () => {
+    const x = el.dataset.x, y = el.dataset.y;
+    document.querySelectorAll('.dom-el').forEach(e => e.classList.remove('active-el'));
+    document.querySelectorAll('.ran-el').forEach(e => e.classList.remove('active-el'));
+    el.classList.add('active-el');
+    document.querySelectorAll(`.ran-el[data-y="${y}"]`).forEach(e => e.classList.add('active-el'));
+    const pd = document.getElementById('pairDisplay');
+    pd.textContent = `f(${x}) = 2(${x}) + 1 = ${y}`;
+    pd.classList.add('has-pair');
+  });
+});
+
+/* ═══════════════════════════════════ TIPOS ═══════════════════════════════════ */
+
+let activeType = null;
+
+function drawGraph(tipo) {
+  const canvas = document.getElementById('typeCanvas');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.offsetWidth || 800;
+  canvas.width = w;
+  canvas.height = 140;
+  ctx.clearRect(0, 0, w, 140);
+
+  // axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, 70); ctx.lineTo(w, 70); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, 140); ctx.stroke();
+
+  tipo.draw(ctx, w, 140);
+}
+
+function renderTypes() {
+  const grid = document.getElementById('typesGrid');
+  grid.innerHTML = '';
+  tiposFunciones.forEach((t, i) => {
+    const card = document.createElement('div');
+    card.className = 'type-card' + (activeType === i ? ' active' : '');
+    card.innerHTML = `
+      <div class="type-head">
+        <div class="type-name">${t.name}</div>
+        <div class="type-formula-badge">${t.formula.split('=')[1]?.trim() || t.formula}</div>
+      </div>
+      <div class="type-mini-desc">${t.mini}</div>
+    `;
+    card.addEventListener('click', () => {
+      activeType = activeType === i ? null : i;
+      renderTypes();
+      const detail = document.getElementById('typeDetail');
+      if (activeType !== null) {
+        detail.classList.add('visible');
+        document.getElementById('detailContent').innerHTML = `
+          <div>
+            <div class="detail-item-label">Fórmula general</div>
+            <div class="detail-item-val"><span class="purple">${t.formula}</span></div>
+            <div class="detail-item-label" style="margin-top:12px">Ejemplo</div>
+            <div class="detail-item-val"><code>${t.example}</code></div>
+            <div class="detail-item-label" style="margin-top:12px">Evaluación</div>
+            <div class="detail-item-val"><code>${t.eval}</code></div>
+          </div>
+          <div>
+            <div class="detail-item-label">Dominio</div>
+            <div class="detail-item-val">${t.domain}</div>
+            <div class="detail-item-label" style="margin-top:12px">Rango</div>
+            <div class="detail-item-val">${t.range}</div>
+          </div>
+          <div>
+            <div class="detail-item-label">Gráfica</div>
+          </div>
+        `;
+        setTimeout(() => drawGraph(tiposFunciones[activeType]), 50);
+      } else {
+        detail.classList.remove('visible');
+      }
+    });
+    grid.appendChild(card);
+  });
+}
+
+renderTypes();
+
+/* ═══════════════════════════════════ DOMINIO/RANGO ═══════════════════════════════════ */
+
+function renderDR() {
+  const grid = document.getElementById('drGrid');
+  grid.innerHTML = '';
+  domranData.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'dr-card';
+    card.innerHTML = `
+      <div class="dr-name">${d.name}</div>
+      <div class="dr-formula">${d.formula}</div>
+      <div class="dr-row">
+        <span class="dr-badge dom">Dom</span>
+        <span class="dr-val">${d.dom}</span>
+      </div>
+      <div class="dr-row">
+        <span class="dr-badge ran">Ran</span>
+        <span class="dr-val">${d.ran}</span>
+      </div>
+      <div class="dr-trick"><strong>💡</strong> ${d.trick}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+renderDR();
+
+/* ═══════════════════════════════════ OPERACIONES ═══════════════════════════════════ */
+
+function renderOps() {
+  const grid = document.getElementById('opsGrid');
+  grid.innerHTML = '';
+  opsData.forEach(op => {
+    const card = document.createElement('div');
+    card.className = 'op-card';
+    const exLines = op.example.split('\n');
+    const evalLines = op.eval.split('\n');
+    card.innerHTML = `
+      <div class="op-head">
+        <div class="op-name">${op.name}</div>
+        <div class="op-symbol">${op.symbol}</div>
+      </div>
+      <div class="op-def">${op.def}</div>
+      <div class="op-example">
+        ${exLines.map(l => `<div>${l}</div>`).join('')}
+        ${evalLines.map(l => `<div><code>${l}</code></div>`).join('')}
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+renderOps();
+
+/* ─── COMPOSICION ─── */
+
+function updateComp() {
+  const xVal = parseFloat(document.getElementById('compInput').value);
+  if (isNaN(xVal)) return;
+  const gx = xVal * xVal;
+  const fog = 2 * gx + 1;
+  document.getElementById('cboxX').textContent = `x = ${xVal}`;
+  document.getElementById('cboxMid').textContent = `g(x) = ${gx}`;
+  document.getElementById('cboxOut').textContent = `f∘g = ${fog}`;
+  document.getElementById('compSteps').innerHTML =
+    `g(${xVal}) = (${xVal})² = <span>${gx}</span>\n` +
+    `f(g(${xVal})) = f(${gx}) = 2·${gx} + 1 = <span class="step-result">${fog}</span>`;
+}
+
+document.getElementById('compInput').addEventListener('input', updateComp);
+updateComp();
+
+/* ═══════════════════════════════════ CLASIFICACION ═══════════════════════════════════ */
+
+function renderClasif() {
+  const grid = document.getElementById('classGrid');
+  grid.innerHTML = '';
+  clasifData.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'class-card';
+    const condLines = c.cond.split('\n');
+    card.innerHTML = `
+      <div class="class-head">
+        <div class="class-name">${c.name}</div>
+        <span class="class-tag" style="color:${c.tagColor};background:${c.tagBg};border:1px solid ${c.tagBorder}">${c.tag}</span>
+      </div>
+      <div class="class-desc">${c.desc}</div>
+      <div class="class-cond">${condLines.map(l => `<div>${l.replace(/f\(-?[\w]+\)/g, m => `<code>${m}</code>`).replace(/(f⁻¹|f∘g|f·g|f\([^)]+\))/g, m => `<code>${m}</code>`)}</div>`).join('')}</div>
+    `;
+    card.addEventListener('click', () => {
+      card.classList.toggle('active');
+    });
+    grid.appendChild(card);
+  });
+}
+
+renderClasif();
+
+</script>
+
+</body>
+</html>

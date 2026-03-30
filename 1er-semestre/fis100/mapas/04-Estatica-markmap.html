@@ -1,0 +1,2645 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Markmap</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        font-family:
+          ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      }
+      #mindmap {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+      }
+      .markmap-dark {
+        background: #27272a;
+        color: white;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18.12/dist/style.css"
+    />
+  </head>
+  <body>
+    <svg id="mindmap"></svg>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markmap-view@0.18.12/dist/browser/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markmap-toolbar@0.18.12/dist/index.js"></script>
+    <script>
+      (() => {
+        setTimeout(() => {
+          const { markmap: S, mm: Q } = window,
+            $ = new S.Toolbar();
+          $.attach(Q);
+          const I = $.render();
+          (I.setAttribute("style", "position:absolute;bottom:20px;right:20px"),
+            document.body.append(I));
+        });
+      })();
+    </script>
+    <script>
+      ((l, U, M, R) => {
+        const N = l();
+        ((window.mm = N.Markmap.create(
+          "svg#mindmap",
+          (U || N.deriveOptions)(R),
+          M,
+        )),
+          window.matchMedia("(prefers-color-scheme: dark)").matches &&
+            document.documentElement.classList.add("markmap-dark"));
+      })(
+        () => window.markmap,
+        null,
+        {
+          content: "&#x1f3d7;&#xfe0f; U3 &#x2014; Est&#xe1;tica",
+          children: [
+            {
+              content: "&#xbf;Qu&#xe9; es la Est&#xe1;tica?",
+              children: [
+                {
+                  content: "Definici&#xf3;n",
+                  children: [
+                    {
+                      content:
+                        "Rama de la mec&#xe1;nica cl&#xe1;sica que estudia los cuerpos en reposo o en equilibrio",
+                      children: [],
+                      payload: { tag: "h4", lines: "5,6" },
+                    },
+                    {
+                      content:
+                        "Analiza las fuerzas que act&#xfa;an sobre un cuerpo sin producir movimiento",
+                      children: [],
+                      payload: { tag: "h4", lines: "6,7" },
+                    },
+                    {
+                      content:
+                        "No importa el tiempo ni la velocidad &#x2192; solo importa el balance de fuerzas y torques",
+                      children: [],
+                      payload: { tag: "h4", lines: "7,8" },
+                    },
+                    {
+                      content:
+                        "Es una caso especial de la din&#xe1;mica donde la aceleraci&#xf3;n es cero (a = 0)",
+                      children: [],
+                      payload: { tag: "h4", lines: "8,9" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "4,5" },
+                },
+                {
+                  content: "&#xbf;Qu&#xe9; estudia la est&#xe1;tica?",
+                  children: [
+                    {
+                      content:
+                        "C&#xf3;mo se distribuyen las fuerzas en estructuras y cuerpos r&#xed;gidos",
+                      children: [],
+                      payload: { tag: "h4", lines: "11,12" },
+                    },
+                    {
+                      content:
+                        "Cu&#xe1;ndo y por qu&#xe9; un sistema permanece en equilibrio",
+                      children: [],
+                      payload: { tag: "h4", lines: "12,13" },
+                    },
+                    {
+                      content:
+                        "Las fuerzas internas y externas que act&#xfa;an sobre cuerpos en reposo",
+                      children: [],
+                      payload: { tag: "h4", lines: "13,14" },
+                    },
+                    {
+                      content:
+                        "El efecto rotacional de las fuerzas (torques) en sistemas est&#xe1;ticos",
+                      children: [],
+                      payload: { tag: "h4", lines: "14,15" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "10,11" },
+                },
+                {
+                  content: "Importancia en ingenier&#xed;a y rob&#xf3;tica",
+                  children: [
+                    {
+                      content:
+                        "Dise&#xf1;o de estructuras que soporten cargas sin colapsar (puentes, edificios, chasis de robots)",
+                      children: [],
+                      payload: { tag: "h4", lines: "17,18" },
+                    },
+                    {
+                      content:
+                        "An&#xe1;lisis de brazos rob&#xf3;ticos detenidos bajo carga",
+                      children: [],
+                      payload: { tag: "h4", lines: "18,19" },
+                    },
+                    {
+                      content:
+                        "C&#xe1;lculo de fuerzas en articulaciones de robots manipuladores",
+                      children: [],
+                      payload: { tag: "h4", lines: "19,20" },
+                    },
+                    {
+                      content:
+                        "Dise&#xf1;o de bases estables para robots m&#xf3;viles y b&#xed;pedos",
+                      children: [],
+                      payload: { tag: "h4", lines: "20,21" },
+                    },
+                    {
+                      content:
+                        "Verificaci&#xf3;n de que ning&#xfa;n componente supera su l&#xed;mite de resistencia",
+                      children: [],
+                      payload: { tag: "h4", lines: "21,22" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "16,17" },
+                },
+                {
+                  content: "Cuerpo r&#xed;gido",
+                  children: [
+                    {
+                      content:
+                        "En est&#xe1;tica se trabaja con cuerpos r&#xed;gidos &#x2192; no se deforman bajo las fuerzas aplicadas",
+                      children: [],
+                      payload: { tag: "h4", lines: "24,25" },
+                    },
+                    {
+                      content:
+                        "Es una idealizaci&#xf3;n: en la realidad todos los cuerpos se deforman un poco",
+                      children: [],
+                      payload: { tag: "h4", lines: "25,26" },
+                    },
+                    {
+                      content:
+                        "Permite simplificar el an&#xe1;lisis sin perder precisi&#xf3;n en la mayor&#xed;a de casos pr&#xe1;cticos",
+                      children: [],
+                      payload: { tag: "h4", lines: "26,27" },
+                    },
+                    {
+                      content:
+                        "Las fuerzas se pueden transmitir a lo largo del cuerpo sin cambiar el resultado",
+                      children: [],
+                      payload: { tag: "h4", lines: "27,28" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "23,24" },
+                },
+              ],
+              payload: { tag: "h2", lines: "2,3" },
+            },
+            {
+              content: "Concepto de Fuerza",
+              children: [
+                {
+                  content: "Definici&#xf3;n",
+                  children: [
+                    {
+                      content:
+                        "Interacci&#xf3;n entre dos cuerpos que puede cambiar el estado de reposo o movimiento de un objeto",
+                      children: [],
+                      payload: { tag: "h4", lines: "34,35" },
+                    },
+                    {
+                      content:
+                        "Es una magnitud vectorial: tiene m&#xf3;dulo, direcci&#xf3;n y sentido",
+                      children: [],
+                      payload: { tag: "h4", lines: "35,36" },
+                    },
+                    {
+                      content: "Unidad SI: Newton (N) = kg&#xb7;m/s&#xb2;",
+                      children: [],
+                      payload: { tag: "h4", lines: "36,37" },
+                    },
+                    {
+                      content:
+                        "1 Newton es la fuerza necesaria para acelerar 1 kg a 1 m/s&#xb2;",
+                      children: [],
+                      payload: { tag: "h4", lines: "37,38" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "33,34" },
+                },
+                {
+                  content: "Efectos de una fuerza sobre un cuerpo",
+                  children: [
+                    {
+                      content:
+                        "Traslaci&#xf3;n &#x2192; mueve el cuerpo en la direcci&#xf3;n de la fuerza",
+                      children: [],
+                      payload: { tag: "h4", lines: "40,41" },
+                    },
+                    {
+                      content:
+                        "Rotaci&#xf3;n &#x2192; si no pasa por el centro de masa, gira el cuerpo",
+                      children: [],
+                      payload: { tag: "h4", lines: "41,42" },
+                    },
+                    {
+                      content:
+                        "Deformaci&#xf3;n &#x2192; cambia la forma del cuerpo (en cuerpos no r&#xed;gidos)",
+                      children: [],
+                      payload: { tag: "h4", lines: "42,43" },
+                    },
+                    {
+                      content:
+                        "Ning&#xfa;n efecto &#x2192; si hay otra fuerza igual y opuesta que la cancela (equilibrio)",
+                      children: [],
+                      payload: { tag: "h4", lines: "43,44" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "39,40" },
+                },
+                {
+                  content: "Caracter&#xed;sticas de una fuerza",
+                  children: [
+                    {
+                      content:
+                        "Punto de aplicaci&#xf3;n &#x2192; d&#xf3;nde act&#xfa;a la fuerza sobre el cuerpo",
+                      children: [],
+                      payload: { tag: "h4", lines: "46,47" },
+                    },
+                    {
+                      content:
+                        "L&#xed;nea de acci&#xf3;n &#x2192; la recta indefinida en la direcci&#xf3;n del vector fuerza",
+                      children: [],
+                      payload: { tag: "h4", lines: "47,48" },
+                    },
+                    {
+                      content:
+                        "M&#xf3;dulo &#x2192; intensidad de la fuerza (en Newtons)",
+                      children: [],
+                      payload: { tag: "h4", lines: "48,49" },
+                    },
+                    {
+                      content:
+                        "Direcci&#xf3;n &#x2192; &#xe1;ngulo respecto a la horizontal u otro eje de referencia",
+                      children: [],
+                      payload: { tag: "h4", lines: "49,50" },
+                    },
+                    {
+                      content:
+                        "Sentido &#x2192; hacia d&#xf3;nde apunta la flecha del vector",
+                      children: [],
+                      payload: { tag: "h4", lines: "50,51" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "45,46" },
+                },
+                {
+                  content: "Principio de transmisibilidad",
+                  children: [
+                    {
+                      content:
+                        "Una fuerza puede moverse a lo largo de su l&#xed;nea de acci&#xf3;n sin cambiar el efecto sobre el cuerpo r&#xed;gido",
+                      children: [],
+                      payload: { tag: "h4", lines: "53,54" },
+                    },
+                    {
+                      content:
+                        "Solo aplica para efectos externos sobre el cuerpo r&#xed;gido",
+                      children: [],
+                      payload: { tag: "h4", lines: "54,55" },
+                    },
+                    {
+                      content:
+                        "No aplica para efectos internos (esfuerzos internos del material)",
+                      children: [],
+                      payload: { tag: "h4", lines: "55,56" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "52,53" },
+                },
+              ],
+              payload: { tag: "h2", lines: "31,32" },
+            },
+            {
+              content: "Tipos de Fuerzas",
+              children: [
+                {
+                  content: "Fuerza de gravedad (Peso)",
+                  children: [
+                    {
+                      content:
+                        "El campo gravitacional terrestre atrae todo objeto con masa hacia el centro de la Tierra",
+                      children: [],
+                      payload: { tag: "h4", lines: "62,63" },
+                    },
+                    {
+                      content: "W = m &#xb7; g",
+                      children: [],
+                      payload: { tag: "h4", lines: "63,64" },
+                    },
+                    {
+                      content: "m &#x2192; masa del objeto (kg)",
+                      children: [],
+                      payload: { tag: "h4", lines: "64,65" },
+                    },
+                    {
+                      content:
+                        "g &#x2192; aceleraci&#xf3;n gravitacional &#x2248; 9.8 m/s&#xb2; hacia abajo",
+                      children: [],
+                      payload: { tag: "h4", lines: "65,66" },
+                    },
+                    {
+                      content:
+                        "Siempre act&#xfa;a hacia abajo, en el centro de masa del objeto",
+                      children: [],
+                      payload: { tag: "h4", lines: "66,67" },
+                    },
+                    {
+                      content: "El peso no es lo mismo que la masa",
+                      children: [
+                        {
+                          content:
+                            "Masa &#x2192; cu&#xe1;nta materia tiene el objeto (constante en cualquier lugar)",
+                          children: [],
+                          payload: { tag: "h5", lines: "68,69" },
+                        },
+                        {
+                          content:
+                            "Peso &#x2192; fuerza gravitacional (depende de g, cambia con la ubicaci&#xf3;n)",
+                          children: [],
+                          payload: { tag: "h5", lines: "69,70" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "67,68" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "61,62" },
+                },
+                {
+                  content: "Fuerza Normal (N)",
+                  children: [
+                    {
+                      content:
+                        "Fuerza de contacto que ejerce una superficie sobre un objeto",
+                      children: [],
+                      payload: { tag: "h4", lines: "72,73" },
+                    },
+                    {
+                      content:
+                        "Siempre es perpendicular a la superficie de contacto",
+                      children: [],
+                      payload: { tag: "h4", lines: "73,74" },
+                    },
+                    {
+                      content:
+                        "Es una fuerza de reacci&#xf3;n &#x2192; aparece para impedir que el objeto atraviese la superficie",
+                      children: [],
+                      payload: { tag: "h4", lines: "74,75" },
+                    },
+                    {
+                      content:
+                        "En superficie horizontal: N = W = m&#xb7;g (si no hay otras fuerzas verticales)",
+                      children: [],
+                      payload: { tag: "h4", lines: "75,76" },
+                    },
+                    {
+                      content:
+                        "En plano inclinado: N = m&#xb7;g&#xb7;cos(&#x3b8;)",
+                      children: [],
+                      payload: { tag: "h4", lines: "76,77" },
+                    },
+                    {
+                      content:
+                        "No siempre es igual al peso &#x2192; depende de la geometr&#xed;a y las fuerzas aplicadas",
+                      children: [],
+                      payload: { tag: "h4", lines: "77,78" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "71,72" },
+                },
+                {
+                  content: "Fuerza de Fricci&#xf3;n o Rozamiento",
+                  children: [
+                    {
+                      content:
+                        "Fuerza de contacto que se opone al movimiento relativo o al inicio del movimiento entre dos superficies",
+                      children: [],
+                      payload: { tag: "h4", lines: "80,81" },
+                    },
+                    {
+                      content:
+                        "Act&#xfa;a siempre paralela a la superficie de contacto",
+                      children: [],
+                      payload: { tag: "h4", lines: "81,82" },
+                    },
+                    {
+                      content:
+                        "Depende del coeficiente de fricci&#xf3;n (&#x3bc;) y la fuerza normal (N)",
+                      children: [],
+                      payload: { tag: "h4", lines: "82,83" },
+                    },
+                    {
+                      content: "Hay dos tipos importantes en est&#xe1;tica",
+                      children: [],
+                      payload: { tag: "h4", lines: "83,84" },
+                    },
+                    {
+                      content: "Fricci&#xf3;n est&#xe1;tica (fs)",
+                      children: [
+                        {
+                          content:
+                            "Se opone al inicio del movimiento &#x2192; el objeto est&#xe1; en reposo",
+                          children: [],
+                          payload: { tag: "h5", lines: "86,87" },
+                        },
+                        {
+                          content:
+                            "Puede tomar cualquier valor desde 0 hasta un m&#xe1;ximo",
+                          children: [],
+                          payload: { tag: "h5", lines: "87,88" },
+                        },
+                        {
+                          content: "fs &#x2264; &#x3bc;s &#xb7; N",
+                          children: [],
+                          payload: { tag: "h5", lines: "88,89" },
+                        },
+                        {
+                          content:
+                            "&#x3bc;s &#x2192; coeficiente de fricci&#xf3;n est&#xe1;tica (adimensional, depende de los materiales)",
+                          children: [],
+                          payload: { tag: "h5", lines: "89,90" },
+                        },
+                        {
+                          content:
+                            "Cuando la fuerza aplicada supera fs_max &#x2192; el objeto empieza a moverse",
+                          children: [],
+                          payload: { tag: "h5", lines: "90,91" },
+                        },
+                        {
+                          content:
+                            "fs_max = &#x3bc;s &#xb7; N &#x2192; valor m&#xe1;ximo justo antes de que deslice",
+                          children: [],
+                          payload: { tag: "h5", lines: "91,92" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "85,86" },
+                    },
+                    {
+                      content: "Fricci&#xf3;n cin&#xe9;tica (fk)",
+                      children: [
+                        {
+                          content:
+                            "Act&#xfa;a cuando ya hay movimiento relativo entre superficies",
+                          children: [],
+                          payload: { tag: "h5", lines: "94,95" },
+                        },
+                        {
+                          content:
+                            "fk = &#x3bc;k &#xb7; N (valor constante durante el movimiento)",
+                          children: [],
+                          payload: { tag: "h5", lines: "95,96" },
+                        },
+                        {
+                          content:
+                            "&#x3bc;k &#x2192; coeficiente de fricci&#xf3;n cin&#xe9;tica",
+                          children: [],
+                          payload: { tag: "h5", lines: "96,97" },
+                        },
+                        {
+                          content:
+                            "Siempre &#x3bc;k &lt; &#x3bc;s (es m&#xe1;s f&#xe1;cil mantener el movimiento que iniciarlo)",
+                          children: [],
+                          payload: { tag: "h5", lines: "97,98" },
+                        },
+                        {
+                          content:
+                            "En est&#xe1;tica pura no aparece &#x2192; pero es importante en problemas de l&#xed;mite de equilibrio",
+                          children: [],
+                          payload: { tag: "h5", lines: "98,99" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "93,94" },
+                    },
+                    {
+                      content: "Coeficientes de fricci&#xf3;n t&#xed;picos",
+                      children: [
+                        {
+                          content:
+                            "Acero sobre acero: &#x3bc;s &#x2248; 0.74, &#x3bc;k &#x2248; 0.57",
+                          children: [],
+                          payload: { tag: "h5", lines: "101,102" },
+                        },
+                        {
+                          content:
+                            "Caucho sobre concreto: &#x3bc;s &#x2248; 0.80, &#x3bc;k &#x2248; 0.70",
+                          children: [],
+                          payload: { tag: "h5", lines: "102,103" },
+                        },
+                        {
+                          content:
+                            "Madera sobre madera: &#x3bc;s &#x2248; 0.40, &#x3bc;k &#x2248; 0.20",
+                          children: [],
+                          payload: { tag: "h5", lines: "103,104" },
+                        },
+                        {
+                          content:
+                            "Tefl&#xf3;n sobre tefl&#xf3;n: &#x3bc;s &#x2248; 0.04, &#x3bc;k &#x2248; 0.04",
+                          children: [],
+                          payload: { tag: "h5", lines: "104,105" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "100,101" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "79,80" },
+                },
+                {
+                  content: "Fuerza de Tensi&#xf3;n (T)",
+                  children: [
+                    {
+                      content:
+                        "Fuerza transmitida a trav&#xe9;s de una cuerda, cable, hilo o barra en tensi&#xf3;n",
+                      children: [],
+                      payload: { tag: "h4", lines: "107,108" },
+                    },
+                    {
+                      content:
+                        "Act&#xfa;a a lo largo del eje de la cuerda, alej&#xe1;ndose del punto de aplicaci&#xf3;n",
+                      children: [],
+                      payload: { tag: "h4", lines: "108,109" },
+                    },
+                    {
+                      content:
+                        "En cuerdas ideales (sin masa y sin fricci&#xf3;n)",
+                      children: [
+                        {
+                          content:
+                            "La tensi&#xf3;n es la misma en toda la longitud de la cuerda",
+                          children: [],
+                          payload: { tag: "h5", lines: "110,111" },
+                        },
+                        {
+                          content: "La cuerda no tiene masa y no se deforma",
+                          children: [],
+                          payload: { tag: "h5", lines: "111,112" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "109,110" },
+                    },
+                    {
+                      content:
+                        "En cuerdas reales la tensi&#xf3;n var&#xed;a a lo largo si hay masa o fricci&#xf3;n",
+                      children: [],
+                      payload: { tag: "h4", lines: "112,113" },
+                    },
+                    {
+                      content:
+                        "Los cables de acero y las correas de transmisi&#xf3;n son tensores reales en rob&#xf3;tica",
+                      children: [],
+                      payload: { tag: "h4", lines: "113,114" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "106,107" },
+                },
+                {
+                  content: "Fuerza El&#xe1;stica (Resorte)",
+                  children: [
+                    {
+                      content:
+                        "Fuerza que ejerce un resorte (muelle) cuando se comprime o estira",
+                      children: [],
+                      payload: { tag: "h4", lines: "116,117" },
+                    },
+                    {
+                      content: "Ley de Hooke: F = -k &#xb7; x",
+                      children: [
+                        {
+                          content:
+                            "k &#x2192; constante del resorte (N/m) &#x2192; rigidez del resorte",
+                          children: [],
+                          payload: { tag: "h5", lines: "118,119" },
+                        },
+                        {
+                          content:
+                            "x &#x2192; deformaci&#xf3;n respecto a la posici&#xf3;n natural (m)",
+                          children: [],
+                          payload: { tag: "h5", lines: "119,120" },
+                        },
+                        {
+                          content:
+                            "El signo negativo indica que la fuerza se opone a la deformaci&#xf3;n",
+                          children: [],
+                          payload: { tag: "h5", lines: "120,121" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "117,118" },
+                    },
+                    {
+                      content:
+                        "Un resorte comprimido empuja &#x2192; fuerza en sentido contrario a la compresi&#xf3;n",
+                      children: [],
+                      payload: { tag: "h4", lines: "121,122" },
+                    },
+                    {
+                      content:
+                        "Un resorte estirado jala &#x2192; fuerza en sentido contrario al estiramiento",
+                      children: [],
+                      payload: { tag: "h4", lines: "122,123" },
+                    },
+                    {
+                      content:
+                        "Los amortiguadores y actuadores el&#xe1;sticos de robots usan este principio (SEA: Series Elastic Actuators)",
+                      children: [],
+                      payload: { tag: "h4", lines: "123,124" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "115,116" },
+                },
+                {
+                  content: "Fuerza Aplicada (F_ap)",
+                  children: [
+                    {
+                      content:
+                        "Fuerza externa ejercida deliberadamente por un agente externo sobre el cuerpo",
+                      children: [],
+                      payload: { tag: "h4", lines: "126,127" },
+                    },
+                    {
+                      content:
+                        "Puede tener cualquier direcci&#xf3;n, sentido y m&#xf3;dulo",
+                      children: [],
+                      payload: { tag: "h4", lines: "127,128" },
+                    },
+                    {
+                      content:
+                        "Es la fuerza que se controla en los problemas de ingenier&#xed;a",
+                      children: [],
+                      payload: { tag: "h4", lines: "128,129" },
+                    },
+                    {
+                      content:
+                        "En rob&#xf3;tica: la fuerza que el actuador o motor ejerce sobre el eslab&#xf3;n",
+                      children: [],
+                      payload: { tag: "h4", lines: "129,130" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "125,126" },
+                },
+                {
+                  content:
+                    "Fuerza de Empuje o Flotaci&#xf3;n (Arqu&#xed;medes)",
+                  children: [
+                    {
+                      content:
+                        "Fuerza que ejerce un fluido sobre un objeto sumergido",
+                      children: [],
+                      payload: { tag: "h4", lines: "132,133" },
+                    },
+                    {
+                      content: "E = &#x3c1;_fluido &#xb7; g &#xb7; V_sumergido",
+                      children: [],
+                      payload: { tag: "h4", lines: "133,134" },
+                    },
+                    {
+                      content:
+                        "Siempre apunta hacia arriba (opuesta a la gravedad)",
+                      children: [],
+                      payload: { tag: "h4", lines: "134,135" },
+                    },
+                    {
+                      content: "Si E &gt; W &#x2192; el objeto flota",
+                      children: [],
+                      payload: { tag: "h4", lines: "135,136" },
+                    },
+                    {
+                      content: "Si E &lt; W &#x2192; el objeto se hunde",
+                      children: [],
+                      payload: { tag: "h4", lines: "136,137" },
+                    },
+                    {
+                      content:
+                        "Si E = W &#x2192; el objeto queda en equilibrio neutro",
+                      children: [],
+                      payload: { tag: "h4", lines: "137,138" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "131,132" },
+                },
+              ],
+              payload: { tag: "h2", lines: "59,60" },
+            },
+            {
+              content: "Diagrama de Cuerpo Libre (DCL)",
+              children: [
+                {
+                  content: "&#xbf;Qu&#xe9; es?",
+                  children: [
+                    {
+                      content:
+                        "Representaci&#xf3;n gr&#xe1;fica que muestra todas las fuerzas externas que act&#xfa;an sobre un cuerpo aislado",
+                      children: [],
+                      payload: { tag: "h4", lines: "144,145" },
+                    },
+                    {
+                      content:
+                        "Se a&#xed;sla el cuerpo del entorno y se reemplazan los contactos por las fuerzas correspondientes",
+                      children: [],
+                      payload: { tag: "h4", lines: "145,146" },
+                    },
+                    {
+                      content:
+                        "Es la herramienta m&#xe1;s importante en est&#xe1;tica y din&#xe1;mica",
+                      children: [],
+                      payload: { tag: "h4", lines: "146,147" },
+                    },
+                    {
+                      content:
+                        "Un DCL mal hecho lleva inevitablemente a resultados incorrectos",
+                      children: [],
+                      payload: { tag: "h4", lines: "147,148" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "143,144" },
+                },
+                {
+                  content: "&#xbf;Para qu&#xe9; sirve?",
+                  children: [
+                    {
+                      content:
+                        "Identificar todas las fuerzas que act&#xfa;an sobre el cuerpo",
+                      children: [],
+                      payload: { tag: "h4", lines: "150,151" },
+                    },
+                    {
+                      content:
+                        "Visualizar la direcci&#xf3;n y sentido de cada fuerza",
+                      children: [],
+                      payload: { tag: "h4", lines: "151,152" },
+                    },
+                    {
+                      content:
+                        "Plantear las ecuaciones de equilibrio de forma sistem&#xe1;tica",
+                      children: [],
+                      payload: { tag: "h4", lines: "152,153" },
+                    },
+                    {
+                      content:
+                        "Evitar olvidar fuerzas o a&#xf1;adir fuerzas incorrectas",
+                      children: [],
+                      payload: { tag: "h4", lines: "153,154" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "149,150" },
+                },
+                {
+                  content: "Pasos para construir un DCL",
+                  children: [
+                    {
+                      content:
+                        "Paso 1 &#x2014; Seleccionar el cuerpo de inter&#xe9;s",
+                      children: [
+                        {
+                          content:
+                            "Decidir exactamente qu&#xe9; objeto se va a analizar",
+                          children: [],
+                          payload: { tag: "h5", lines: "158,159" },
+                        },
+                        {
+                          content:
+                            "Solo se incluyen las fuerzas externas sobre ese cuerpo",
+                          children: [],
+                          payload: { tag: "h5", lines: "159,160" },
+                        },
+                        {
+                          content:
+                            "Las fuerzas internas entre partes del mismo cuerpo se cancelan (no se incluyen)",
+                          children: [],
+                          payload: { tag: "h5", lines: "160,161" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "157,158" },
+                    },
+                    {
+                      content: "Paso 2 &#x2014; Aislar el cuerpo del entorno",
+                      children: [
+                        {
+                          content:
+                            "Imaginariamente separar el cuerpo de todo lo que lo rodea",
+                          children: [],
+                          payload: { tag: "h5", lines: "163,164" },
+                        },
+                        {
+                          content:
+                            "Quitar los apoyos, cuerdas, superficies y otros objetos en contacto",
+                          children: [],
+                          payload: { tag: "h5", lines: "164,165" },
+                        },
+                        {
+                          content: "Dibujar el cuerpo solo, en el espacio",
+                          children: [],
+                          payload: { tag: "h5", lines: "165,166" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "162,163" },
+                    },
+                    {
+                      content:
+                        "Paso 3 &#x2014; Identificar y dibujar todas las fuerzas externas",
+                      children: [
+                        {
+                          content:
+                            "Por cada contacto eliminado &#x2192; a&#xf1;adir la fuerza de reacci&#xf3;n correspondiente",
+                          children: [],
+                          payload: { tag: "h5", lines: "168,169" },
+                        },
+                        {
+                          content:
+                            "Superficie de contacto &#x2192; fuerza normal (perpendicular) + fricci&#xf3;n (paralela si aplica)",
+                          children: [],
+                          payload: { tag: "h5", lines: "169,170" },
+                        },
+                        {
+                          content:
+                            "Cuerda o cable &#x2192; tensi&#xf3;n (a lo largo del cable, alej&#xe1;ndose del cuerpo)",
+                          children: [],
+                          payload: { tag: "h5", lines: "170,171" },
+                        },
+                        {
+                          content:
+                            "Resorte &#x2192; fuerza el&#xe1;stica (seg&#xfa;n la deformaci&#xf3;n y la constante k)",
+                          children: [],
+                          payload: { tag: "h5", lines: "171,172" },
+                        },
+                        {
+                          content:
+                            "Siempre incluir el peso (W = mg) actuando en el centro de masa, hacia abajo",
+                          children: [],
+                          payload: { tag: "h5", lines: "172,173" },
+                        },
+                        {
+                          content:
+                            "Fuerzas aplicadas &#x2192; dibujarlas en su punto de aplicaci&#xf3;n con su direcci&#xf3;n real",
+                          children: [],
+                          payload: { tag: "h5", lines: "173,174" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "167,168" },
+                    },
+                    {
+                      content:
+                        "Paso 4 &#x2014; Colocar el sistema de referencia",
+                      children: [
+                        {
+                          content:
+                            "Elegir la direcci&#xf3;n de los ejes x e y (generalmente horizontal y vertical)",
+                          children: [],
+                          payload: { tag: "h5", lines: "176,177" },
+                        },
+                        {
+                          content:
+                            "Para planos inclinados conviene inclinar los ejes junto con el plano",
+                          children: [],
+                          payload: { tag: "h5", lines: "177,178" },
+                        },
+                        {
+                          content:
+                            "Marcar el sentido positivo de cada eje en el diagrama",
+                          children: [],
+                          payload: { tag: "h5", lines: "178,179" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "175,176" },
+                    },
+                    {
+                      content:
+                        "Paso 5 &#x2014; Anotar los valores conocidos y desconocidos",
+                      children: [
+                        {
+                          content:
+                            "Escribir los valores num&#xe9;ricos de las fuerzas conocidas",
+                          children: [],
+                          payload: { tag: "h5", lines: "181,182" },
+                        },
+                        {
+                          content:
+                            "Usar letras para las fuerzas desconocidas (T, N, f, R, etc.)",
+                          children: [],
+                          payload: { tag: "h5", lines: "182,183" },
+                        },
+                        {
+                          content:
+                            "El sentido asumido es positivo &#x2192; si el resultado es negativo, el sentido real es el opuesto",
+                          children: [],
+                          payload: { tag: "h5", lines: "183,184" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "180,181" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "155,156" },
+                },
+                {
+                  content: "Errores comunes en el DCL",
+                  children: [
+                    {
+                      content:
+                        "Incluir fuerzas internas del cuerpo &#x2192; no van en el DCL",
+                      children: [],
+                      payload: { tag: "h4", lines: "186,187" },
+                    },
+                    {
+                      content: "Olvidar el peso del cuerpo",
+                      children: [],
+                      payload: { tag: "h4", lines: "187,188" },
+                    },
+                    {
+                      content:
+                        "Dibujar la fuerza normal en la direcci&#xf3;n incorrecta (no siempre es vertical)",
+                      children: [],
+                      payload: { tag: "h4", lines: "188,189" },
+                    },
+                    {
+                      content:
+                        "Incluir la fuerza de acci&#xf3;n cuando se pide la de reacci&#xf3;n (3a ley de Newton)",
+                      children: [],
+                      payload: { tag: "h4", lines: "189,190" },
+                    },
+                    {
+                      content: "No aislar completamente el cuerpo del entorno",
+                      children: [],
+                      payload: { tag: "h4", lines: "190,191" },
+                    },
+                    {
+                      content:
+                        "Dibujarlo mal escalado (las longitudes de las flechas deben ser proporcionales al m&#xf3;dulo)",
+                      children: [],
+                      payload: { tag: "h4", lines: "191,192" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "185,186" },
+                },
+                {
+                  content:
+                    "Ejemplo de DCL &#x2014; Bloque sobre superficie horizontal con cuerda",
+                  children: [
+                    {
+                      content:
+                        "El bloque tiene: peso W hacia abajo, normal N hacia arriba, tensi&#xf3;n T hacia la derecha, fricci&#xf3;n f hacia la izquierda",
+                      children: [],
+                      payload: { tag: "h4", lines: "194,195" },
+                    },
+                    {
+                      content:
+                        "Nada m&#xe1;s &#x2192; no se incluye la fuerza que el bloque ejerce sobre la mesa (esa va en el DCL de la mesa)",
+                      children: [],
+                      payload: { tag: "h4", lines: "195,196" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "193,194" },
+                },
+              ],
+              payload: { tag: "h2", lines: "141,142" },
+            },
+            {
+              content: "Condiciones de Equilibrio Traslacional",
+              children: [
+                {
+                  content: "Definici&#xf3;n",
+                  children: [
+                    {
+                      content:
+                        "Tambi&#xe9;n conocido como: condici&#xf3;n de equilibrio de fuerzas o primera condici&#xf3;n de equilibrio",
+                      children: [],
+                      payload: { tag: "h4" },
+                    },
+                    {
+                      content:
+                        "Un cuerpo est&#xe1; en equilibrio traslacional si no tiene aceleraci&#xf3;n lineal",
+                      children: [],
+                      payload: { tag: "h4", lines: "202,203" },
+                    },
+                    {
+                      content:
+                        "La suma vectorial de todas las fuerzas externas es cero",
+                      children: [],
+                      payload: { tag: "h4", lines: "203,204" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;F = 0 &#x2192; el cuerpo no se mueve ni acelera en ninguna direcci&#xf3;n",
+                      children: [],
+                      payload: { tag: "h4", lines: "204,205" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "201,202" },
+                },
+                {
+                  content: "Ecuaciones de equilibrio traslacional",
+                  children: [
+                    {
+                      content: "En 2D",
+                      children: [
+                        {
+                          content:
+                            "&#x3a3;F&#x2093; = 0 &#x2192; suma de todas las componentes x es cero",
+                          children: [],
+                          payload: { tag: "h5", lines: "209,210" },
+                        },
+                        {
+                          content:
+                            "&#x3a3;F&#x1d67; = 0 &#x2192; suma de todas las componentes y es cero",
+                          children: [],
+                          payload: { tag: "h5", lines: "210,211" },
+                        },
+                        {
+                          content:
+                            "Dos ecuaciones &#x2192; puede resolver hasta dos inc&#xf3;gnitas",
+                          children: [],
+                          payload: { tag: "h5", lines: "211,212" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "208,209" },
+                    },
+                    {
+                      content: "En 3D",
+                      children: [
+                        {
+                          content: "&#x3a3;F&#x2093; = 0",
+                          children: [],
+                          payload: { tag: "h5", lines: "214,215" },
+                        },
+                        {
+                          content: "&#x3a3;F&#x1d67; = 0",
+                          children: [],
+                          payload: { tag: "h5", lines: "215,216" },
+                        },
+                        {
+                          content: "&#x3a3;F_z = 0",
+                          children: [],
+                          payload: { tag: "h5", lines: "216,217" },
+                        },
+                        {
+                          content:
+                            "Tres ecuaciones &#x2192; puede resolver hasta tres inc&#xf3;gnitas",
+                          children: [],
+                          payload: { tag: "h5", lines: "217,218" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "213,214" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "206,207" },
+                },
+                {
+                  content: "Procedimiento general",
+                  children: [
+                    {
+                      content: "Construir el DCL del cuerpo",
+                      children: [],
+                      payload: { tag: "h4", lines: "220,221" },
+                    },
+                    {
+                      content:
+                        "Descomponer todas las fuerzas en componentes x e y",
+                      children: [],
+                      payload: { tag: "h4", lines: "221,222" },
+                    },
+                    {
+                      content:
+                        "Plantear &#x3a3;F&#x2093; = 0 y &#x3a3;F&#x1d67; = 0",
+                      children: [],
+                      payload: { tag: "h4", lines: "222,223" },
+                    },
+                    {
+                      content:
+                        "Resolver el sistema de ecuaciones para encontrar las inc&#xf3;gnitas",
+                      children: [],
+                      payload: { tag: "h4", lines: "223,224" },
+                    },
+                    {
+                      content:
+                        "Verificar que los resultados tienen sentido f&#xed;sico",
+                      children: [],
+                      payload: { tag: "h4", lines: "224,225" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "219,220" },
+                },
+                {
+                  content:
+                    "Ejemplo &#x2014; Bloque en reposo sobre mesa horizontal",
+                  children: [
+                    {
+                      content: "Fuerzas: W = 50 N (&#x2193;), N = ? (&#x2191;)",
+                      children: [],
+                      payload: { tag: "h4", lines: "227,228" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;F&#x1d67; = 0 &#x2192; N - W = 0 &#x2192; N = W = 50 N &#x2705;",
+                      children: [],
+                      payload: { tag: "h4", lines: "228,229" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;F&#x2093; = 0 &#x2192; no hay fuerzas horizontales &#x2192; 0 = 0 &#x2705;",
+                      children: [],
+                      payload: { tag: "h4", lines: "229,230" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "226,227" },
+                },
+                {
+                  content: "Ejemplo &#x2014; Bloque colgado de dos cuerdas",
+                  children: [
+                    {
+                      content:
+                        "Bloque de 20 kg colgado de dos cuerdas: T&#x2081; a 30&#xb0; y T&#x2082; a 60&#xb0; con la horizontal",
+                      children: [],
+                      payload: { tag: "h4", lines: "232,233" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;F&#x2093; = 0 &#x2192; T&#x2081;&#xb7;cos(30&#xb0;) - T&#x2082;&#xb7;cos(60&#xb0;) ... (se resuelve el sistema)",
+                      children: [],
+                      payload: { tag: "h4", lines: "233,234" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;F&#x1d67; = 0 &#x2192; T&#x2081;&#xb7;sen(30&#xb0;) + T&#x2082;&#xb7;sen(60&#xb0;) - W = 0",
+                      children: [],
+                      payload: { tag: "h4", lines: "234,235" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "231,232" },
+                },
+              ],
+              payload: { tag: "h2", lines: "199,200" },
+            },
+            {
+              content: "Condiciones de Equilibrio Rotacional",
+              children: [
+                {
+                  content: "Definici&#xf3;n",
+                  children: [
+                    {
+                      content:
+                        "Tambi&#xe9;n conocido como: condici&#xf3;n de equilibrio de momentos o de torques, o segunda condici&#xf3;n de equilibrio",
+                      children: [],
+                      payload: { tag: "h4" },
+                    },
+                    {
+                      content:
+                        "Un cuerpo est&#xe1; en equilibrio rotacional si no tiene aceleraci&#xf3;n angular",
+                      children: [],
+                      payload: { tag: "h4", lines: "241,242" },
+                    },
+                    {
+                      content:
+                        "La suma de todos los torques respecto a cualquier punto es cero",
+                      children: [],
+                      payload: { tag: "h4", lines: "242,243" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;&#x3c4; = 0 &#x2192; el cuerpo no rota ni cambia su velocidad angular",
+                      children: [],
+                      payload: { tag: "h4", lines: "243,244" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "240,241" },
+                },
+                {
+                  content: "Relaci&#xf3;n con el equilibrio traslacional",
+                  children: [
+                    {
+                      content:
+                        "Para equilibrio est&#xe1;tico completo se necesitan AMBAS condiciones",
+                      children: [],
+                      payload: { tag: "h4", lines: "246,247" },
+                    },
+                    {
+                      content: "&#x3a3;F = 0 &#x2192; no se traslada",
+                      children: [],
+                      payload: { tag: "h4", lines: "247,248" },
+                    },
+                    {
+                      content: "&#x3a3;&#x3c4; = 0 &#x2192; no rota",
+                      children: [],
+                      payload: { tag: "h4", lines: "248,249" },
+                    },
+                    {
+                      content:
+                        "Un cuerpo puede tener &#x3a3;F = 0 y a&#xfa;n as&#xed; rotar (si los torques no se cancelan)",
+                      children: [],
+                      payload: { tag: "h4", lines: "249,250" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "245,246" },
+                },
+                {
+                  content: "Elecci&#xf3;n del punto de referencia para torques",
+                  children: [
+                    {
+                      content:
+                        "El torque se calcula respecto a un punto de referencia (pivot o fulcro)",
+                      children: [],
+                      payload: { tag: "h4", lines: "252,253" },
+                    },
+                    {
+                      content:
+                        "Si el sistema est&#xe1; en equilibrio, &#x3a3;&#x3c4; = 0 respecto a CUALQUIER punto",
+                      children: [],
+                      payload: { tag: "h4", lines: "253,254" },
+                    },
+                    {
+                      content:
+                        "Conviene elegir el punto donde act&#xfa;an la mayor cantidad de fuerzas desconocidas &#x2192; se eliminan del c&#xe1;lculo de torques",
+                      children: [],
+                      payload: { tag: "h4", lines: "254,255" },
+                    },
+                    {
+                      content:
+                        "Esto simplifica las ecuaciones significativamente",
+                      children: [],
+                      payload: { tag: "h4", lines: "255,256" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "251,252" },
+                },
+                {
+                  content: "Ecuaciones de equilibrio rotacional",
+                  children: [
+                    {
+                      content:
+                        "&#x3a3;&#x3c4; = 0 &#x2192; una sola ecuaci&#xf3;n adicional en 2D",
+                      children: [],
+                      payload: { tag: "h4", lines: "258,259" },
+                    },
+                    {
+                      content:
+                        "En 3D: &#x3a3;&#x3c4;&#x2093; = 0, &#x3a3;&#x3c4;&#x1d67; = 0, &#x3a3;&#x3c4;_z = 0 (tres ecuaciones adicionales)",
+                      children: [],
+                      payload: { tag: "h4", lines: "259,260" },
+                    },
+                    {
+                      content:
+                        "En total en 2D: 3 ecuaciones &#x2192; puede resolver hasta 3 inc&#xf3;gnitas",
+                      children: [
+                        {
+                          content: "&#x3a3;F&#x2093; = 0",
+                          children: [],
+                          payload: { tag: "h5", lines: "261,262" },
+                        },
+                        {
+                          content: "&#x3a3;F&#x1d67; = 0",
+                          children: [],
+                          payload: { tag: "h5", lines: "262,263" },
+                        },
+                        {
+                          content: "&#x3a3;&#x3c4; = 0",
+                          children: [],
+                          payload: { tag: "h5", lines: "263,264" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "260,261" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "257,258" },
+                },
+              ],
+              payload: { tag: "h2", lines: "238,239" },
+            },
+            {
+              content: "Torque o Momento de Fuerza",
+              children: [
+                {
+                  content: "Definici&#xf3;n",
+                  children: [
+                    {
+                      content:
+                        "Efecto rotacional que produce una fuerza sobre un cuerpo respecto a un punto o eje",
+                      children: [],
+                      payload: { tag: "h4", lines: "270,271" },
+                    },
+                    {
+                      content:
+                        "Es la causa del movimiento angular (o de la tendencia a girar en est&#xe1;tica)",
+                      children: [],
+                      payload: { tag: "h4", lines: "271,272" },
+                    },
+                    {
+                      content:
+                        "Tambi&#xe9;n llamado momento de fuerza o momento torsor",
+                      children: [],
+                      payload: { tag: "h4", lines: "272,273" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "269,270" },
+                },
+                {
+                  content: "F&#xf3;rmula del torque",
+                  children: [
+                    {
+                      content: "Definici&#xf3;n vectorial",
+                      children: [
+                        {
+                          content: "&#x3c4; = r &#xd7; F",
+                          children: [],
+                          payload: { tag: "h5", lines: "277,278" },
+                        },
+                        {
+                          content:
+                            "r &#x2192; vector posici&#xf3;n desde el eje de rotaci&#xf3;n hasta el punto de aplicaci&#xf3;n de la fuerza",
+                          children: [],
+                          payload: { tag: "h5", lines: "278,279" },
+                        },
+                        {
+                          content: "F &#x2192; vector fuerza",
+                          children: [],
+                          payload: { tag: "h5", lines: "279,280" },
+                        },
+                        {
+                          content:
+                            "El resultado &#x3c4; es perpendicular al plano que forman r y F",
+                          children: [],
+                          payload: { tag: "h5", lines: "280,281" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "276,277" },
+                    },
+                    {
+                      content: "M&#xf3;dulo del torque",
+                      children: [
+                        {
+                          content: "|&#x3c4;| = r &#xb7; F &#xb7; sen(&#x3b8;)",
+                          children: [],
+                          payload: { tag: "h5", lines: "283,284" },
+                        },
+                        {
+                          content:
+                            "&#x3b8; &#x2192; &#xe1;ngulo entre el vector r y el vector F",
+                          children: [],
+                          payload: { tag: "h5", lines: "284,285" },
+                        },
+                        {
+                          content:
+                            "|&#x3c4;| = F &#xb7; d_perp (donde d_perp es el brazo de palanca)",
+                          children: [],
+                          payload: { tag: "h5", lines: "285,286" },
+                        },
+                        {
+                          content:
+                            "El brazo de palanca (d) es la distancia perpendicular desde el eje hasta la l&#xed;nea de acci&#xf3;n de la fuerza",
+                          children: [],
+                          payload: { tag: "h5", lines: "286,287" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "282,283" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "274,275" },
+                },
+                {
+                  content: "Brazo de palanca (brazo de momento)",
+                  children: [
+                    {
+                      content:
+                        "Es la distancia m&#xe1;s corta entre el eje de rotaci&#xf3;n y la l&#xed;nea de acci&#xf3;n de la fuerza",
+                      children: [],
+                      payload: { tag: "h4", lines: "289,290" },
+                    },
+                    {
+                      content: "d = r &#xb7; sen(&#x3b8;)",
+                      children: [],
+                      payload: { tag: "h4", lines: "290,291" },
+                    },
+                    {
+                      content:
+                        "A mayor brazo de palanca &#x2192; mayor torque (con la misma fuerza)",
+                      children: [],
+                      payload: { tag: "h4", lines: "291,292" },
+                    },
+                    {
+                      content:
+                        "Ejemplo: una llave m&#xe1;s larga ejerce m&#xe1;s torque con la misma fuerza de la mano",
+                      children: [],
+                      payload: { tag: "h4", lines: "292,293" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "288,289" },
+                },
+                {
+                  content: "Unidad del torque",
+                  children: [
+                    {
+                      content: "SI: Newton-metro (N&#xb7;m)",
+                      children: [],
+                      payload: { tag: "h4", lines: "295,296" },
+                    },
+                    {
+                      content:
+                        "&#x26a0;&#xfe0f; Es la misma unidad que el Joule (J) pero NO son lo mismo",
+                      children: [],
+                      payload: { tag: "h4", lines: "296,297" },
+                    },
+                    {
+                      content:
+                        "El torque es una magnitud vectorial &#x2192; no es energ&#xed;a",
+                      children: [],
+                      payload: { tag: "h4", lines: "297,298" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "294,295" },
+                },
+                {
+                  content: "Convenio de signos del torque",
+                  children: [
+                    {
+                      content:
+                        "Antihorario (CCW, counter-clockwise) &#x2192; torque positivo (+)",
+                      children: [],
+                      payload: { tag: "h4", lines: "300,301" },
+                    },
+                    {
+                      content:
+                        "Horario (CW, clockwise) &#x2192; torque negativo (-)",
+                      children: [],
+                      payload: { tag: "h4", lines: "301,302" },
+                    },
+                    {
+                      content:
+                        "Esta convenci&#xf3;n es la est&#xe1;ndar pero puede invertirse si se define expl&#xed;citamente",
+                      children: [],
+                      payload: { tag: "h4", lines: "302,303" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "299,300" },
+                },
+                {
+                  content: "Caso especiales del torque",
+                  children: [
+                    {
+                      content:
+                        "Fuerza paralela al vector r (&#x3b8; = 0&#xb0; o 180&#xb0;)",
+                      children: [
+                        {
+                          content: "sen(0&#xb0;) = 0 &#x2192; &#x3c4; = 0",
+                          children: [],
+                          payload: { tag: "h5", lines: "307,308" },
+                        },
+                        {
+                          content:
+                            "Una fuerza que pasa por el eje de rotaci&#xf3;n no produce torque",
+                          children: [],
+                          payload: { tag: "h5", lines: "308,309" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "306,307" },
+                    },
+                    {
+                      content:
+                        "Fuerza perpendicular al vector r (&#x3b8; = 90&#xb0;)",
+                      children: [
+                        {
+                          content:
+                            "sen(90&#xb0;) = 1 &#x2192; |&#x3c4;| = r &#xb7; F (torque m&#xe1;ximo)",
+                          children: [],
+                          payload: { tag: "h5", lines: "311,312" },
+                        },
+                        {
+                          content:
+                            "La fuerza perpendicular al brazo produce el mayor torque posible",
+                          children: [],
+                          payload: { tag: "h5", lines: "312,313" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "310,311" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "304,305" },
+                },
+                {
+                  content: "Ejemplo de c&#xe1;lculo de torque",
+                  children: [
+                    {
+                      content:
+                        "Una fuerza de 100 N se aplica a 0.5 m del eje de rotaci&#xf3;n, con un &#xe1;ngulo de 60&#xb0; respecto al brazo",
+                      children: [],
+                      payload: { tag: "h4", lines: "315,316" },
+                    },
+                    {
+                      content:
+                        "|&#x3c4;| = 0.5 &#xb7; 100 &#xb7; sen(60&#xb0;) = 50 &#xb7; 0.866 = 43.3 N&#xb7;m",
+                      children: [],
+                      payload: { tag: "h4", lines: "316,317" },
+                    },
+                    {
+                      content:
+                        "Si el giro es antihorario &#x2192; &#x3c4; = +43.3 N&#xb7;m",
+                      children: [],
+                      payload: { tag: "h4", lines: "317,318" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "314,315" },
+                },
+                {
+                  content: "Palanca y el torque",
+                  children: [
+                    {
+                      content:
+                        "La palanca es una m&#xe1;quina simple que usa el torque para amplificar fuerzas",
+                      children: [],
+                      payload: { tag: "h4", lines: "320,321" },
+                    },
+                    {
+                      content: "Tipos de palancas",
+                      children: [
+                        {
+                          content:
+                            "Primer g&#xe9;nero &#x2192; fulcro entre la carga y el esfuerzo (tijeras, balanza)",
+                          children: [],
+                          payload: { tag: "h5", lines: "322,323" },
+                        },
+                        {
+                          content:
+                            "Segundo g&#xe9;nero &#x2192; carga entre el fulcro y el esfuerzo (carretilla)",
+                          children: [],
+                          payload: { tag: "h5", lines: "323,324" },
+                        },
+                        {
+                          content:
+                            "Tercer g&#xe9;nero &#x2192; esfuerzo entre el fulcro y la carga (pinzas, brazo humano)",
+                          children: [],
+                          payload: { tag: "h5", lines: "324,325" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "321,322" },
+                    },
+                    {
+                      content:
+                        "Ley de la palanca: F&#x2081; &#xb7; d&#x2081; = F&#x2082; &#xb7; d&#x2082; (en equilibrio)",
+                      children: [],
+                      payload: { tag: "h4", lines: "325,326" },
+                    },
+                    {
+                      content:
+                        "En rob&#xf3;tica: los brazos son sistemas de palancas articuladas",
+                      children: [],
+                      payload: { tag: "h4", lines: "326,327" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "319,320" },
+                },
+              ],
+              payload: { tag: "h2", lines: "267,268" },
+            },
+            {
+              content: "Centro de Masa y Centro de Gravedad",
+              children: [
+                {
+                  content: "Centro de masa (CM)",
+                  children: [
+                    {
+                      content: "Definici&#xf3;n",
+                      children: [
+                        {
+                          content:
+                            "Punto geom&#xe9;trico donde se puede considerar que est&#xe1; concentrada toda la masa del sistema",
+                          children: [],
+                          payload: { tag: "h5", lines: "335,336" },
+                        },
+                        {
+                          content:
+                            "Es el punto en que se aplica el peso equivalente de todo el cuerpo o sistema",
+                          children: [],
+                          payload: { tag: "h5", lines: "336,337" },
+                        },
+                        {
+                          content:
+                            "No necesariamente est&#xe1; dentro del objeto (puede estar en el espacio libre)",
+                          children: [],
+                          payload: { tag: "h5", lines: "337,338" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "334,335" },
+                    },
+                    {
+                      content:
+                        "F&#xf3;rmula para sistemas discretos de part&#xed;culas",
+                      children: [
+                        {
+                          content:
+                            "x_cm = (m&#x2081;x&#x2081; + m&#x2082;x&#x2082; + ... + m&#x2099;x&#x2099;) / (m&#x2081; + m&#x2082; + ... + m&#x2099;)",
+                          children: [],
+                          payload: { tag: "h5", lines: "340,341" },
+                        },
+                        {
+                          content:
+                            "y_cm = (m&#x2081;y&#x2081; + m&#x2082;y&#x2082; + ... + m&#x2099;y&#x2099;) / M_total",
+                          children: [],
+                          payload: { tag: "h5", lines: "341,342" },
+                        },
+                        {
+                          content:
+                            "z_cm = (m&#x2081;z&#x2081; + m&#x2082;z&#x2082; + ... + m&#x2099;z&#x2099;) / M_total",
+                          children: [],
+                          payload: { tag: "h5", lines: "342,343" },
+                        },
+                        {
+                          content:
+                            "En notaci&#xf3;n compacta: r_cm = &#x3a3;(m&#x1d62;&#xb7;r&#x1d62;) / M_total",
+                          children: [],
+                          payload: { tag: "h5", lines: "343,344" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "339,340" },
+                    },
+                    {
+                      content: "F&#xf3;rmula para cuerpos continuos",
+                      children: [
+                        {
+                          content: "x_cm = (1/M) &#x222b; x dm",
+                          children: [],
+                          payload: { tag: "h5", lines: "346,347" },
+                        },
+                        {
+                          content:
+                            "Se integra sobre todo el volumen del cuerpo",
+                          children: [],
+                          payload: { tag: "h5", lines: "347,348" },
+                        },
+                        {
+                          content:
+                            "Requiere conocer la distribuci&#xf3;n de densidad del material",
+                          children: [],
+                          payload: { tag: "h5", lines: "348,349" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "345,346" },
+                    },
+                    {
+                      content: "Propiedades del centro de masa",
+                      children: [
+                        {
+                          content:
+                            "Para cuerpos homog&#xe9;neos y sim&#xe9;tricos coincide con el centro geom&#xe9;trico",
+                          children: [],
+                          payload: { tag: "h5", lines: "351,352" },
+                        },
+                        {
+                          content:
+                            "Si se aplica una fuerza en el CM &#x2192; solo hay traslaci&#xf3;n, no rotaci&#xf3;n",
+                          children: [],
+                          payload: { tag: "h5", lines: "352,353" },
+                        },
+                        {
+                          content:
+                            "El CM de un sistema aislado no cambia si no hay fuerzas externas netas",
+                          children: [],
+                          payload: { tag: "h5", lines: "353,354" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "350,351" },
+                    },
+                    {
+                      content: "Ejemplos de centro de masa",
+                      children: [
+                        {
+                          content:
+                            "Esfera uniforme &#x2192; centro de la esfera",
+                          children: [],
+                          payload: { tag: "h5", lines: "356,357" },
+                        },
+                        {
+                          content:
+                            "Barra uniforme &#x2192; punto medio de la barra",
+                          children: [],
+                          payload: { tag: "h5", lines: "357,358" },
+                        },
+                        {
+                          content:
+                            "Tri&#xe1;ngulo &#x2192; intersecci&#xf3;n de las medianas (a 1/3 de la base)",
+                          children: [],
+                          payload: { tag: "h5", lines: "358,359" },
+                        },
+                        {
+                          content:
+                            "Objeto con forma de L &#x2192; puede estar fuera del material",
+                          children: [],
+                          payload: { tag: "h5", lines: "359,360" },
+                        },
+                        {
+                          content:
+                            "Robot b&#xed;pedo &#x2192; cerca de la cadera cuando est&#xe1; erguido",
+                          children: [],
+                          payload: { tag: "h5", lines: "360,361" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "355,356" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "332,333" },
+                },
+                {
+                  content: "Centro de gravedad (CG)",
+                  children: [
+                    {
+                      content: "Definici&#xf3;n",
+                      children: [
+                        {
+                          content:
+                            "Punto donde se puede considerar que act&#xfa;a todo el peso del cuerpo",
+                          children: [],
+                          payload: { tag: "h5", lines: "365,366" },
+                        },
+                        {
+                          content:
+                            "En campos gravitacionales uniformes (como en la superficie terrestre) CG = CM",
+                          children: [],
+                          payload: { tag: "h5", lines: "366,367" },
+                        },
+                        {
+                          content:
+                            "En campos gravitacionales no uniformes (objetos muy grandes) CG &#x2260; CM",
+                          children: [],
+                          payload: { tag: "h5", lines: "367,368" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "364,365" },
+                    },
+                    {
+                      content: "Importancia en estabilidad",
+                      children: [
+                        {
+                          content:
+                            "Un cuerpo es estable si su CG est&#xe1; sobre su base de sustentaci&#xf3;n",
+                          children: [],
+                          payload: { tag: "h5", lines: "370,371" },
+                        },
+                        {
+                          content:
+                            "Si el CG cae fuera de la base &#x2192; el cuerpo se vuelca",
+                          children: [],
+                          payload: { tag: "h5", lines: "371,372" },
+                        },
+                        {
+                          content:
+                            "Cuanto m&#xe1;s bajo est&#xe9; el CG &#x2192; m&#xe1;s estable es el cuerpo",
+                          children: [],
+                          payload: { tag: "h5", lines: "372,373" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "369,370" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "362,363" },
+                },
+                {
+                  content: "Estabilidad y base de sustentaci&#xf3;n",
+                  children: [
+                    {
+                      content: "Base de sustentaci&#xf3;n",
+                      children: [
+                        {
+                          content:
+                            "&#xc1;rea del pol&#xed;gono formado por los puntos de contacto del cuerpo con el suelo",
+                          children: [],
+                          payload: { tag: "h5", lines: "377,378" },
+                        },
+                        {
+                          content:
+                            "Un robot con 4 patas tiene una base de sustentaci&#xf3;n rectangular",
+                          children: [],
+                          payload: { tag: "h5", lines: "378,379" },
+                        },
+                        {
+                          content:
+                            "Un robot b&#xed;pedo tiene una base de sustentaci&#xf3;n muy peque&#xf1;a (entre los dos pies)",
+                          children: [],
+                          payload: { tag: "h5", lines: "379,380" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "376,377" },
+                    },
+                    {
+                      content: "Tipos de equilibrio",
+                      children: [
+                        {
+                          content:
+                            "Estable &#x2192; si se perturba, vuelve a su posici&#xf3;n original (CG sube al perturbarse)",
+                          children: [],
+                          payload: { tag: "h5", lines: "382,383" },
+                        },
+                        {
+                          content:
+                            "Inestable &#x2192; si se perturba, se aleja de la posici&#xf3;n original (CG baja al perturbarse)",
+                          children: [],
+                          payload: { tag: "h5", lines: "383,384" },
+                        },
+                        {
+                          content:
+                            "Neutro &#x2192; si se perturba, queda en la nueva posici&#xf3;n (CG permanece igual)",
+                          children: [],
+                          payload: { tag: "h5", lines: "384,385" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "381,382" },
+                    },
+                    {
+                      content: "En rob&#xf3;tica m&#xf3;vil",
+                      children: [
+                        {
+                          content:
+                            "Los robots de 4+ patas son m&#xe1;s estables que los b&#xed;pedos",
+                          children: [],
+                          payload: { tag: "h5", lines: "387,388" },
+                        },
+                        {
+                          content:
+                            "El control de equilibrio en robots b&#xed;pedos es un reto enorme (ZMP: Zero Moment Point)",
+                          children: [],
+                          payload: { tag: "h5", lines: "388,389" },
+                        },
+                        {
+                          content:
+                            "Los robots m&#xf3;viles de ruedas deben mantener el CG dentro de la base de sustentaci&#xf3;n",
+                          children: [],
+                          payload: { tag: "h5", lines: "389,390" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "386,387" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "374,375" },
+                },
+              ],
+              payload: { tag: "h2", lines: "330,331" },
+            },
+            {
+              content: "Planos Inclinados en Equilibrio",
+              children: [
+                {
+                  content: "Definici&#xf3;n del sistema",
+                  children: [
+                    {
+                      content:
+                        "Una superficie plana que forma un &#xe1;ngulo &#x3b8; con la horizontal",
+                      children: [],
+                      payload: { tag: "h4", lines: "396,397" },
+                    },
+                    {
+                      content:
+                        "Los objetos sobre planos inclinados experimentan la gravedad descompuesta en dos componentes",
+                      children: [],
+                      payload: { tag: "h4", lines: "397,398" },
+                    },
+                    {
+                      content:
+                        "El eje x&apos; se toma paralelo al plano y el eje y&apos; perpendicular al plano",
+                      children: [],
+                      payload: { tag: "h4", lines: "398,399" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "395,396" },
+                },
+                {
+                  content: "Descomposici&#xf3;n del peso en el plano inclinado",
+                  children: [
+                    {
+                      content: "Componente perpendicular al plano (W&#x22a5;)",
+                      children: [
+                        {
+                          content: "W&#x22a5; = m &#xb7; g &#xb7; cos(&#x3b8;)",
+                          children: [],
+                          payload: { tag: "h5", lines: "403,404" },
+                        },
+                        {
+                          content:
+                            "Es la componente que &quot;presiona&quot; el objeto contra el plano",
+                          children: [],
+                          payload: { tag: "h5", lines: "404,405" },
+                        },
+                        {
+                          content:
+                            "Es contrarrestada por la fuerza normal: N = m&#xb7;g&#xb7;cos(&#x3b8;)",
+                          children: [],
+                          payload: { tag: "h5", lines: "405,406" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "402,403" },
+                    },
+                    {
+                      content: "Componente paralela al plano (W&#x2225;)",
+                      children: [
+                        {
+                          content: "W&#x2225; = m &#xb7; g &#xb7; sen(&#x3b8;)",
+                          children: [],
+                          payload: { tag: "h5", lines: "408,409" },
+                        },
+                        {
+                          content:
+                            "Es la componente que tiende a hacer deslizar el objeto hacia abajo",
+                          children: [],
+                          payload: { tag: "h5", lines: "409,410" },
+                        },
+                        {
+                          content:
+                            "Debe ser contrarrestada por la fricci&#xf3;n o una fuerza aplicada para mantener el equilibrio",
+                          children: [],
+                          payload: { tag: "h5", lines: "410,411" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "407,408" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "400,401" },
+                },
+                {
+                  content:
+                    "An&#xe1;lisis de equilibrio en plano inclinado sin fricci&#xf3;n",
+                  children: [
+                    {
+                      content:
+                        "Solo act&#xfa;an el peso y la normal (+ posible fuerza aplicada)",
+                      children: [],
+                      payload: { tag: "h4", lines: "414,415" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;F&#x1d67;&apos; = 0 &#x2192; N - m&#xb7;g&#xb7;cos(&#x3b8;) = 0 &#x2192; N = m&#xb7;g&#xb7;cos(&#x3b8;)",
+                      children: [],
+                      payload: { tag: "h4", lines: "415,416" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;F&#x2093;&apos; = 0 &#x2192; Para que haya equilibrio sin fricci&#xf3;n se necesita una fuerza F paralela al plano",
+                      children: [],
+                      payload: { tag: "h4", lines: "416,417" },
+                    },
+                    {
+                      content:
+                        "F = m&#xb7;g&#xb7;sen(&#x3b8;) (hacia arriba del plano)",
+                      children: [],
+                      payload: { tag: "h4", lines: "417,418" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "412,413" },
+                },
+                {
+                  content:
+                    "An&#xe1;lisis de equilibrio en plano inclinado con fricci&#xf3;n",
+                  children: [
+                    {
+                      content:
+                        "La fricci&#xf3;n m&#xe1;xima disponible es: fs_max = &#x3bc;s &#xb7; N = &#x3bc;s &#xb7; m&#xb7;g&#xb7;cos(&#x3b8;)",
+                      children: [],
+                      payload: { tag: "h4", lines: "421,422" },
+                    },
+                    {
+                      content:
+                        "El objeto no desliza si: m&#xb7;g&#xb7;sen(&#x3b8;) &#x2264; &#x3bc;s &#xb7; m&#xb7;g&#xb7;cos(&#x3b8;)",
+                      children: [],
+                      payload: { tag: "h4", lines: "422,423" },
+                    },
+                    {
+                      content:
+                        "Condici&#xf3;n de no deslizamiento: tan(&#x3b8;) &#x2264; &#x3bc;s",
+                      children: [],
+                      payload: { tag: "h4", lines: "423,424" },
+                    },
+                    {
+                      content:
+                        "&#xc1;ngulo cr&#xed;tico: &#x3b8;_critico = arctan(&#x3bc;s) &#x2192; &#xe1;ngulo m&#xe1;ximo antes de que deslice",
+                      children: [],
+                      payload: { tag: "h4", lines: "424,425" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "419,420" },
+                },
+                {
+                  content:
+                    "Objeto en equilibrio sobre plano inclinado con cuerda",
+                  children: [
+                    {
+                      content:
+                        "Si hay una cuerda paralela al plano con tensi&#xf3;n T",
+                      children: [],
+                      payload: { tag: "h4", lines: "427,428" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;F&#x2093;&apos; = 0 &#x2192; T + fs - m&#xb7;g&#xb7;sen(&#x3b8;) = 0",
+                      children: [],
+                      payload: { tag: "h4", lines: "428,429" },
+                    },
+                    {
+                      content:
+                        "&#x3a3;F&#x1d67;&apos; = 0 &#x2192; N - m&#xb7;g&#xb7;cos(&#x3b8;) = 0 &#x2192; N = m&#xb7;g&#xb7;cos(&#x3b8;)",
+                      children: [],
+                      payload: { tag: "h4", lines: "429,430" },
+                    },
+                    {
+                      content:
+                        "Se despeja T seg&#xfa;n si la fricci&#xf3;n ayuda o no al equilibrio",
+                      children: [],
+                      payload: { tag: "h4", lines: "430,431" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "426,427" },
+                },
+                {
+                  content: "Plano inclinado con objeto colgante",
+                  children: [
+                    {
+                      content:
+                        "Un objeto sobre el plano conectado por una cuerda que pasa por una polea a un objeto colgante",
+                      children: [],
+                      payload: { tag: "h4", lines: "433,434" },
+                    },
+                    {
+                      content: "Se analiza cada objeto con su propio DCL",
+                      children: [],
+                      payload: { tag: "h4", lines: "434,435" },
+                    },
+                    {
+                      content:
+                        "Se aplican las condiciones de equilibrio a cada uno",
+                      children: [],
+                      payload: { tag: "h4", lines: "435,436" },
+                    },
+                    {
+                      content:
+                        "La tensi&#xf3;n es la misma en toda la cuerda (polea ideal)",
+                      children: [],
+                      payload: { tag: "h4", lines: "436,437" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "432,433" },
+                },
+              ],
+              payload: { tag: "h2", lines: "393,394" },
+            },
+            {
+              content: "Estructuras Reticuladas (Armaduras)",
+              children: [
+                {
+                  content: "&#xbf;Qu&#xe9; es una armadura?",
+                  children: [
+                    {
+                      content:
+                        "Estructura formada por miembros rectos conectados en sus extremos mediante articulaciones (nodos)",
+                      children: [],
+                      payload: { tag: "h4", lines: "443,444" },
+                    },
+                    {
+                      content: "Las cargas se aplican solo en los nodos",
+                      children: [],
+                      payload: { tag: "h4", lines: "444,445" },
+                    },
+                    {
+                      content:
+                        "Cada miembro solo trabaja en tensi&#xf3;n o compresi&#xf3;n (no en flexi&#xf3;n)",
+                      children: [],
+                      payload: { tag: "h4", lines: "445,446" },
+                    },
+                    {
+                      content:
+                        "Muy usadas en puentes, techos, torres de antena y chasis de robots",
+                      children: [],
+                      payload: { tag: "h4", lines: "446,447" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "442,443" },
+                },
+                {
+                  content: "Tipos de miembros",
+                  children: [
+                    {
+                      content:
+                        "Miembro en tensi&#xf3;n &#x2192; la fuerza interna jala los extremos hacia afuera",
+                      children: [],
+                      payload: { tag: "h4", lines: "449,450" },
+                    },
+                    {
+                      content:
+                        "Miembro en compresi&#xf3;n &#x2192; la fuerza interna empuja los extremos hacia adentro",
+                      children: [],
+                      payload: { tag: "h4", lines: "450,451" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "448,449" },
+                },
+                {
+                  content: "M&#xe9;todo de los nodos",
+                  children: [
+                    {
+                      content:
+                        "Se analiza cada nodo por separado aplicando &#x3a3;F&#x2093; = 0 y &#x3a3;F&#x1d67; = 0",
+                      children: [],
+                      payload: { tag: "h4", lines: "453,454" },
+                    },
+                    {
+                      content:
+                        "En cada nodo solo act&#xfa;an las fuerzas de los miembros que convergen en &#xe9;l y las cargas externas",
+                      children: [],
+                      payload: { tag: "h4", lines: "454,455" },
+                    },
+                    {
+                      content:
+                        "Se empieza por el nodo con menos inc&#xf3;gnitas (m&#xe1;ximo dos)",
+                      children: [],
+                      payload: { tag: "h4", lines: "455,456" },
+                    },
+                    {
+                      content:
+                        "Se avanza nodo a nodo hasta resolver toda la estructura",
+                      children: [],
+                      payload: { tag: "h4", lines: "456,457" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "452,453" },
+                },
+                {
+                  content: "Condici&#xf3;n de estabilidad de una armadura",
+                  children: [
+                    {
+                      content:
+                        "m + r = 2n (estructura est&#xe1;ticamente determinada)",
+                      children: [],
+                      payload: { tag: "h4", lines: "459,460" },
+                    },
+                    {
+                      content: "m &#x2192; n&#xfa;mero de miembros",
+                      children: [],
+                      payload: { tag: "h4", lines: "460,461" },
+                    },
+                    {
+                      content: "r &#x2192; n&#xfa;mero de reacciones externas",
+                      children: [],
+                      payload: { tag: "h4", lines: "461,462" },
+                    },
+                    {
+                      content: "n &#x2192; n&#xfa;mero de nodos",
+                      children: [],
+                      payload: { tag: "h4", lines: "462,463" },
+                    },
+                    {
+                      content:
+                        "m + r &lt; 2n &#x2192; estructura inestable (mecanismo)",
+                      children: [],
+                      payload: { tag: "h4", lines: "463,464" },
+                    },
+                    {
+                      content:
+                        "m + r &gt; 2n &#x2192; estructura hiperest&#xe1;tica (est&#xe1;ticamente indeterminada)",
+                      children: [],
+                      payload: { tag: "h4", lines: "464,465" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "458,459" },
+                },
+              ],
+              payload: { tag: "h2", lines: "440,441" },
+            },
+            {
+              content: "Aplicaciones en Estructuras y Rob&#xf3;tica",
+              children: [
+                {
+                  content:
+                    "An&#xe1;lisis de brazos rob&#xf3;ticos est&#xe1;ticos",
+                  children: [
+                    {
+                      content:
+                        "El brazo rob&#xf3;tico como sistema de palancas articuladas",
+                      children: [
+                        {
+                          content:
+                            "Cada eslab&#xf3;n es una barra r&#xed;gida sometida a fuerzas y torques",
+                          children: [],
+                          payload: { tag: "h5", lines: "473,474" },
+                        },
+                        {
+                          content:
+                            "Las articulaciones transmiten fuerzas y torques entre eslabones",
+                          children: [],
+                          payload: { tag: "h5", lines: "474,475" },
+                        },
+                        {
+                          content:
+                            "El motor debe generar suficiente torque para sostener la carga",
+                          children: [],
+                          payload: { tag: "h5", lines: "475,476" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "472,473" },
+                    },
+                    {
+                      content: "Torque requerido en una articulaci&#xf3;n",
+                      children: [
+                        {
+                          content:
+                            "&#x3c4;_motor = m_carga &#xb7; g &#xb7; d_horizontal + m_eslab&#xf3;n &#xb7; g &#xb7; d_cm",
+                          children: [],
+                          payload: { tag: "h5", lines: "478,479" },
+                        },
+                        {
+                          content:
+                            "d_horizontal &#x2192; distancia horizontal desde la articulaci&#xf3;n al centro de masa de la carga",
+                          children: [],
+                          payload: { tag: "h5", lines: "479,480" },
+                        },
+                        {
+                          content:
+                            "A mayor alcance horizontal &#x2192; mayor torque requerido",
+                          children: [],
+                          payload: { tag: "h5", lines: "480,481" },
+                        },
+                        {
+                          content:
+                            "Por eso los robots industriales tienen sus motores cerca de la base",
+                          children: [],
+                          payload: { tag: "h5", lines: "481,482" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "477,478" },
+                    },
+                    {
+                      content: "Workspace est&#xe1;tico",
+                      children: [
+                        {
+                          content:
+                            "Zona del espacio donde el robot puede mantener una carga en equilibrio est&#xe1;tico",
+                          children: [],
+                          payload: { tag: "h5", lines: "484,485" },
+                        },
+                        {
+                          content:
+                            "Limitada por el torque m&#xe1;ximo de cada motor",
+                          children: [],
+                          payload: { tag: "h5", lines: "485,486" },
+                        },
+                        {
+                          content:
+                            "Diferente del workspace cinem&#xe1;tico (zona que puede alcanzar)",
+                          children: [],
+                          payload: { tag: "h5", lines: "486,487" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "483,484" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "470,471" },
+                },
+                {
+                  content: "Estabilidad de robots m&#xf3;viles",
+                  children: [
+                    {
+                      content: "Robot con ruedas",
+                      children: [
+                        {
+                          content:
+                            "Base de sustentaci&#xf3;n &#x2192; pol&#xed;gono formado por los puntos de contacto de las ruedas",
+                          children: [],
+                          payload: { tag: "h5", lines: "491,492" },
+                        },
+                        {
+                          content: "El CG debe mantenerse dentro de esa base",
+                          children: [],
+                          payload: { tag: "h5", lines: "492,493" },
+                        },
+                        {
+                          content:
+                            "En curvas &#x2192; la fuerza centr&#xed;fuga puede volcar el robot si el CG es muy alto",
+                          children: [],
+                          payload: { tag: "h5", lines: "493,494" },
+                        },
+                        {
+                          content:
+                            "Dise&#xf1;ar con CG bajo &#x2192; aumenta la estabilidad",
+                          children: [],
+                          payload: { tag: "h5", lines: "494,495" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "490,491" },
+                    },
+                    {
+                      content: "Robot cuadr&#xfa;pedo (4 patas)",
+                      children: [
+                        {
+                          content:
+                            "Con 4 patas &#x2192; base de sustentaci&#xf3;n grande &#x2192; muy estable en reposo",
+                          children: [],
+                          payload: { tag: "h5", lines: "497,498" },
+                        },
+                        {
+                          content:
+                            "Al caminar &#x2192; cuando levanta una pata &#x2192; base triangular &#x2192; menos estable",
+                          children: [],
+                          payload: { tag: "h5", lines: "498,499" },
+                        },
+                        {
+                          content:
+                            "La marcha debe calcularse para mantener el CG siempre dentro de la base de sustentaci&#xf3;n",
+                          children: [],
+                          payload: { tag: "h5", lines: "499,500" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "496,497" },
+                    },
+                    {
+                      content: "Robot b&#xed;pedo (2 patas)",
+                      children: [
+                        {
+                          content:
+                            "Base de sustentaci&#xf3;n m&#xed;nima &#x2192; muy inestable por naturaleza",
+                          children: [],
+                          payload: { tag: "h5", lines: "502,503" },
+                        },
+                        {
+                          content:
+                            "Usa el concepto de ZMP (Zero Moment Point) para control din&#xe1;mico del equilibrio",
+                          children: [],
+                          payload: { tag: "h5", lines: "503,504" },
+                        },
+                        {
+                          content:
+                            "Requiere sensores IMU y control activo continuo para no caerse",
+                          children: [],
+                          payload: { tag: "h5", lines: "504,505" },
+                        },
+                        {
+                          content:
+                            "Ejemplo: Boston Dynamics Atlas, Honda ASIMO",
+                          children: [],
+                          payload: { tag: "h5", lines: "505,506" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "501,502" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "488,489" },
+                },
+                {
+                  content: "Dise&#xf1;o de estructuras soporte",
+                  children: [
+                    {
+                      content: "Chasis de robot",
+                      children: [
+                        {
+                          content:
+                            "Debe soportar todos los componentes sin deformarse excesivamente",
+                          children: [],
+                          payload: { tag: "h5", lines: "510,511" },
+                        },
+                        {
+                          content:
+                            "Se analiza con diagramas de cuerpo libre de cada parte",
+                          children: [],
+                          payload: { tag: "h5", lines: "511,512" },
+                        },
+                        {
+                          content:
+                            "Se optimiza para minimizar la masa manteniendo la rigidez",
+                          children: [],
+                          payload: { tag: "h5", lines: "512,513" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "509,510" },
+                    },
+                    {
+                      content: "Efector final (end-effector)",
+                      children: [
+                        {
+                          content:
+                            "La pinza o herramienta al final del brazo rob&#xf3;tico",
+                          children: [],
+                          payload: { tag: "h5", lines: "515,516" },
+                        },
+                        {
+                          content:
+                            "Debe soportar la fuerza de agarre sin deformarse",
+                          children: [],
+                          payload: { tag: "h5", lines: "516,517" },
+                        },
+                        {
+                          content:
+                            "Las fuerzas de reacci&#xf3;n se transmiten hasta la base del robot",
+                          children: [],
+                          payload: { tag: "h5", lines: "517,518" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "514,515" },
+                    },
+                    {
+                      content: "Anclajes y bases",
+                      children: [
+                        {
+                          content:
+                            "La base del robot debe estar anclada para resistir las reacciones de las fuerzas aplicadas",
+                          children: [],
+                          payload: { tag: "h5", lines: "520,521" },
+                        },
+                        {
+                          content:
+                            "Los tornillos de anclaje trabajan en cortante y tensi&#xf3;n",
+                          children: [],
+                          payload: { tag: "h5", lines: "521,522" },
+                        },
+                        {
+                          content:
+                            "El an&#xe1;lisis est&#xe1;tico determina el tama&#xf1;o y n&#xfa;mero de tornillos necesarios",
+                          children: [],
+                          payload: { tag: "h5", lines: "522,523" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "519,520" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "507,508" },
+                },
+                {
+                  content: "Sensores de fuerza y torque en rob&#xf3;tica",
+                  children: [
+                    {
+                      content: "Galgas extensom&#xe9;tricas (strain gauges)",
+                      children: [
+                        {
+                          content:
+                            "Miden la deformaci&#xf3;n de una estructura bajo carga",
+                          children: [],
+                          payload: { tag: "h5", lines: "527,528" },
+                        },
+                        {
+                          content:
+                            "Permiten calcular la fuerza aplicada usando la ley de Hooke",
+                          children: [],
+                          payload: { tag: "h5", lines: "528,529" },
+                        },
+                        {
+                          content:
+                            "Se instalan en puntos estrat&#xe9;gicos de la estructura",
+                          children: [],
+                          payload: { tag: "h5", lines: "529,530" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "526,527" },
+                    },
+                    {
+                      content: "Sensores de fuerza 6 DOF",
+                      children: [
+                        {
+                          content:
+                            "Miden fuerzas y torques en los tres ejes (Fx, Fy, Fz, &#x3c4;x, &#x3c4;y, &#x3c4;z)",
+                          children: [],
+                          payload: { tag: "h5", lines: "532,533" },
+                        },
+                        {
+                          content:
+                            "Se instalan en la mu&#xf1;eca del robot entre el brazo y el efector final",
+                          children: [],
+                          payload: { tag: "h5", lines: "533,534" },
+                        },
+                        {
+                          content:
+                            "Permiten control de fuerza &#x2192; el robot siente cu&#xe1;nta fuerza ejerce",
+                          children: [],
+                          payload: { tag: "h5", lines: "534,535" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "531,532" },
+                    },
+                    {
+                      content: "Celdas de carga",
+                      children: [
+                        {
+                          content:
+                            "Miden la fuerza aplicada directamente sobre un punto",
+                          children: [],
+                          payload: { tag: "h5", lines: "537,538" },
+                        },
+                        {
+                          content:
+                            "Se usan en plataformas de pesaje y en patas de robots para medir el peso soportado",
+                          children: [],
+                          payload: { tag: "h5", lines: "538,539" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "536,537" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "524,525" },
+                },
+                {
+                  content: "M&#xe1;quinas simples en rob&#xf3;tica",
+                  children: [
+                    {
+                      content: "Palanca",
+                      children: [
+                        {
+                          content:
+                            "Brazos articulados del robot &#x2192; sistema de palancas",
+                          children: [],
+                          payload: { tag: "h5", lines: "543,544" },
+                        },
+                        {
+                          content:
+                            "Relaci&#xf3;n de ventaja mec&#xe1;nica: VM = d_esfuerzo / d_carga",
+                          children: [],
+                          payload: { tag: "h5", lines: "544,545" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "542,543" },
+                    },
+                    {
+                      content: "Polea",
+                      children: [
+                        {
+                          content:
+                            "Cambiar la direcci&#xf3;n de fuerzas en cables de robots cable-driven",
+                          children: [],
+                          payload: { tag: "h5", lines: "547,548" },
+                        },
+                        {
+                          content:
+                            "Las poleas compuestas multiplican la fuerza disponible",
+                          children: [],
+                          payload: { tag: "h5", lines: "548,549" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "546,547" },
+                    },
+                    {
+                      content: "Tornillo",
+                      children: [
+                        {
+                          content:
+                            "Mecanismo tornillo-tuerca convierte rotaci&#xf3;n en traslaci&#xf3;n lineal",
+                          children: [],
+                          payload: { tag: "h5", lines: "551,552" },
+                        },
+                        {
+                          content:
+                            "Usado en actuadores lineales de robots: husillos de bolas (ball screws)",
+                          children: [],
+                          payload: { tag: "h5", lines: "552,553" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "550,551" },
+                    },
+                    {
+                      content: "Engranajes",
+                      children: [
+                        {
+                          content:
+                            "Transmiten torque entre ejes &#x2192; relaci&#xf3;n de transmisi&#xf3;n",
+                          children: [],
+                          payload: { tag: "h5", lines: "555,556" },
+                        },
+                        {
+                          content:
+                            "VM = &#x3c4;_salida / &#x3c4;_entrada = &#x3c9;_entrada / &#x3c9;_salida",
+                          children: [],
+                          payload: { tag: "h5", lines: "556,557" },
+                        },
+                        {
+                          content:
+                            "A mayor reducci&#xf3;n &#x2192; m&#xe1;s torque, menos velocidad",
+                          children: [],
+                          payload: { tag: "h5", lines: "557,558" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "554,555" },
+                    },
+                    {
+                      content: "Plano inclinado",
+                      children: [
+                        {
+                          content:
+                            "Las rampas de acceso para robots m&#xf3;viles siguen el an&#xe1;lisis del plano inclinado",
+                          children: [],
+                          payload: { tag: "h5", lines: "560,561" },
+                        },
+                        {
+                          content:
+                            "El &#xe1;ngulo m&#xe1;ximo de rampa lo limita la fricci&#xf3;n de las ruedas o el torque del motor",
+                          children: [],
+                          payload: { tag: "h5", lines: "561,562" },
+                        },
+                      ],
+                      payload: { tag: "h4", lines: "559,560" },
+                    },
+                  ],
+                  payload: { tag: "h3", lines: "540,541" },
+                },
+              ],
+              payload: { tag: "h2", lines: "468,469" },
+            },
+          ],
+          payload: { tag: "h1", lines: "0,1" },
+        },
+        null,
+      );
+    </script>
+  </body>
+</html>
