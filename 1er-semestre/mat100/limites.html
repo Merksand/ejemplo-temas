@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Límites — MAT100</title>
+<link rel="stylesheet" href="../../assets/shared.css">
+<style>
+  body { padding-bottom: 5rem; }
+
+  /* HERO */
+  .hero { padding: 2.5rem 0 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--purple); text-transform: uppercase; margin-bottom: 10px; }
+  h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 10px; }
+  h1 span { color: var(--purple); }
+  .subtitle { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+  .section-label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--dim);
+    padding-bottom: 8px; border-bottom: 1px solid var(--border); margin: 1.5rem 0 1rem;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex; gap: 4px; flex-wrap: wrap;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 5px; margin-bottom: 1.5rem;
+  }
+  .tab-btn {
+    font-family: var(--mono); font-size: 12px; padding: 7px 16px;
+    border-radius: var(--radius-sm); border: none; background: transparent;
+    color: var(--muted); cursor: pointer; transition: all .18s; white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); background: var(--bg3); }
+  .tab-btn.active { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(127,119,221,0.3); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* INFO BOX */
+  .info-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--purple); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 1rem; }
+  .info-title { font-size: 13px; font-weight: 700; color: var(--purple); margin-bottom: 8px; font-family: var(--mono); }
+  .info-body { font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.9; }
+  .info-body code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
+  .info-body strong { color: var(--text); }
+
+  /* PANEL DEFINICIÓN */
+  .canvas-wrap {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    margin-bottom: 1rem;
+  }
+  canvas { display: block; width: 100%; height: 320px; background: var(--bg); border-radius: var(--radius-sm); }
+
+  .control-row {
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+    margin-top: 14px; font-family: var(--mono); font-size: 12px; color: var(--muted);
+  }
+  .control-row label { display: flex; align-items: center; gap: 8px; }
+  .control-row input[type="range"] {
+    width: 220px; accent-color: var(--purple);
+  }
+  .readout {
+    font-family: var(--mono); font-size: 12px;
+    background: var(--purple-bg); color: var(--purple);
+    padding: 4px 10px; border-radius: 6px;
+    border: 1px solid rgba(127,119,221,0.25);
+  }
+  .readout strong { color: var(--text); }
+
+  /* LATERALES */
+  .side-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
+  @media (max-width: 600px) { .side-grid { grid-template-columns: 1fr; } }
+  .side-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+  }
+  .side-card.left  { border-left: 3px solid var(--blue); }
+  .side-card.right { border-left: 3px solid var(--teal); }
+  .side-name { font-family: var(--mono); font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
+  .side-val  { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--text); }
+  .side-card.left .side-val  { color: var(--blue); }
+  .side-card.right .side-val { color: var(--teal-l); }
+
+  .verdict {
+    font-family: var(--mono); font-size: 13px;
+    text-align: center; padding: 12px;
+    border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .verdict.exists { color: var(--teal-l); border-color: rgba(93,202,165,0.3); background: var(--teal-bg); }
+  .verdict.no { color: var(--red); border-color: rgba(226,75,74,0.3); background: var(--red-bg); }
+
+  .fn-picker { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .fn-pill {
+    font-family: var(--mono); font-size: 11.5px;
+    padding: 6px 12px; border-radius: 20px;
+    border: 1px solid var(--border); background: transparent; color: var(--muted);
+    cursor: pointer; transition: all .18s;
+  }
+  .fn-pill:hover { color: var(--text); border-color: var(--border-h); }
+  .fn-pill.active { background: var(--purple-bg); color: var(--purple); border-color: rgba(127,119,221,0.4); }
+
+  /* INDETERMINACIONES */
+  .indet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+  .indet-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    cursor: pointer; transition: all .18s;
+  }
+  .indet-card:hover { border-color: var(--border-h); background: var(--bg3); }
+  .indet-card.active { border-color: rgba(127,119,221,0.5); background: var(--purple-bg); }
+  .indet-form { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .indet-card.active .indet-form { color: var(--purple); }
+  .indet-tip { font-family: var(--mono); font-size: 11px; color: var(--dim); line-height: 1.4; }
+  .indet-card.active .indet-tip { color: var(--muted); }
+
+  .indet-detail {
+    margin-top: 14px;
+    background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--amber);
+    border-radius: var(--radius); padding: 16px 20px;
+    display: none; font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.9;
+  }
+  .indet-detail.visible { display: block; }
+  .indet-detail b { color: var(--amber); }
+  .indet-detail code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
+
+  /* TÉCNICAS — STEPS */
+  .steps-wrap {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+  }
+  .steps-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+  .steps-title { font-family: var(--sans); font-size: 16px; font-weight: 700; color: var(--text); }
+  .steps-controls { display: flex; gap: 6px; }
+  .steps-btn {
+    font-family: var(--mono); font-size: 12px;
+    padding: 6px 12px; border-radius: 6px;
+    background: var(--bg3); border: 1px solid var(--border); color: var(--muted); cursor: pointer;
+  }
+  .steps-btn:hover { color: var(--text); border-color: var(--border-h); }
+  .steps-btn.primary { background: var(--purple-bg); color: var(--purple); border-color: rgba(127,119,221,0.3); }
+
+  .step {
+    font-family: var(--mono); font-size: 13.5px;
+    padding: 10px 14px; margin-bottom: 8px;
+    background: var(--bg); border-radius: var(--radius-sm);
+    color: var(--dim); border: 1px solid transparent;
+    transition: all .25s;
+  }
+  .step.shown { color: var(--text); border-color: var(--border); }
+  .step.shown.highlight { border-color: rgba(127,119,221,0.4); background: rgba(127,119,221,0.05); }
+  .step .lbl { color: var(--purple); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; margin-right: 8px; }
+  .step .ok { color: var(--teal-l); }
+  .step code { color: var(--amber); }
+
+  /* NOTABLES */
+  .notable-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .notable-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+  .notable-formula { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--purple); margin-bottom: 8px; }
+  .notable-desc { font-family: var(--mono); font-size: 11.5px; color: var(--muted); line-height: 1.6; margin-bottom: 10px; }
+  .notable-canvas { width: 100%; height: 130px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">apuntes<span>/</span>visuales</div>
+  <a href="../../index.html" class="nav-back">← volver al dashboard</a>
+</nav>
+
+<div class="container">
+
+  <div class="hero">
+    <p class="eyebrow">MAT100 — Cálculo I</p>
+    <h1>Límites de <span>funciones</span></h1>
+    <p class="subtitle">aproximación, laterales, indeterminaciones y técnicas — todo interactivo</p>
+  </div>
+
+  <!-- ── TABS ── -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="def">Definición</button>
+    <button class="tab-btn" data-tab="lat">Laterales</button>
+    <button class="tab-btn" data-tab="ind">Indeterminaciones</button>
+    <button class="tab-btn" data-tab="tec">Técnicas</button>
+    <button class="tab-btn" data-tab="not">Notables</button>
+  </div>
+
+  <!-- ── PANEL: DEFINICIÓN ── -->
+  <div class="tab-panel active" id="tab-def">
+    <div class="info-box">
+      <div class="info-title">Idea intuitiva</div>
+      <div class="info-body">
+        El <strong>límite</strong> de <code>f(x)</code> cuando <code>x → a</code> es el valor <strong>L</strong> al que se acerca <code>f(x)</code> a medida que <code>x</code> se acerca a <code>a</code>, sin importar si <code>f(a)</code> existe o no.
+        <br>Notación: <code>lim<sub>x→a</sub> f(x) = L</code>
+      </div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="cvDef"></canvas>
+      <div class="control-row">
+        <label>x = <input type="range" id="xSlider" min="-2" max="6" step="0.05" value="1.5"></label>
+        <span class="readout">x: <strong id="xVal">1.50</strong></span>
+        <span class="readout">f(x): <strong id="fxVal">—</strong></span>
+        <span class="readout" style="background:var(--teal-bg); color:var(--teal-l); border-color:rgba(93,202,165,0.3)">L = <strong id="lVal">4</strong></span>
+      </div>
+    </div>
+
+    <div class="info-box" style="border-left-color:var(--teal)">
+      <div class="info-title" style="color:var(--teal-l)">Ejemplo: f(x) = (x²−4)/(x−2)</div>
+      <div class="info-body">
+        En <code>x=2</code> hay <strong>0/0</strong> (un hueco). Pero al aproximarte por ambos lados, <code>f(x) → 4</code>. El límite existe aunque <code>f(2)</code> no esté definido.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PANEL: LATERALES ── -->
+  <div class="tab-panel" id="tab-lat">
+    <div class="info-box">
+      <div class="info-title">Límites laterales</div>
+      <div class="info-body">
+        <code>lim<sub>x→a⁻</sub></code> = aproximación por la <strong style="color:var(--blue)">izquierda</strong>.<br>
+        <code>lim<sub>x→a⁺</sub></code> = aproximación por la <strong style="color:var(--teal-l)">derecha</strong>.<br>
+        El límite existe <strong>solo si</strong> ambos coinciden.
+      </div>
+    </div>
+
+    <div class="fn-picker" id="fnPicker">
+      <button class="fn-pill active" data-fn="poly">f(x) = x²</button>
+      <button class="fn-pill" data-fn="abs">f(x) = |x|/x</button>
+      <button class="fn-pill" data-fn="step">escalón en x=1</button>
+      <button class="fn-pill" data-fn="hyp">f(x) = 1/(x−2)</button>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="cvLat"></canvas>
+      <div class="control-row">
+        <label>a = <input type="range" id="aSlider" min="-3" max="4" step="0.1" value="1"></label>
+        <span class="readout">a: <strong id="aVal">1.0</strong></span>
+      </div>
+    </div>
+
+    <div class="side-grid">
+      <div class="side-card left">
+        <div class="side-name">lim x → a⁻</div>
+        <div class="side-val" id="leftVal">—</div>
+      </div>
+      <div class="side-card right">
+        <div class="side-name">lim x → a⁺</div>
+        <div class="side-val" id="rightVal">—</div>
+      </div>
+    </div>
+    <div class="verdict" id="verdict">—</div>
+  </div>
+
+  <!-- ── PANEL: INDETERMINACIONES ── -->
+  <div class="tab-panel" id="tab-ind">
+    <div class="info-box">
+      <div class="info-title">Las 7 formas indeterminadas</div>
+      <div class="info-body">
+        Cuando al evaluar el límite obtienes una de estas formas, <strong>no puedes concluir</strong>. Hay que transformar la expresión. Click en cada forma para ver la estrategia.
+      </div>
+    </div>
+
+    <div class="indet-grid" id="indetGrid"></div>
+    <div class="indet-detail" id="indetDetail"></div>
+  </div>
+
+  <!-- ── PANEL: TÉCNICAS ── -->
+  <div class="tab-panel" id="tab-tec">
+    <div class="info-box">
+      <div class="info-title">Resolver paso a paso</div>
+      <div class="info-body">
+        Elegí un ejercicio y presioná <strong>Siguiente paso</strong>. La técnica se aplica progresivamente hasta obtener el resultado.
+      </div>
+    </div>
+
+    <div class="fn-picker" id="exPicker"></div>
+
+    <div class="steps-wrap">
+      <div class="steps-head">
+        <div class="steps-title" id="exTitle">—</div>
+        <div class="steps-controls">
+          <button class="steps-btn" id="resetBtn">↺ reiniciar</button>
+          <button class="steps-btn primary" id="nextBtn">siguiente paso →</button>
+        </div>
+      </div>
+      <div id="stepsBox"></div>
+    </div>
+  </div>
+
+  <!-- ── PANEL: NOTABLES ── -->
+  <div class="tab-panel" id="tab-not">
+    <div class="info-box">
+      <div class="info-title">Límites notables</div>
+      <div class="info-body">
+        Resultados memorizados que aparecen muy seguido. Reconocé la forma y aplicalos directo.
+      </div>
+    </div>
+    <div class="notable-grid" id="notableGrid"></div>
+  </div>
+
+</div>
+
+<script>
+/* ============== Helpers de canvas ============== */
+function setupCanvas(cv) {
+  var dpr = window.devicePixelRatio || 1;
+  var rect = cv.getBoundingClientRect();
+  cv.width = rect.width * dpr;
+  cv.height = rect.height * dpr;
+  var ctx = cv.getContext("2d");
+  ctx.scale(dpr, dpr);
+  return { ctx: ctx, w: rect.width, h: rect.height };
+}
+function axes(ctx, w, h, xMin, xMax, yMin, yMax) {
+  var xToPx = function(x){ return (x - xMin) / (xMax - xMin) * w; };
+  var yToPx = function(y){ return h - (y - yMin) / (yMax - yMin) * h; };
+  ctx.strokeStyle = "rgba(255,255,255,0.06)";
+  ctx.lineWidth = 1;
+  for (var i = Math.ceil(xMin); i <= Math.floor(xMax); i++) {
+    ctx.beginPath(); ctx.moveTo(xToPx(i), 0); ctx.lineTo(xToPx(i), h); ctx.stroke();
+  }
+  for (var j = Math.ceil(yMin); j <= Math.floor(yMax); j++) {
+    ctx.beginPath(); ctx.moveTo(0, yToPx(j)); ctx.lineTo(w, yToPx(j)); ctx.stroke();
+  }
+  ctx.strokeStyle = "rgba(255,255,255,0.2)";
+  ctx.beginPath(); ctx.moveTo(0, yToPx(0)); ctx.lineTo(w, yToPx(0)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(xToPx(0), 0); ctx.lineTo(xToPx(0), h); ctx.stroke();
+  return { xToPx: xToPx, yToPx: yToPx };
+}
+
+/* ============== TABS ============== */
+document.querySelectorAll(".tab-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    document.querySelectorAll(".tab-btn").forEach(function(b){ b.classList.remove("active"); });
+    document.querySelectorAll(".tab-panel").forEach(function(p){ p.classList.remove("active"); });
+    btn.classList.add("active");
+    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+    // Re-render canvases si aplica
+    if (btn.dataset.tab === "def") drawDef();
+    if (btn.dataset.tab === "lat") drawLat();
+    if (btn.dataset.tab === "not") drawNotables();
+  });
+});
+
+/* ============== DEFINICIÓN ============== */
+var cvDef = document.getElementById("cvDef");
+var xSlider = document.getElementById("xSlider");
+function fDef(x) {
+  if (Math.abs(x - 2) < 0.0001) return null; // hueco
+  return (x*x - 4) / (x - 2); // = x+2
+}
+function drawDef() {
+  var s = setupCanvas(cvDef);
+  var ax = axes(s.ctx, s.w, s.h, -2, 6, -2, 8);
+  // curva
+  s.ctx.strokeStyle = "rgba(127,119,221,0.9)";
+  s.ctx.lineWidth = 2.2;
+  s.ctx.beginPath();
+  for (var x = -2; x <= 6; x += 0.05) {
+    var y = x + 2;
+    var px = ax.xToPx(x), py = ax.yToPx(y);
+    if (x === -2) s.ctx.moveTo(px, py); else s.ctx.lineTo(px, py);
+  }
+  s.ctx.stroke();
+  // hueco en x=2
+  s.ctx.beginPath();
+  s.ctx.arc(ax.xToPx(2), ax.yToPx(4), 5, 0, Math.PI*2);
+  s.ctx.fillStyle = "#0d0d0f";
+  s.ctx.strokeStyle = "rgba(127,119,221,0.9)";
+  s.ctx.lineWidth = 2;
+  s.ctx.fill(); s.ctx.stroke();
+  // línea de L
+  s.ctx.strokeStyle = "rgba(93,202,165,0.4)";
+  s.ctx.setLineDash([4,4]);
+  s.ctx.beginPath();
+  s.ctx.moveTo(0, ax.yToPx(4)); s.ctx.lineTo(s.w, ax.yToPx(4));
+  s.ctx.stroke();
+  s.ctx.setLineDash([]);
+  // punto activo
+  var xv = parseFloat(xSlider.value);
+  var fy = fDef(xv);
+  if (fy !== null) {
+    s.ctx.fillStyle = "#7F77DD";
+    s.ctx.beginPath();
+    s.ctx.arc(ax.xToPx(xv), ax.yToPx(fy), 6, 0, Math.PI*2);
+    s.ctx.fill();
+    // proyecciones
+    s.ctx.strokeStyle = "rgba(127,119,221,0.5)";
+    s.ctx.setLineDash([2,3]);
+    s.ctx.beginPath();
+    s.ctx.moveTo(ax.xToPx(xv), s.h); s.ctx.lineTo(ax.xToPx(xv), ax.yToPx(fy));
+    s.ctx.lineTo(0, ax.yToPx(fy));
+    s.ctx.stroke();
+    s.ctx.setLineDash([]);
+  }
+  document.getElementById("xVal").textContent = xv.toFixed(2);
+  document.getElementById("fxVal").textContent = fy === null ? "indef" : fy.toFixed(3);
+}
+xSlider.addEventListener("input", drawDef);
+window.addEventListener("resize", function(){ if (document.getElementById("tab-def").classList.contains("active")) drawDef(); });
+drawDef();
+
+/* ============== LATERALES ============== */
+var cvLat = document.getElementById("cvLat");
+var aSlider = document.getElementById("aSlider");
+var currentFn = "poly";
+var fns = {
+  poly: { f: function(x){ return x*x; }, name: "x²" },
+  abs:  { f: function(x){ if (x === 0) return null; return Math.abs(x)/x; }, name: "|x|/x" },
+  step: { f: function(x){ return x < 1 ? x : x + 2; }, name: "escalón en x=1" },
+  hyp:  { f: function(x){ if (Math.abs(x-2) < 0.0001) return null; return 1/(x-2); }, name: "1/(x−2)" }
+};
+
+document.getElementById("fnPicker").addEventListener("click", function(e) {
+  if (!e.target.classList.contains("fn-pill")) return;
+  document.querySelectorAll("#fnPicker .fn-pill").forEach(function(p){ p.classList.remove("active"); });
+  e.target.classList.add("active");
+  currentFn = e.target.dataset.fn;
+  drawLat();
+});
+
+function drawLat() {
+  var s = setupCanvas(cvLat);
+  var yRange = currentFn === "hyp" ? 8 : 6;
+  var ax = axes(s.ctx, s.w, s.h, -4, 5, -yRange, yRange);
+  var fn = fns[currentFn].f;
+
+  // curva
+  s.ctx.strokeStyle = "rgba(127,119,221,0.9)";
+  s.ctx.lineWidth = 2;
+  var prev = null;
+  for (var x = -4; x <= 5; x += 0.02) {
+    var y = fn(x);
+    if (y === null || !isFinite(y) || Math.abs(y) > yRange*1.2) { prev = null; continue; }
+    var px = ax.xToPx(x), py = ax.yToPx(y);
+    if (prev === null) { s.ctx.beginPath(); s.ctx.moveTo(px, py); }
+    else s.ctx.lineTo(px, py);
+    prev = [px, py];
+  }
+  s.ctx.stroke();
+
+  var a = parseFloat(aSlider.value);
+  // línea vertical en a
+  s.ctx.strokeStyle = "rgba(239,159,39,0.6)";
+  s.ctx.setLineDash([4,4]);
+  s.ctx.beginPath();
+  s.ctx.moveTo(ax.xToPx(a), 0); s.ctx.lineTo(ax.xToPx(a), s.h);
+  s.ctx.stroke();
+  s.ctx.setLineDash([]);
+
+  // valores laterales (aproximar)
+  var L = fn(a - 0.001), R = fn(a + 0.001);
+  var fmt = function(v) {
+    if (v === null) return "indef";
+    if (!isFinite(v) || Math.abs(v) > 100) return v > 0 ? "+∞" : "−∞";
+    return v.toFixed(2);
+  };
+  // puntos laterales
+  if (L !== null && isFinite(L) && Math.abs(L) <= yRange) {
+    s.ctx.fillStyle = "#378ADD";
+    s.ctx.beginPath(); s.ctx.arc(ax.xToPx(a-0.05), ax.yToPx(fn(a-0.05) || 0), 5, 0, Math.PI*2); s.ctx.fill();
+  }
+  if (R !== null && isFinite(R) && Math.abs(R) <= yRange) {
+    s.ctx.fillStyle = "#5DCAA5";
+    s.ctx.beginPath(); s.ctx.arc(ax.xToPx(a+0.05), ax.yToPx(fn(a+0.05) || 0), 5, 0, Math.PI*2); s.ctx.fill();
+  }
+
+  document.getElementById("aVal").textContent = a.toFixed(1);
+  document.getElementById("leftVal").textContent = fmt(L);
+  document.getElementById("rightVal").textContent = fmt(R);
+
+  var v = document.getElementById("verdict");
+  v.classList.remove("exists", "no");
+  if (L === null || R === null || !isFinite(L) || !isFinite(R)) {
+    v.classList.add("no"); v.textContent = "✗ El límite NO existe (uno o ambos laterales son infinitos o indefinidos)";
+  } else if (Math.abs(L - R) < 0.01) {
+    v.classList.add("exists"); v.textContent = "✓ El límite EXISTE: lim x→" + a.toFixed(1) + " = " + fmt(L);
+  } else {
+    v.classList.add("no"); v.textContent = "✗ El límite NO existe (laterales distintos: " + fmt(L) + " ≠ " + fmt(R) + ")";
+  }
+}
+aSlider.addEventListener("input", drawLat);
+window.addEventListener("resize", function(){ if (document.getElementById("tab-lat").classList.contains("active")) drawLat(); });
+
+/* ============== INDETERMINACIONES ============== */
+var indets = [
+  { f: "0/0",  tip: "factorizar o racionalizar", det: "<b>Estrategia:</b> factorizar numerador y denominador, cancelar el factor común que produce el cero. Si hay raíces, racionalizar multiplicando por el conjugado.<br><br><b>Ejemplo:</b> <code>lim (x²−4)/(x−2) = lim (x−2)(x+2)/(x−2) = lim (x+2) = 4</code>" },
+  { f: "∞/∞", tip: "dividir entre la mayor potencia", det: "<b>Estrategia:</b> dividir numerador y denominador entre la <b>mayor potencia</b> de x del denominador. Comparar grados.<br><br><b>Ejemplo:</b> <code>lim (3x²+1)/(2x²−x) = lim (3+1/x²)/(2−1/x) = 3/2</code>" },
+  { f: "∞−∞", tip: "factor común o conjugado", det: "<b>Estrategia:</b> reescribir como una sola fracción (común denominador) o multiplicar por conjugado para que aparezca 0/0 o ∞/∞.<br><br><b>Ejemplo:</b> <code>lim (√(x²+x) − x) · (√(x²+x)+x)/(√(x²+x)+x) = lim x/(√(x²+x)+x) = 1/2</code>" },
+  { f: "0·∞", tip: "convertir a 0/0 o ∞/∞", det: "<b>Estrategia:</b> reescribir como cociente: <code>f·g = f/(1/g)</code>. Después aplicar L'Hôpital o factorizar.<br><br><b>Ejemplo:</b> <code>lim x·ln(x) cuando x→0⁺ = lim ln(x)/(1/x) = ∞/∞ → L'Hôpital → 0</code>" },
+  { f: "1<sup>∞</sup>", tip: "usar el límite e", det: "<b>Estrategia:</b> reescribir como <code>(1+u)^(1/u)</code> donde <code>u→0</code>. Usar <code>lim (1+1/n)^n = e</code>.<br><br><b>Ejemplo:</b> <code>lim (1+1/x)^x = e</code>; <code>lim (1+a/x)^x = e^a</code>" },
+  { f: "0<sup>0</sup>", tip: "tomar logaritmo", det: "<b>Estrategia:</b> sea <code>y = f^g</code>, entonces <code>ln y = g·ln f</code>. Resolver <code>lim g·ln f</code> y luego exponenciar.<br><br><b>Ejemplo:</b> <code>lim x^x cuando x→0⁺ → ln y = x·ln x → 0 → y = e⁰ = 1</code>" },
+  { f: "∞<sup>0</sup>", tip: "tomar logaritmo", det: "<b>Estrategia:</b> mismo método que 0⁰. Tomar logaritmos para convertir a producto, después a cociente.<br><br><b>Ejemplo:</b> <code>lim x^(1/x) cuando x→∞ → ln y = ln(x)/x → 0 → y = 1</code>" }
+];
+var indetGrid = document.getElementById("indetGrid");
+var indetDetail = document.getElementById("indetDetail");
+indets.forEach(function(it, i) {
+  var div = document.createElement("div");
+  div.className = "indet-card";
+  div.innerHTML = '<div class="indet-form">' + it.f + '</div><div class="indet-tip">' + it.tip + '</div>';
+  div.addEventListener("click", function() {
+    document.querySelectorAll(".indet-card").forEach(function(c){ c.classList.remove("active"); });
+    div.classList.add("active");
+    indetDetail.innerHTML = '<div style="font-size:14px;color:var(--text);font-weight:700;margin-bottom:8px">Forma ' + it.f + '</div>' + it.det;
+    indetDetail.classList.add("visible");
+  });
+  indetGrid.appendChild(div);
+});
+
+/* ============== TÉCNICAS — paso a paso ============== */
+var examples = [
+  {
+    id: "fact", title: "lim x→2  (x²−4)/(x−2)",
+    steps: [
+      { lbl: "Sustituir", html: "Reemplazar <code>x = 2</code>: → <code>(4−4)/(2−2) = 0/0</code> (indeterminado)" },
+      { lbl: "Factorizar", html: "Numerador: <code>x²−4 = (x−2)(x+2)</code>" },
+      { lbl: "Cancelar", html: "<code>(x−2)(x+2)/(x−2) = x+2</code>  (válido si x≠2)" },
+      { lbl: "Evaluar", html: "<code>lim x→2 (x+2) = 2+2 =</code> <span class='ok'>4</span>" }
+    ]
+  },
+  {
+    id: "racio", title: "lim x→0  (√(x+1)−1)/x",
+    steps: [
+      { lbl: "Sustituir", html: "<code>(√1 − 1)/0 = 0/0</code> (indeterminado)" },
+      { lbl: "Conjugado", html: "Multiplicar por <code>(√(x+1)+1)/(√(x+1)+1)</code>" },
+      { lbl: "Simplificar", html: "Numerador: <code>(x+1)−1 = x</code> → expresión: <code>x / (x·(√(x+1)+1))</code>" },
+      { lbl: "Cancelar", html: "<code>= 1/(√(x+1)+1)</code>" },
+      { lbl: "Evaluar", html: "<code>= 1/(√1+1) = 1/2 =</code> <span class='ok'>0.5</span>" }
+    ]
+  },
+  {
+    id: "infs", title: "lim x→∞  (3x²+5)/(2x²−x+1)",
+    steps: [
+      { lbl: "Forma", html: "Como <code>x→∞</code>: <code>∞/∞</code> (indeterminado)" },
+      { lbl: "Dividir", html: "Dividir num. y denom. entre <code>x²</code> (la mayor potencia)" },
+      { lbl: "Reescribir", html: "<code>(3 + 5/x²) / (2 − 1/x + 1/x²)</code>" },
+      { lbl: "Evaluar", html: "Cuando <code>x→∞</code>: <code>1/x → 0</code>, <code>1/x² → 0</code>" },
+      { lbl: "Resultado", html: "<code>= 3/2 =</code> <span class='ok'>1.5</span>" }
+    ]
+  },
+  {
+    id: "lh", title: "lim x→0  sen(x)/x  (L'Hôpital)",
+    steps: [
+      { lbl: "Forma", html: "<code>sen(0)/0 = 0/0</code>" },
+      { lbl: "Derivar", html: "<code>d/dx[sen(x)] = cos(x)</code>;  <code>d/dx[x] = 1</code>" },
+      { lbl: "Aplicar L'H", html: "<code>lim cos(x)/1 = cos(0) = 1</code>" },
+      { lbl: "Resultado", html: "<span class='ok'>= 1</span> (es un límite notable)" }
+    ]
+  }
+];
+var exPicker = document.getElementById("exPicker");
+var exTitle = document.getElementById("exTitle");
+var stepsBox = document.getElementById("stepsBox");
+var currentEx = examples[0];
+var stepIdx = 0;
+
+function renderEx() {
+  exTitle.textContent = currentEx.title;
+  stepsBox.innerHTML = currentEx.steps.map(function(st, i) {
+    return '<div class="step" data-i="' + i + '"><span class="lbl">' + st.lbl + '</span>' + st.html + '</div>';
+  }).join("");
+  applyStepView();
+}
+function applyStepView() {
+  document.querySelectorAll("#stepsBox .step").forEach(function(s, i) {
+    s.classList.remove("shown", "highlight");
+    if (i < stepIdx) s.classList.add("shown");
+    if (i === stepIdx - 1) s.classList.add("shown", "highlight");
+  });
+}
+
+examples.forEach(function(ex, i) {
+  var b = document.createElement("button");
+  b.className = "fn-pill" + (i === 0 ? " active" : "");
+  b.textContent = ex.title;
+  b.addEventListener("click", function() {
+    document.querySelectorAll("#exPicker .fn-pill").forEach(function(p){ p.classList.remove("active"); });
+    b.classList.add("active");
+    currentEx = ex; stepIdx = 0; renderEx();
+  });
+  exPicker.appendChild(b);
+});
+
+document.getElementById("nextBtn").addEventListener("click", function() {
+  if (stepIdx < currentEx.steps.length) { stepIdx++; applyStepView(); }
+});
+document.getElementById("resetBtn").addEventListener("click", function() {
+  stepIdx = 0; applyStepView();
+});
+renderEx();
+
+/* ============== NOTABLES ============== */
+var notables = [
+  {
+    formula: "lim x→0  sen(x)/x = 1",
+    desc: "Base trigonométrica fundamental. Se generaliza: lim sen(kx)/x = k.",
+    plot: function(x){ return x === 0 ? 1 : Math.sin(x)/x; },
+    range: [-6, 6, -0.4, 1.2]
+  },
+  {
+    formula: "lim x→∞  (1+1/x)^x = e",
+    desc: "Define el número e ≈ 2.718. Aparece en interés compuesto continuo.",
+    plot: function(x){ return x <= 0 ? null : Math.pow(1+1/x, x); },
+    range: [0.1, 30, 0, 3]
+  },
+  {
+    formula: "lim x→0  (1−cos(x))/x² = 1/2",
+    desc: "Útil para resolver límites trigonométricos sin L'Hôpital.",
+    plot: function(x){ return x === 0 ? 0.5 : (1-Math.cos(x))/(x*x); },
+    range: [-4, 4, 0, 0.7]
+  },
+  {
+    formula: "lim x→0  (eˣ−1)/x = 1",
+    desc: "Pendiente de eˣ en x=0. Base para la derivada de la exponencial.",
+    plot: function(x){ return x === 0 ? 1 : (Math.exp(x)-1)/x; },
+    range: [-3, 3, 0, 3]
+  }
+];
+function drawNotables() {
+  var grid = document.getElementById("notableGrid");
+  grid.innerHTML = "";
+  notables.forEach(function(n, i) {
+    var card = document.createElement("div");
+    card.className = "notable-card";
+    card.innerHTML = '<div class="notable-formula">' + n.formula + '</div>' +
+                     '<div class="notable-desc">' + n.desc + '</div>' +
+                     '<canvas class="notable-canvas" id="ncv' + i + '"></canvas>';
+    grid.appendChild(card);
+  });
+  notables.forEach(function(n, i) {
+    var cv = document.getElementById("ncv" + i);
+    var s = setupCanvas(cv);
+    var r = n.range;
+    var ax = axes(s.ctx, s.w, s.h, r[0], r[1], r[2], r[3]);
+    s.ctx.strokeStyle = "rgba(127,119,221,0.9)";
+    s.ctx.lineWidth = 1.8;
+    s.ctx.beginPath();
+    var first = true;
+    var step = (r[1] - r[0]) / 200;
+    for (var x = r[0]; x <= r[1]; x += step) {
+      var y = n.plot(x);
+      if (y === null || !isFinite(y)) { first = true; continue; }
+      var px = ax.xToPx(x), py = ax.yToPx(y);
+      if (first) { s.ctx.moveTo(px, py); first = false; }
+      else s.ctx.lineTo(px, py);
+    }
+    s.ctx.stroke();
+  });
+}
+window.addEventListener("resize", function(){ if (document.getElementById("tab-not").classList.contains("active")) drawNotables(); });
+</script>
+
+</body>
+</html>

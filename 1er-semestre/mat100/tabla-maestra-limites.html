@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabla Maestra — MAT100</title>
+<link rel="stylesheet" href="../../assets/shared.css">
+<style>
+  body { padding-bottom: 5rem; }
+
+  .hero { padding: 2.5rem 0 2rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; color: var(--purple); text-transform: uppercase; margin-bottom: 10px; }
+  h1 { font-size: clamp(26px, 5vw, 42px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 10px; }
+  h1 span { color: var(--purple); }
+  .subtitle { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 1rem;
+  }
+  .search-box {
+    flex: 1; min-width: 180px; padding: 8px 14px;
+    font-family: var(--mono); font-size: 13px;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--bg2); color: var(--text);
+    outline: none; transition: border-color .2s;
+  }
+  .search-box::placeholder { color: var(--dim); }
+  .search-box:focus { border-color: var(--purple); }
+
+  .filter-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+  .pill {
+    font-family: var(--mono); font-size: 11px;
+    padding: 5px 12px; border-radius: 20px;
+    border: 1px solid var(--border); background: transparent; color: var(--muted);
+    cursor: pointer; transition: all .18s; white-space: nowrap;
+  }
+  .pill:hover { color: var(--text); border-color: var(--border-h); }
+  .pill.active { background: var(--purple-bg); color: var(--purple); border-color: rgba(127,119,221,0.4); }
+
+  /* ── COUNTER ── */
+  .counter {
+    font-family: var(--mono); font-size: 11px; color: var(--dim);
+    margin-bottom: 10px;
+  }
+  .counter b { color: var(--purple); }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; margin-bottom: 1.5rem; }
+  .tt { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; min-width: 760px; }
+  .tt thead th {
+    font-weight: 500; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 10px 12px; text-align: left;
+    color: var(--dim); border-bottom: 1px solid var(--border);
+    background: var(--bg2); position: sticky; top: 0; z-index: 1;
+  }
+  .tt thead th.col-lim { color: var(--blue); }
+  .tt thead th.col-fn  { color: var(--teal-l); }
+
+  .tt tbody tr { transition: background .15s; cursor: pointer; }
+  .tt tbody tr:hover { background: var(--bg2); }
+  .tt tbody tr.active { background: var(--bg3); }
+
+  .tt td {
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+    color: var(--muted); vertical-align: top;
+  }
+  .tt td.col-num  { color: var(--dim); font-size: 11px; width: 32px; }
+  .tt td.col-tipo { width: 90px; }
+  .tt td.col-name { color: var(--text); font-weight: 600; font-size: 12.5px; width: 17%; }
+  .tt td.col-formula { width: 18%; }
+  .tt td.col-formula code {
+    color: var(--amber); background: var(--amber-bg);
+    padding: 2px 7px; border-radius: 4px; font-size: 11.5px;
+  }
+  .tt td.col-lim { width: 21%; font-size: 11.5px; background: rgba(55,138,221,0.04); }
+  .tt td.col-fn  { font-size: 11.5px; background: rgba(29,158,117,0.04); }
+
+  /* ── BADGE ── */
+  .tipo-badge {
+    display: inline-block; font-size: 10.5px; font-weight: 500;
+    padding: 3px 10px; border-radius: 99px; white-space: nowrap;
+  }
+
+  /* ── DETAIL CARD ── */
+  .detail-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-left: 3px solid var(--purple); border-radius: var(--radius);
+    padding: 18px 22px; margin-bottom: 1.5rem;
+    display: none; animation: slideDown .2s ease;
+  }
+  .detail-card.visible { display: block; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .detail-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .detail-name { font-size: 16px; font-weight: 700; color: var(--text); }
+  .detail-close {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 10px; cursor: pointer;
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    transition: all .15s;
+  }
+  .detail-close:hover { color: var(--text); border-color: var(--border-h); }
+
+  .detail-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 600px) { .detail-cols { grid-template-columns: 1fr; } }
+
+  .detail-section {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+  }
+  .detail-section.lim { border-top: 2px solid var(--blue); }
+  .detail-section.fn  { border-top: 2px solid var(--teal); }
+
+  .detail-label {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--dim); margin-bottom: 8px;
+  }
+  .detail-section.lim .detail-label { color: var(--blue); }
+  .detail-section.fn  .detail-label { color: var(--teal-l); }
+
+  .detail-text { font-family: var(--mono); font-size: 12.5px; color: var(--text); line-height: 1.7; }
+  .detail-text code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
+
+  .detail-formula {
+    font-family: var(--mono); font-size: 14px; font-weight: 700;
+    color: var(--purple); background: var(--purple-bg);
+    border: 1px solid rgba(127,119,221,0.25);
+    border-radius: var(--radius-sm); padding: 10px 16px;
+    margin-bottom: 14px; text-align: center;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center; padding: 2.5rem 1rem;
+    font-family: var(--mono); font-size: 13px; color: var(--dim);
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">apuntes<span>/</span>visuales</div>
+  <a href="../../index.html" class="nav-back">← volver al dashboard</a>
+</nav>
+
+<div class="container">
+
+  <div class="hero">
+    <p class="eyebrow">MAT100 — Cálculo I</p>
+    <h1>Tabla maestra de <span>técnicas</span></h1>
+    <p class="subtitle">30 técnicas algebraicas para resolver límites y analizar funciones — búsqueda y filtrado</p>
+  </div>
+
+  <div class="toolbar">
+    <input class="search-box" id="buscar" type="text" placeholder="buscar técnica, fórmula o palabra clave...">
+    <div class="filter-pills" id="filtros"></div>
+  </div>
+
+  <div class="counter" id="counter"></div>
+
+  <div class="detail-card" id="detailCard">
+    <div class="detail-head">
+      <div class="detail-name" id="detailName"></div>
+      <button class="detail-close" id="detailClose">cerrar</button>
+    </div>
+    <div class="detail-formula" id="detailFormula"></div>
+    <div class="detail-cols">
+      <div class="detail-section lim">
+        <div class="detail-label">Uso en Límites</div>
+        <div class="detail-text" id="detailLim"></div>
+      </div>
+      <div class="detail-section fn">
+        <div class="detail-label">Uso en Funciones</div>
+        <div class="detail-text" id="detailFn"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="tt">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Tipo</th>
+          <th>Técnica</th>
+          <th>Fórmula</th>
+          <th class="col-lim">Uso en Límites</th>
+          <th class="col-fn">Uso en Funciones</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <div class="empty" id="emptyMsg" style="display:none">No se encontraron técnicas con ese criterio.</div>
+
+</div>
+
+<script>
+var rows = [
+  {n:"Factor común",t:"factorización",f:"ax+ay = a(x+y)",l:"Cancelar factor común con denominador para resolver 0/0",fn:"Sacar factor para encontrar raíces y simplificar expresión"},
+  {n:"Diferencia de cuadrados",t:"factorización",f:"a²−b² = (a+b)(a−b)",l:"Cancelar (x−a) o (x+a) que anula numerador y denominador",fn:"Hallar raíces, dominio de funciones racionales, simplificar f(x)"},
+  {n:"Trinomio cuadrado perfecto",t:"factorización",f:"a²±2ab+b² = (a±b)²",l:"Identificar (x−a)² y cancelar un factor con el denominador",fn:"Encontrar raíz doble, analizar vértice de parábola, simplificar"},
+  {n:"Trinomio x²+bx+c",t:"factorización",f:"(x+p)(x+q), p·q=c, p+q=b",l:"Descomponer numerador/denominador para cancelar factor común",fn:"Encontrar ceros de f(x), dominio, intervalos de signo"},
+  {n:"Trinomio ax²+bx+c",t:"factorización",f:"Aspa / ensayo",l:"Igual que anterior pero con coeficiente líder ≠ 1",fn:"Ceros, dominio, forma factorizada de función cuadrática"},
+  {n:"Suma de cubos",t:"factorización",f:"a³+b³ = (a+b)(a²−ab+b²)",l:"Cancelar (x+a) que genera 0/0 en el límite",fn:"Factorizar f(x)=x³+k para dominio y raíces"},
+  {n:"Diferencia de cubos",t:"factorización",f:"a³−b³ = (a−b)(a²+ab+b²)",l:"Cancelar (x−a) en lim x→a de f(x)=x³−a³",fn:"Factorizar cúbicas, hallar la única raíz real"},
+  {n:"Agrupación de términos",t:"factorización",f:"ax+ay+bx+by = (a+b)(x+y)",l:"Factorizar polinomios de grado 3+ para cancelar",fn:"Reducir polinomios complejos, encontrar raíces agrupadas"},
+  {n:"Ruffini / División sintética",t:"factorización",f:"Divide f(x) entre (x−a) si f(a)=0",l:"Factorizar polinomios de grado alto para cancelar raíz",fn:"Deflactar polinomio, hallar todas las raíces racionales"},
+  {n:"Teorema del factor",t:"factorización",f:"f(a)=0 ⟹ (x−a) es factor",l:"Confirmar qué factor cancela la indeterminación",fn:"Determinar si (x−a) es factor antes de dividir"},
+  {n:"Sustitución de variable",t:"factorización",f:"u = expresión → trinomio simple",l:"Resolver lim con expresiones compuestas tipo (x²+1)²",fn:"Simplificar funciones compuestas, analizar f(g(x))"},
+  {n:"Completar el cuadrado",t:"factorización",f:"x²+bx = (x+b/2)²−(b/2)²",l:"Reescribir numerador para encontrar factor cancelable",fn:"Forma canónica de parábola, vértice, dominio de radicales"},
+  {n:"Diferencia de 4tas potencias",t:"factorización",f:"a⁴−b⁴ = (a²+b²)(a+b)(a−b)",l:"Cancelar factores lineales en límites con potencia 4",fn:"Factorización encadenada de polinomios de grado 4"},
+  {n:"Factorizar con raíces fraccionarias",t:"factorización",f:"x^(p/q) como factor común",l:"Cancelar potencias fraccionarias compartidas en 0/0",fn:"Dominio de funciones con exponentes racionales"},
+  {n:"Definición de potencia",t:"expansión",f:"(a)ⁿ = a·a·…·a",l:"(x−1)²=(x−1)(x−1) → cancela un (x−1) del denominador",fn:"Reescribir para identificar factor repetido en f(x)"},
+  {n:"Binomio al cuadrado",t:"expansión",f:"(a±b)² = a²±2ab+b²",l:"Expandir (x+h)² en definición de derivada → cancela h",fn:"Expandir para simplificar, comparar con forma estándar"},
+  {n:"Binomio al cubo",t:"expansión",f:"(a±b)³ = a³±3a²b+3ab²±b³",l:"Expandir (x+h)³−x³ → cancela h en def. de derivada",fn:"Expandir funciones cúbicas, verificar identidades"},
+  {n:"Binomio de Newton",t:"expansión",f:"(a+b)ⁿ = Σ C(n,k)·aⁿ⁻ᵏ·bᵏ",l:"Expandir (x+h)ⁿ−xⁿ para límite de derivada general",fn:"Expandir potencias altas de funciones polinómicas"},
+  {n:"Conjugado de raíz cuadrada",t:"racionalización",f:"(√a−√b)(√a+√b) = a−b",l:"Eliminar raíz en numerador o denominador para cancelar",fn:"Simplificar f(x) con radicales, hallar dominio"},
+  {n:"Conjugado de raíz cúbica",t:"racionalización",f:"(a−b)(a²+ab+b²) = a³−b³",l:"Racionalizar expresiones con ∛ en el límite",fn:"Simplificar funciones con raíces cúbicas"},
+  {n:"Racionalizar numerador",t:"racionalización",f:"Mult. por conjugado del numerador",l:"Convertir diferencia de raíces en forma sin radical arriba",fn:"Reescribir f(x) racionalizada para análisis de dominio"},
+  {n:"Racionalizar denominador",t:"racionalización",f:"Mult. por conjugado del denominador",l:"Eliminar radical del denominador antes de evaluar límite",fn:"Forma estándar de funciones, simplificación"},
+  {n:"Simplificación de fracciones",t:"álgebra básica",f:"(a·b)/(a·c) = b/c si a≠0",l:"Cancelar directamente factor evidente en num. y denom.",fn:"Simplificar f(x) racional, encontrar huecos (agujeros)"},
+  {n:"Mínimo común denominador",t:"álgebra básica",f:"Unir fracciones antes de cancelar",l:"Sumar 1/f − 1/g → fracción única → cancelar factor",fn:"Operar funciones racionales, simplificar expresiones"},
+  {n:"División de polinomios",t:"división",f:"f(x)/g(x) = cociente + resto/g",l:"Simplificar cuando grado(num) ≥ grado(denom)",fn:"Asíntotas oblicuas de funciones racionales"},
+  {n:"Fracciones parciales",t:"división",f:"f/g = A/(x−a)+B/(x−b)+…",l:"Descomponer para evaluar límites de fracciones complejas",fn:"Analizar comportamiento, integración, asíntotas"},
+  {n:"Cambio de variable",t:"sustitución",f:"u = x−a para trasladar al origen",l:"Convertir lim x→a en lim u→0 más manejable",fn:"Análisis de traslaciones y transformaciones de f(x)"},
+  {n:"L'Hôpital",t:"regla especial",f:"lim f/g = lim f'/g' si hay 0/0 o ∞/∞",l:"Último recurso cuando no factoriza ni racionaliza",fn:"No aplica directamente (es una regla de límites)"},
+  {n:"Límite notable sen(x)/x",t:"regla especial",f:"lim(x→0) sen(x)/x = 1",l:"Reconocer la forma y resolver sin factorizar",fn:"Base para analizar continuidad de f(x)=sen(x)/x en x=0"},
+  {n:"Límite notable (1+1/x)^x",t:"regla especial",f:"lim(x→∞) (1+1/x)^x = e",l:"Reconocer forma exponencial y sustituir directamente",fn:"Base de la función exponencial natural f(x)=eˣ"}
+];
+
+var tipos = ["factorización","expansión","racionalización","álgebra básica","división","sustitución","regla especial"];
+var tc = {
+  "factorización":   {bg:"rgba(29,158,117,0.15)", tx:"var(--teal-l)"},
+  "expansión":       {bg:"rgba(55,138,221,0.15)",  tx:"var(--blue)"},
+  "racionalización": {bg:"rgba(239,159,39,0.15)",  tx:"var(--amber)"},
+  "álgebra básica":  {bg:"rgba(255,255,255,0.06)",  tx:"var(--muted)"},
+  "división":        {bg:"rgba(127,119,221,0.15)",  tx:"var(--purple)"},
+  "sustitución":     {bg:"rgba(93,202,165,0.12)",   tx:"var(--teal-l)"},
+  "regla especial":  {bg:"rgba(226,75,74,0.12)",    tx:"var(--red)"}
+};
+
+function badge(t) {
+  var c = tc[t];
+  return '<span class="tipo-badge" style="background:' + c.bg + ';color:' + c.tx + '">' + t + '</span>';
+}
+
+var activeF = "all", searchV = "", activeRow = null;
+
+function updateCounter(count) {
+  document.getElementById("counter").innerHTML = "Mostrando <b>" + count + "</b> de " + rows.length + " técnicas";
+}
+
+function render() {
+  var filtered = rows.filter(function(r) {
+    if (activeF !== "all" && r.t !== activeF) return false;
+    if (searchV) {
+      var hay = (r.n + " " + r.t + " " + r.f + " " + r.l + " " + r.fn).toLowerCase();
+      return hay.indexOf(searchV) >= 0;
+    }
+    return true;
+  });
+
+  var tb = document.getElementById("tbody");
+  var empty = document.getElementById("emptyMsg");
+
+  if (!filtered.length) {
+    tb.innerHTML = "";
+    empty.style.display = "block";
+    updateCounter(0);
+    return;
+  }
+  empty.style.display = "none";
+  updateCounter(filtered.length);
+
+  tb.innerHTML = filtered.map(function(r, i) {
+    var idx = rows.indexOf(r);
+    var cls = activeRow === idx ? ' class="active"' : '';
+    return '<tr data-idx="' + idx + '"' + cls + '>' +
+      '<td class="col-num">' + (i + 1) + '</td>' +
+      '<td class="col-tipo">' + badge(r.t) + '</td>' +
+      '<td class="col-name">' + r.n + '</td>' +
+      '<td class="col-formula"><code>' + r.f + '</code></td>' +
+      '<td class="col-lim">' + r.l + '</td>' +
+      '<td class="col-fn">' + r.fn + '</td>' +
+    '</tr>';
+  }).join("");
+
+  tb.querySelectorAll("tr").forEach(function(tr) {
+    tr.addEventListener("click", function() {
+      var idx = parseInt(tr.dataset.idx);
+      if (activeRow === idx) {
+        activeRow = null;
+        closeDetail();
+      } else {
+        activeRow = idx;
+        showDetail(rows[idx]);
+      }
+      render();
+    });
+  });
+}
+
+function showDetail(r) {
+  document.getElementById("detailName").textContent = r.n;
+  document.getElementById("detailFormula").textContent = r.f;
+  document.getElementById("detailLim").textContent = r.l;
+  document.getElementById("detailFn").textContent = r.fn;
+  document.getElementById("detailCard").classList.add("visible");
+}
+
+function closeDetail() {
+  activeRow = null;
+  document.getElementById("detailCard").classList.remove("visible");
+  render();
+}
+
+document.getElementById("detailClose").addEventListener("click", closeDetail);
+
+// Filtros
+var filtrosEl = document.getElementById("filtros");
+["all"].concat(tipos).forEach(function(f) {
+  var btn = document.createElement("button");
+  btn.className = "pill" + (f === "all" ? " active" : "");
+  btn.textContent = f === "all" ? "Todos" : f;
+  btn.addEventListener("click", function() {
+    activeF = f;
+    filtrosEl.querySelectorAll(".pill").forEach(function(p) { p.classList.remove("active"); });
+    btn.classList.add("active");
+    activeRow = null;
+    document.getElementById("detailCard").classList.remove("visible");
+    render();
+  });
+  filtrosEl.appendChild(btn);
+});
+
+// Búsqueda
+document.getElementById("buscar").addEventListener("input", function(e) {
+  searchV = e.target.value.toLowerCase().trim();
+  render();
+});
+
+render();
+</script>
+
+</body>
+</html>

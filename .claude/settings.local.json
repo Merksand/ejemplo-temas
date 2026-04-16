@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv tabla_maestra_limites_funciones.html tabla-maestra-limites.html)",
+      "Bash(ls *.html)"
+    ]
+  }
+}

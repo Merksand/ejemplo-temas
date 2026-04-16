@@ -137,10 +137,31 @@
   .detail-item-val code { color: var(--amber); background: var(--amber-bg); padding: 1px 6px; border-radius: 4px; }
   .detail-item-val .purple { color: var(--purple); }
 
+  .graph-wrap { margin-top: 12px; }
+  .graph-toolbar {
+    display: flex; justify-content: flex-end; gap: 4px;
+    background: var(--bg2); border: 1px solid var(--border); border-bottom: none;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    padding: 5px;
+  }
+  .graph-toggle {
+    font-family: var(--mono); font-size: 11px;
+    padding: 4px 10px; border-radius: 6px;
+    background: transparent; border: 1px solid transparent; color: var(--muted);
+    cursor: pointer; transition: all .15s;
+  }
+  .graph-toggle:hover { color: var(--text); background: var(--bg3); }
+  .graph-toggle.active { background: var(--purple-bg); color: var(--purple); border-color: rgba(127,119,221,0.3); }
+
   .graph-mini {
-    width: 100%; height: 120px;
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--bg); margin-top: 8px;
+    width: 100%; height: 180px;
+    border: 1px solid var(--border); border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    background: var(--bg);
+    display: block;
+  }
+  .graph-mini.square {
+    max-width: 360px; aspect-ratio: 1 / 1; height: auto;
+    margin: 0 auto;
   }
 
   /* ── DOM/RAN TABLE ── */
@@ -363,7 +384,13 @@
 
     <div class="type-detail" id="typeDetail">
       <div class="detail-grid" id="detailContent"></div>
-      <canvas class="graph-mini" id="typeCanvas" height="140"></canvas>
+      <div class="graph-wrap">
+        <div class="graph-toolbar">
+          <button class="graph-toggle active" data-mode="wide" id="modeWide">▭ ancho</button>
+          <button class="graph-toggle" data-mode="square" id="modeSquare">□ cuadrado</button>
+        </div>
+        <canvas class="graph-mini" id="typeCanvas"></canvas>
+      </div>
     </div>
 
     <div class="info-box">
@@ -791,21 +818,40 @@ document.querySelectorAll('.dom-el').forEach(el => {
 
 let activeType = null;
 
+let graphMode = 'wide';
 function drawGraph(tipo) {
   const canvas = document.getElementById('typeCanvas');
   const ctx = canvas.getContext('2d');
-  const w = canvas.offsetWidth || 800;
-  canvas.width = w;
-  canvas.height = 140;
-  ctx.clearRect(0, 0, w, 140);
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const w = rect.width || 800;
+  const h = rect.height || 180;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
 
   // axes
   ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, 70); ctx.lineTo(w, 70); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, 140); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, h / 2); ctx.lineTo(w, h / 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
 
-  tipo.draw(ctx, w, 140);
+  tipo.draw(ctx, w, h);
 }
+
+document.querySelectorAll('.graph-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    graphMode = btn.dataset.mode;
+    document.querySelectorAll('.graph-toggle').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const canvas = document.getElementById('typeCanvas');
+    canvas.classList.toggle('square', graphMode === 'square');
+    if (activeType !== null) setTimeout(() => drawGraph(tiposFunciones[activeType]), 30);
+  });
+});
+window.addEventListener('resize', () => {
+  if (activeType !== null) drawGraph(tiposFunciones[activeType]);
+});
 
 function renderTypes() {
   const grid = document.getElementById('typesGrid');

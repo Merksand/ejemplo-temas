@@ -13,10 +13,10 @@ apuntes-visuales/
 │   └── shared.css                    ← Estilos globales compartidos — SIEMPRE importar esto
 ├── README.md
 └── 1er-semestre/
-    ├── inf110-sf/
+    ├── inf110-sf/                    ← Sistemas informáticos
     │   └── compuertas-logicas.html   ← Ejemplo de referencia
-    ├── fisica/
-    └── matematicas/
+    ├── fis100/                       ← Física (puede contener subcarpeta mapas/)
+    └── mat100/                       ← Matemáticas (puede contener subcarpeta mapas/)
 ```
 
 ---
@@ -27,8 +27,8 @@ Ubicación: `1er-semestre/<materia>/<nombre-en-kebab-case>.html`
 
 Ejemplos válidos:
 - `1er-semestre/inf110-sf/algebra-boole.html`
-- `1er-semestre/fisica/cinematica.html`
-- `1er-semestre/matematicas/limites.html`
+- `1er-semestre/fis100/cinematica.html`
+- `1er-semestre/mat100/limites.html`
 
 **Regla de nombres: siempre kebab-case, sin espacios, sin mayúsculas.**
 
